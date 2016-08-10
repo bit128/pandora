@@ -1,0 +1,25 @@
+body {
+	padding-top: 70px;
+}
+legend {
+	margin-top: 20px;
+}
+.header {
+	padding: 10px 0 10px;
+	border-bottom: 1px solid #e5e5e5;
+}
+.icon-box { display: block; width: 100%; padding: 10px; text-align: center; color: #fff; text-decoration: none;}
+.icon-box .glyphicon { font-size: 40px;}
+.icon-box .title { font-size: 24px;}
+
+.bg-blue1 { background: #368FF4; }
+.bg-blue2 { background: #0FC4D9; }
+.bg-purple1 { background: #747AE8; }
+.bg-purple2 { background: #9556F3; }
+.bg-pink { background: #FF6779; }
+.bg-green { background: #84D018; }
+.bg-yellow1 { background: #F3B613; }
+.bg-yellow2 { background: #FF864A; }
+
+.dashed-line { border-bottom: 1px dashed #ccc; margin: 10px 0 10px;}
+.hide {display: none;}
