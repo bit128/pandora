@@ -18,8 +18,9 @@ class TestController extends Controller
 
 	public function actionIndex()
 	{
-		$m_channel = new \app\models\M_channel;
-		echo $m_channel->create(0, '站点根栏目');
+		$m_stock = new \app\models\M_stock;
+		$rs = $m_stock->getStock('57abe7f60eef6');
+		print_r($rs);
 	}
 
 	public function actionUpload()
@@ -63,5 +64,16 @@ class TestController extends Controller
 			);
 		$psdk = new Psdk;
 		echo $psdk->post('user/logout', $data);
+	}
+
+	public function actionSearchList()
+	{
+		$data = array(
+			'offset' => 0,
+			'limit' => 10,
+			'keyword' => '中西主食 手工冰淇淋'
+			);
+		$psdk = new Psdk;
+		echo $psdk->post('product/searchList', $data);
 	}
 }

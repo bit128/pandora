@@ -58,6 +58,28 @@ class M_album extends Model
 	}
 
 	/**
+	* 获取实体图片列表
+	* ======
+	* @param $by_id 	实体id
+	* ======
+	* @author 洪波
+	* @version 16.08.11
+	*/
+	public function getImages($by_id)
+	{
+		$criteria = new Criteria;
+		$criteria->add('by_id', $by_id);
+		$criteria->order = 'al_sort asc';
+		$list = Orm::model($this->table_name)->findAll($criteria);
+		$result = array();
+		foreach ($list as $v)
+		{
+			$result[] = $v->al_image;
+		}
+		return $result;
+	}
+
+	/**
 	* 设置图片排序
 	* ======
 	* @param $al_id 	栏目id

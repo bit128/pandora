@@ -71,6 +71,35 @@ class M_dictionary extends Model
 	}
 
 	/**
+	* 通过关键词获取实体id
+	* ======
+	* @param $dc_keyword 	关键词
+	* ======
+	* @author 洪波
+	* @version 16.08.11
+	*/
+	public function getEntryIds($dc_keyword)
+	{
+		if(is_array($dc_keyword))
+		{
+			$sql = "select distinct(a.by_id) from t_index as a,t_dictionary as b where b.dc_keyword in ('".implode("','", $dc_keyword)."') and a.dc_id=b.dc_id";
+		}
+		else
+		{
+			$sql = "select distinct(a.by_id) from t_index as a,t_dictionary as b where b.dc_keyword='{$dc_keyword}' and a.dc_id=b.dc_id";
+		}
+		$ids = array();
+		$result = Orm::model($this->table_name)
+			->getDb()
+			->queryAll($sql);
+		foreach ($result as $v)
+		{
+			$ids[] = $v->by_id;
+		}
+		return $ids;
+	}
+
+	/**
 	* 增加词汇用量
 	* ======
 	* @param $dc_id 	词汇id

@@ -112,16 +112,12 @@
           <!-- Brand and toggle get grouped for better mobile display -->
           <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false"> <span class="sr-only">目录</span> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-            <a class="navbar-brand" href="index.html" >首页</a> </div>
+            <a class="navbar-brand" href="/" >首页</a> </div>
           
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-              <li><a href="/site/list">中西主食</a></li>
-              <li><a href="/site/list">缤纷甜点</a></li>
-              <li><a href="/site/list">滋味饮品</a></li>
-              <li><a href="/site/list">手工冰淇淋</a></li>
-              <li><a href="/site/list">手工曲奇饼干</a></li>
+              <li><a href="/site/list">美食菜单</a></li>
               <li><a href="/site/blog">美食博客</a></li>
               <li><a href="/site/about">产品理念</a></li>
             </ul>

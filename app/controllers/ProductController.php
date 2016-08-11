@@ -9,6 +9,8 @@ namespace app\controllers;
 use core\Controller;
 use core\Request;
 use core\Response;
+use core\Criteria;
+use library\Psdk;
 use app\models\M_product;
 use app\models\M_admin;
 
@@ -58,6 +60,82 @@ class ProductController extends Controller
 			}
 			$response->json();
 		}
+	}
+
+	/**
+	* 搜索商品列表
+	* ======
+	* @author 洪波
+	* @version 16.08.11
+	*/
+	public function actionSearchList()
+	{
+		if(Psdk::checkSign())
+		{
+			$response = new Response;
+			$offset = Request::inst()->getPost('offset');
+			$limit = Request::inst()->getPost('limit');
+			$keyword = urldecode(Request::inst()->getPost('keyword'));
+			//关键词分析
+			$m_dictionary = new \app\models\M_dictionary;
+			$kr = explode(' ', trim($keyword));
+			$pd_ids = $m_dictionary->getEntryIds($kr);
+			//获取pd_id列表
+			$criteria = new Criteria;
+			$criteria->add('pd_status', M_product::STATUS_OPEN);
+			if($keyword != '')
+			{
+				if(! $pd_ids)
+				{
+					$pd_ids[] = '';
+				}
+				$criteria->addCondition("pd_id in ('".implode("','", $pd_ids)."')");
+			}
+			$criteria->order = 'pd_sort asc';
+			
+			$response->setResult($this->m_product->getList($offset, $limit, $criteria), Response::RES_SUCCESS);
+			$response->json();
+		}
+	}
+
+	/**
+	* 获取商品详情
+	* ======
+	* @author 洪波
+	* @version 16.08.11
+	*/
+	public function actionGetDetail()
+	{
+		$response = new Response;
+		$pd_id = Request::inst()->getParam('id');
+		if(strlen($pd_id) == 13)
+		{
+			$product = $this->m_product->get($pd_id);
+			if($product)
+			{
+				$m_content = new \app\models\M_content;
+				$m_stock = new \app\models\M_stock;
+				$m_album = new \app\models\M_album;
+				$detail = $m_content->get($pd_id);
+
+				$result = array(
+					'product' => $product,
+					'image' => $m_album->getImages($pd_id),
+					'detail' => $detail->ct_detail,
+					'stock' => $m_stock->getStock($pd_id)
+					);
+				$response->setResult($result, Response::RES_SUCCESS);
+			}
+			else
+			{
+				$response->setError('商品不存在', Response::RES_NOHAS);
+			}
+		}
+		else
+		{
+			$response->setError('参数错误', Response::RES_PARAMF);
+		}
+		$response->json();
 	}
 
 	/**

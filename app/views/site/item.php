@@ -9,7 +9,7 @@
       </ol>
     </div>
     <div class="col-md-12">
-      <h3 class="mt10">澳门玛嘉烈葡式蛋挞</h3>
+      <h3 class="mt10"><?php echo $product->pd_name; ?></h3>
     </div>
   </div>
   
@@ -43,11 +43,9 @@
         </script>
         <link type="text/css" rel="stylesheet" href="/app/statics/site/css/itembox.css">
         <ul id="itembox" class="list-unstyled ">
-          <li> <img class="etalage_thumb_image" src="/app/statics/site/img/item/img01.jpg" /> <img class="etalage_source_image" src="/app/statics/site/img/item/img01.jpg" /> </li>
-          <li> <img class="etalage_thumb_image" src="/app/statics/site/img/item/img02.jpg" /> <img class="etalage_source_image" src="/app/statics/site/img/item/img02.jpg" /> </li>
-          <li> <img class="etalage_thumb_image" src="/app/statics/site/img/item/img03.jpg" /> <img class="etalage_source_image" src="/app/statics/site/img/item/img03.jpg" /> </li>
-          <li> <img class="etalage_thumb_image" src="/app/statics/site/img/item/img02.jpg" /> <img class="etalage_source_image" src="/app/statics/site/img/item/img02.jpg" /> </li>
-          <li> <img class="etalage_thumb_image" src="/app/statics/site/img/item/img02.jpg" /> <img class="etalage_source_image" src="/app/statics/site/img/item/img02.jpg" /> </li>
+          <?php foreach ($image as $v) { ?>
+          <li> <img class="etalage_thumb_image" src="/nfs/image/<?php echo $v; ?>" /> <img class="etalage_source_image" src="/nfs/image/<?php echo $v; ?>" /> </li>
+          <?php } ?>
         </ul>
       </div>
       <!-- 图片秀结束 -->
@@ -56,31 +54,21 @@
     <div class="col-md-6">
       <dl class="dl-horizontal dl-001">
         <dt class="pt15 text-danger">单价：</dt>
-        <dd><span class="pricef f30 text-danger">￥3.5</span></dd>
+        <dd><span class="pricef f30 text-danger">￥<?php echo $stock->price; ?></span></dd>
         <dt>口味：</dt>
         <dd>
           <ul class="list-unstyled chooseblock cb01 clearfix">
-            <li><a href="javascript:;" class="active"><img src="img/item/img01.jpg" alt="" width="40" height="40" /> <span>原味</span></a> <span class="box-check"></span></li>
-            <li><a href="javascript:;"><img src="img/item/img02.jpg" alt="" width="40" height="40"/> <span>黄桃味</span></a> </li>
-            <li><a href="javascript:;"><img src="img/item/img03.jpg" alt="" width="40" height="40"/> <span>红豆味</span></a> </li>
+            <?php foreach ($stock->item as $v ) { ?>
+            <li><a href="javascript:;"><img src="/nfs/image/<?php echo $v->st_image; ?>" alt="" width="40" height="40" /> <span><?php echo $v->st_name; ?></span></a> <!--<span class="box-check"></span>--></li>
+            <?php } ?>
           </ul>
         </dd>
-        <dt>口味：</dt>
+        <dt>规格：</dt>
         <dd>
           <ul class="list-unstyled chooseblock cb02 clearfix">
-            <li><a href="javascript:;" class="active">原味</a><span class="box-check"></span></li>
-            <li><a href="javascript:;">黄桃味</a></li>
-            <li><a href="javascript:;">红豆味</a></li>
-            <li><a href="javascript:;">S</a></li>
-            <li><a href="javascript:;">M</a></li>
-            <li><a href="javascript:;">L</a></li>
-            <li><a href="javascript:;">XL</a></li>
-            <li><a href="javascript:;">黄桃味</a></li>
-            <li><a href="javascript:;">红豆味</a></li>
-            <li><a href="javascript:;">黄桃味</a></li>
-            <li><a href="javascript:;">红豆味</a></li>
-            <li><a href="javascript:;">黄桃味</a></li>
-            <li><a href="javascript:;">红豆味</a></li>
+            <?php foreach ($stock->size as $v) { ?>
+            <li><a href="javascript:;"><?php echo $v; ?></a><!--<span class="box-check"></span>--></li>
+            <?php } ?>
           </ul>
         </dd>
         <dt>数量：</dt>
@@ -100,7 +88,10 @@
   <!--详情开始-->
   <div class="row mt25">
     <div class="col-md-12">
-     <div class=" t-line01"><h5>产品描述</h5></div>
+     <div class="t-line01"></div>
+     <p>&nbsp;</p>
+     <?php echo $detail; ?>
+     <p>&nbsp;</p>
     </div>
   </div>
 </div>

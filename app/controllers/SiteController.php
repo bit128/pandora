@@ -3,6 +3,7 @@ namespace app\controllers;
 use core\Controller;
 use core\Request;
 use core\View;
+use library\Psdk;
 
 /**
 * 站点控制器示例
@@ -64,7 +65,27 @@ class SiteController extends Controller
 	*/
 	public function actionList()
 	{
-		View::layout('layout_site')->render('list');
+		$keyword = Request::inst()->getQuery('k');
+		$page = Request::inst()->getQuery('page', 1);
+		$limit = 16;
+		$offset = ($page - 1) * $limit;
+
+		$data = array(
+			'offset' => $offset,
+			'limit' => $limit,
+			'keyword' => $keyword
+			);
+		$psdk = new Psdk;
+		$response = json_decode($psdk->post('product/searchList', $data));
+		//分页
+		$url = '/site/list';
+		$pages = new \library\Pagination($response->result->count, $limit, $page, $url);
+
+		$data = array(
+			'product_list' => $response->result->result,
+			'pages' => $pages->build()
+			);
+		View::layout('layout_site')->render('list', $data);
 	}
 
 	/**
@@ -75,7 +96,22 @@ class SiteController extends Controller
 	*/
 	public function actionItem()
 	{
-		View::layout('layout_site')->render('item');
+		$pd_id = Request::inst()->getQuery('id');
+		if(strlen($pd_id) == 13)
+		{
+			$psdk = new Psdk;
+			$result = json_decode($psdk->query('product/getDetail/id/' . $pd_id));
+			if($result->code == 1)
+			{
+				$data = array(
+					'product' => $result->result->product,
+					'image' => $result->result->image,
+					'stock' => $result->result->stock,
+					'detail' => $result->result->detail
+					);
+				View::layout('layout_site')->render('item', $data);
+			}
+		}
 	}
 
 	/**
