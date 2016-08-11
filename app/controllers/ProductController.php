@@ -118,6 +118,12 @@ class ProductController extends Controller
 					//删除商品图片
 					$m_album = new \app\models\M_album;
 					$m_album->deleteById($pd_id);
+					//删除库存
+					$m_stock = new \app\models\M_stock;
+					$m_stock->deleteByPd($pd_id);
+					//删除索引
+					$m_index = new \app\models\M_index;
+					$m_index->deleteIndex($pd_id);
 
 					$response->setResult('删除成功', Response::RES_SUCCESS);
 				}
