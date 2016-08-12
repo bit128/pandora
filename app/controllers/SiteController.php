@@ -13,6 +13,12 @@ use library\Psdk;
 */
 class SiteController extends Controller
 {
+
+	public function init()
+	{
+		header("Content-Type:text/html;charset=UTF-8");
+	}
+
 	/**
 	* 主页面
 	* ======
@@ -25,6 +31,18 @@ class SiteController extends Controller
 	}
 
 	/**
+	* 生成验证码
+	* ======
+	* @author 洪波
+	* @version 16.08.12
+	*/
+	public function actionValidateCode()
+	{
+		$validate = new \library\ValidateCode;
+		$validate->show();
+	}
+
+	/**
 	* 登录页面
 	* ======
 	* @author 洪波
@@ -32,7 +50,40 @@ class SiteController extends Controller
 	*/
 	public function actionLogin()
 	{
-		View::layout('layout_site')->render('login');
+		if(Request::inst()->isPostRequest())
+		{
+			$code = Request::inst()->getPost('code');
+			if(strtoupper($code) == Request::inst()->getSession('validate_code'))
+			{
+				$data = array(
+					'user_phone' => Request::inst()->getPost('user_phone'),
+					'user_password' => Request::inst()->getPost('user_password'),
+					'user_device' => 1,
+					'user_ip' => $_SERVER['REMOTE_ADDR']
+					);
+				$psdk = new Psdk;
+				$result = json_decode($psdk->post('user/login', $data));
+				if($result->code == 1)
+				{
+					Request::inst()->setSession('user_id', $result->result->user_id);
+					Request::inst()->setSession('user_name', $result->result->user_name);
+					Request::inst()->setSession('token', $result->result->token);
+					header('Location:/');
+				}
+				else
+				{
+					echo $result->error;
+				}
+			}
+			else
+			{
+				echo '验证码错误';
+			}
+		}
+		else
+		{
+			View::layout('layout_site')->render('login');
+		}
 	}
 
 	/**
@@ -43,7 +94,45 @@ class SiteController extends Controller
 	*/
 	public function actionRegister()
 	{
-		View::layout('layout_site')->render('register');
+		if(Request::inst()->isPostRequest())
+		{
+			$data = array(
+				'user_phone' => Request::inst()->getPost('user_phone'),
+				'user_password' => Request::inst()->getPost('user_password'),
+				'user_name' => Request::inst()->getPost('user_name'),
+				'user_device' => 1,
+				'user_ip' => $_SERVER['REMOTE_ADDR']
+				);
+			$psdk = new Psdk;
+			$result = json_decode($psdk->post('user/register', $data));
+			if($result->code == 1)
+			{
+				Request::inst()->setSession('user_id', $result->result->user_id);
+				Request::inst()->setSession('user_name', $result->result->user_name);
+				Request::inst()->setSession('token', $result->result->token);
+				header('Location:/');
+			}
+			else
+			{
+				echo $result->error;
+			}
+		}
+		else
+		{
+			View::layout('layout_site')->render('register');
+		}
+	}
+
+	/**
+	* 用户登出
+	* ======
+	* @author 洪波
+	* @version 16.08.12
+	*/
+	public function actionLogout()
+	{
+		Request::inst()->destorySession();
+		header("Location:/");
 	}
 
 	/**

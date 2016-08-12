@@ -49,23 +49,27 @@
         </ul>
       </div>
       <!-- 图片秀结束 -->
-      <!--手机版显示产品大预览图--><div class="m-item-pic"><img src="/app/statics/site/img/item/img01.jpg" alt="" class="img-responsive"/></div><!--结束-->
+      <!--手机版显示产品大预览图--><div class="m-item-pic"><img src="/nfs/image/<?php echo $product->pd_image; ?>" alt="" class="img-responsive"/></div><!--结束-->
     </div>
     <div class="col-md-6">
       <dl class="dl-horizontal dl-001">
         <dt class="pt15 text-danger">单价：</dt>
-        <dd><span class="pricef f30 text-danger">￥<?php echo $stock->price; ?></span></dd>
+        <dd><span class="pricef f30 text-danger" id="price">￥<?php echo $stock->price; ?></span></dd>
         <dt>口味：</dt>
         <dd>
           <ul class="list-unstyled chooseblock cb01 clearfix">
             <?php foreach ($stock->item as $v ) { ?>
-            <li><a href="javascript:;"><img src="/nfs/image/<?php echo $v->st_image; ?>" alt="" width="40" height="40" /> <span><?php echo $v->st_name; ?></span></a> <!--<span class="box-check"></span>--></li>
+            <li>
+              <a href="javascript:;" data-price="<?php echo $v->st_price; ?>" data-sizes="<?php echo implode(' ', $v->st_size); ?>" class="stock_item">
+                <img src="/nfs/image/<?php echo $v->st_image; ?>" alt="" width="40" height="40" /> <strong><?php echo $v->st_name; ?></strong>
+              </a><span class="box-check" style="display:none;"></span>
+            </li>
             <?php } ?>
           </ul>
         </dd>
         <dt>规格：</dt>
         <dd>
-          <ul class="list-unstyled chooseblock cb02 clearfix">
+          <ul class="list-unstyled chooseblock cb02 clearfix" id="stock_sizes">
             <?php foreach ($stock->size as $v) { ?>
             <li><a href="javascript:;"><?php echo $v; ?></a><!--<span class="box-check"></span>--></li>
             <?php } ?>
@@ -96,3 +100,29 @@
   </div>
 </div>
 <!--main-area end-->
+<script type="text/javascript">
+$(document).ready(function(){
+  //选择库存
+  $('.stock_item').on('click', function(){
+    //样式变化
+    $('.stock_item').removeClass('active');
+    $(this).addClass('active');
+    $(this).parents('ul').find('span').hide();
+    $(this).parents('li').find('span').show();
+    //价格和规格
+    $('#price').text('￥' + $(this).attr('data-price'));
+    var html = '';
+    $.each($(this).attr('data-sizes').split(' '), function(i, d){
+      html += '<li><a href="javascript:;" class="stock_size">' + d + '</a><span class="box-check" style="display:none;"></span></li>'
+    });
+    $('#stock_sizes').html(html);
+  });
+  //选择规格
+  $('#stock_sizes').on('click', '.stock_size', function(){
+    $('.stock_size').removeClass('active');
+    $(this).addClass('active');
+    $(this).parents('ul').find('span').hide();
+    $(this).parents('li').find('span').show();
+  });
+});
+</script>

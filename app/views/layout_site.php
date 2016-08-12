@@ -32,18 +32,20 @@
       <div class="col-md-5">
         <ul class="list-inline mtb0">
           <li>欢迎光临！</li>
-          <!--登陆时状态--<li><a href="myorder.html">Username</a></li><li><a href="javascript:;">退出</a></li>-->
+          <?php if (\core\Request::inst()->getSession('user_id')) { ?>
+          <li><a href="myorder.html"><?php echo \core\Request::inst()->getSession('user_name'); ?></a></li><li><a href="/site/logout">退出</a></li>
+          <li><a href="/site/order">我的订单</a></li>
+          <li><a href="myfavorite.html">我的收藏</a></li>
+          <?php } else { ?>
           <li><a href="/site/login">登录</a></li>
           <li>|</li>
           <li><a href="/site/register">注册</a></li>
-          <li><a href="/site/order">我的订单</a></li>
-          
-          <li><a href="/site/news">网站公告</a></li>
+          <?php } ?>
         </ul>
       </div>
       <div class="col-md-7 text-right">
         <ul class="list-inline mtb0 muv">
-          <li><a href="myfavorite.html">我的收藏</a></li>
+          <li><a href="/site/news">网站公告</a></li>
           <li><a href="/site/help_order">帮助中心</a></li>
           <li><a href="dlapp.html"><i class="fa fa-mobile fa-lg "></i> 手机客户端</a></li>
           <li><a href="/"><i class="fa fa-weibo fa-lg "></i> 新浪微博</a></li>

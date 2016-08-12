@@ -36,7 +36,7 @@ class TestController extends Controller
 	public function actionRegister()
 	{
 		$data = array(
-			'user_phone' => '8613761497959',
+			'user_phone' => '13761497959',
 			'user_password' => '123',
 			'user_name' => '银莹',
 			'user_device' => 4,

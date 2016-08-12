@@ -42,12 +42,13 @@ class M_stock extends Model
 			if(! in_array($v->st_name, $names))
 			{
 				$names[] = $v->st_name; 
-				$result['item'][] = array(
+				$result['item'][$v->st_name] = array(
 					'st_image' => $v->st_image,
 					'st_name' => $v->st_name,
 					'st_price' => $v->st_price
 					);
 			}
+			$result['item'][$v->st_name]['st_size'][] = $v->st_size;
 			if(! in_array($v->st_size, $result['size']))
 			{
 				$result['size'][] = $v->st_size;

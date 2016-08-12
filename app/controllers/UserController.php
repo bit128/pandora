@@ -96,6 +96,7 @@ class UserController extends Controller
 				{
 					//构建令牌
 					$token = RedisCache::model('token')->build($user_id, $token_info);
+					$token['user_name'] = $info['user_name'];
 					$response->setResult($token, Response::RES_SUCCESS);
 				}
 				else
@@ -137,6 +138,7 @@ class UserController extends Controller
 					$this->m_user->update($user_id, $info);
 					//构建令牌
 					$token = RedisCache::model('token')->build($user_id, $info);
+					$token['user_name'] = $user->user_name;
 					$response->setResult($token, Response::RES_SUCCESS);
 				}
 				else
