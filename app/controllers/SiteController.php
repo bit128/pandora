@@ -3,7 +3,6 @@ namespace app\controllers;
 use core\Controller;
 use core\Request;
 use core\View;
-use library\Psdk;
 
 /**
 * 站点控制器示例
@@ -156,24 +155,36 @@ class SiteController extends Controller
 	*/
 	public function actionList()
 	{
-		$keyword = Request::inst()->getQuery('k');
+
+		$m_dictionary = new \app\models\M_dictionary;
+		$m_product = new \app\models\M_product;
+		$criteria = new \core\Criteria;
+
+		$keyword = urldecode(Request::inst()->getQuery('k'));
 		$page = Request::inst()->getQuery('page', 1);
 		$limit = 16;
 		$offset = ($page - 1) * $limit;
-
-		$data = array(
-			'offset' => $offset,
-			'limit' => $limit,
-			'keyword' => $keyword
-			);
-		$psdk = new Psdk;
-		$response = json_decode($psdk->post('product/searchList', $data));
+		//关键词分析
+		$kr = explode(' ', trim($keyword));
+		$pd_ids = $m_dictionary->getEntryIds($kr);
+		//获取pd_id列表
+		$criteria->add('pd_status', 1);
+		if($keyword != '')
+		{
+			if(! $pd_ids)
+			{
+				$pd_ids[] = '';
+			}
+			$criteria->addCondition("pd_id in ('".implode("','", $pd_ids)."')");
+		}
+		$criteria->order = 'pd_sort asc';
+		$product_list = $m_product->getList($offset, $limit, $criteria);
 		//分页
 		$url = '/site/list';
-		$pages = new \library\Pagination($response->result->count, $limit, $page, $url);
+		$pages = new \library\Pagination($product_list['count'], $limit, $page, $url);
 
 		$data = array(
-			'product_list' => $response->result->result,
+			'product_list' => $product_list['result'],
 			'pages' => $pages->build()
 			);
 		View::layout('layout_site')->render('list', $data);
@@ -190,15 +201,18 @@ class SiteController extends Controller
 		$pd_id = Request::inst()->getQuery('id');
 		if(strlen($pd_id) == 13)
 		{
-			$psdk = new Psdk;
-			$result = json_decode($psdk->query('product/getDetail/id/' . $pd_id));
-			if($result->code == 1)
+			$m_product = new \app\models\M_product;
+			if($product = $m_product->get($pd_id))
 			{
+				$m_content = new \app\models\M_content;
+				$m_stock = new \app\models\M_stock;
+				$m_album = new \app\models\M_album;
+				$detail = $m_content->get($pd_id);
 				$data = array(
-					'product' => $result->result->product,
-					'image' => $result->result->image,
-					'stock' => $result->result->stock,
-					'detail' => $result->result->detail
+					'product' => $product,
+					'image' => $m_album->getImages($pd_id),
+					'stock' => $m_stock->getStock($pd_id),
+					'detail' => $detail->ct_detail
 					);
 				View::layout('layout_site')->render('item', $data);
 			}
@@ -298,12 +312,12 @@ class SiteController extends Controller
 		$id = Request::inst()->getQuery('id');
 		if(strlen($id) == 13)
 		{
-			$psdk = new Psdk;
-			$response = json_decode($psdk->query('content/get/ct_id/'.$id));
-			if($response->code == 1)
+			$m_content = new \app\models\M_content;
+			$content_detail = $m_content->get($id);
+			if($content_detail)
 			{
 				$data = array(
-					'contents' => $response->result,
+					'contents' => $content_detail,
 					'blog_channel' => $this->getBlogChannel(),
 					'hot_content' => $this->getHotContent()
 					);

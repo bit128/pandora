@@ -54,14 +54,14 @@
     <div class="col-md-6">
       <dl class="dl-horizontal dl-001">
         <dt class="pt15 text-danger">单价：</dt>
-        <dd><span class="pricef f30 text-danger" id="price">￥<?php echo $stock->price; ?></span></dd>
+        <dd><span class="pricef f30 text-danger" id="price">￥<?php echo $stock['price']; ?></span></dd>
         <dt>口味：</dt>
         <dd>
           <ul class="list-unstyled chooseblock cb01 clearfix">
-            <?php foreach ($stock->item as $v ) { ?>
+            <?php foreach ($stock['item'] as $v ) { ?>
             <li>
-              <a href="javascript:;" data-price="<?php echo $v->st_price; ?>" data-sizes="<?php echo implode(' ', $v->st_size); ?>" class="stock_item">
-                <img src="/nfs/image/<?php echo $v->st_image; ?>" alt="" width="40" height="40" /> <strong><?php echo $v->st_name; ?></strong>
+              <a href="javascript:;" data-price="<?php echo $v['st_price']; ?>" data-sizes="<?php echo implode(' ', $v['st_size']); ?>" class="stock_item">
+                <img src="/nfs/image/<?php echo $v['st_image']; ?>" alt="" width="40" height="40" /> <strong><?php echo $v['st_name']; ?></strong>
               </a><span class="box-check" style="display:none;"></span>
             </li>
             <?php } ?>
@@ -70,7 +70,7 @@
         <dt>规格：</dt>
         <dd>
           <ul class="list-unstyled chooseblock cb02 clearfix" id="stock_sizes">
-            <?php foreach ($stock->size as $v) { ?>
+            <?php foreach ($stock['size'] as $v) { ?>
             <li><a href="javascript:;"><?php echo $v; ?></a><!--<span class="box-check"></span>--></li>
             <?php } ?>
           </ul>
