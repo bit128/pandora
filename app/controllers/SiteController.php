@@ -14,6 +14,7 @@ use library\Psdk;
 class SiteController extends Controller
 {
 	const CHANNEL_BLOG = '57ad76d2a739f';
+	const CHANNEL_NEWS = '57ae9a6b2a96b';
 
 	public function init()
 	{
@@ -63,7 +64,6 @@ class SiteController extends Controller
 					'user_ip' => $_SERVER['REMOTE_ADDR']
 					);
 				$psdk = new Psdk;
-				//print_r($psdk->post('user/login', $data));exit;
 				$result = json_decode($psdk->post('user/login', $data));
 				if($result->code == 1)
 				{
@@ -354,7 +354,23 @@ class SiteController extends Controller
 	*/
 	public function actionNews()
 	{
-		View::layout('layout_site')->render('news');
+		$m_content = new \app\models\M_content;
+		$page = Request::inst()->getQuery('page', 1);
+		$limit =5;
+		$offset = ($page - 1) * $limit;
+		$criteria = new \core\Criteria;
+		$criteria->add('cn_id', self::CHANNEL_NEWS);
+		$criteria->order = 'ct_utime desc';
+		$content_list = $m_content->getList($offset, $limit, $criteria);
+		//分页
+		$url = '/site/news';
+		$pages = new \library\Pagination($content_list['count'], $limit, $page, $url);
+
+		$data = array(
+			'content_list' => $content_list['result'],
+			'pages' => $pages->build()
+			);
+		View::layout('layout_site')->render('news', $data);
 	}
 
 	/**
