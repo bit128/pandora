@@ -9,6 +9,8 @@ namespace app\controllers;
 use core\Controller;
 use core\Request;
 use core\Response;
+use core\Criteria;
+use library\Psdk;
 use app\models\M_content;
 use app\models\M_admin;
 
@@ -118,7 +120,38 @@ class ContentController extends Controller
 	}
 
 	/**
-	* 获取内容列表
+	* 搜索文章列表
+	* ======
+	* @author 洪波
+	* @version 16.08.12
+	*/
+	public function actionSearchList()
+	{
+		if(Psdk::checkSign())
+		{
+			$response = new Response;
+			$offset = Request::inst()->getPost('offset', 0);
+			$limit = Request::inst()->getPost('limit', 99);
+			$cn_id = Request::inst()->getPost('cn_id');
+			$keyword = Request::inst()->getPost('keyword');
+
+			$criteria = new Criteria;
+			$criteria->addCondition('ct_status > 0');
+			if(strlen($cn_id) == 13)
+			{
+				$m_channel = new \app\models\M_channel;
+				$cn_ids = $m_channel->getChildIds($cn_id);
+				$criteria->addCondition("cn_id in ('".implode("','", $cn_ids)."')");
+			}
+			$criteria->order = 'ct_utime desc';
+			$result = $this->m_content->getList($offset, $limit, $criteria);
+			$response->setResult($result, Response::RES_SUCCESS);
+			$response->json();
+		}
+	}
+
+	/**
+	* [管理员]获取内容列表
 	* ======
 	* @author 洪波
 	* @version 16.07.31

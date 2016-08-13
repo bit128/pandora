@@ -13,6 +13,7 @@ use library\Psdk;
 */
 class SiteController extends Controller
 {
+	const CHANNEL_BLOG = '57ad76d2a739f';
 
 	public function init()
 	{
@@ -62,6 +63,7 @@ class SiteController extends Controller
 					'user_ip' => $_SERVER['REMOTE_ADDR']
 					);
 				$psdk = new Psdk;
+				//print_r($psdk->post('user/login', $data));exit;
 				$result = json_decode($psdk->post('user/login', $data));
 				if($result->code == 1)
 				{
@@ -255,7 +257,34 @@ class SiteController extends Controller
 	*/
 	public function actionBlog()
 	{
-		View::layout('layout_site')->render('blog');
+		$cn_id = Request::inst()->getQuery('cn', self::CHANNEL_BLOG);
+		$page = Request::inst()->getQuery('page', 1);
+		$limit =5;
+		$offset = ($page - 1) * $limit;
+		
+		$m_channel = new \app\models\M_channel;
+		$m_content = new \app\models\M_content;
+		//获取内容列表
+		$criteria = new \core\Criteria;
+		$criteria->addCondition('ct_status > 0');
+		if(strlen($cn_id) == 13)
+		{
+			$cn_ids = $m_channel->getChildIds($cn_id);
+			$criteria->addCondition("cn_id in ('".implode("','", $cn_ids)."')");
+		}
+		$criteria->order = 'ct_utime desc';
+		$content_list = $m_content->getList($offset, $limit, $criteria);
+		//分页
+		$url = '/site/blog';
+		$pages = new \library\Pagination($content_list['count'], $limit, $page, $url);
+
+		$data = array(
+			'content_list' => $content_list['result'],
+			'blog_channel' => $this->getBlogChannel(),
+			'hot_content' => $this->getHotContent(),
+			'pages' => $pages->build()
+			);
+		View::layout('layout_site')->render('blog', $data);
 	}
 
 	/**
@@ -266,7 +295,55 @@ class SiteController extends Controller
 	*/
 	public function actionBlogDetail()
 	{
-		View::layout('layout_site')->render('blog_detail');
+		$id = Request::inst()->getQuery('id');
+		if(strlen($id) == 13)
+		{
+			$psdk = new Psdk;
+			$response = json_decode($psdk->query('content/get/ct_id/'.$id));
+			if($response->code == 1)
+			{
+				$data = array(
+					'contents' => $response->result,
+					'blog_channel' => $this->getBlogChannel(),
+					'hot_content' => $this->getHotContent()
+					);
+				View::layout('layout_site')->render('blog_detail', $data);
+			}
+		}
+	}
+
+	/**
+	* 获取博客栏目列表
+	* ======
+	* @author 洪波
+	* @version 16.08.13
+	*/
+	private function getBlogChannel()
+	{
+		$m_channel = new \app\models\M_channel;
+		$criteria = new \core\Criteria;
+		$criteria->add('cn_fid', self::CHANNEL_BLOG);
+		$criteria->add('cn_status', 1);
+		$criteria->order = 'cn_sort asc';
+		return $m_channel->getList(0, 20, $criteria);
+	}
+
+	/**
+	* 获取博客热门内容列表
+	* ======
+	* @author 洪波
+	* @version 16.08.13
+	*/
+	private function getHotContent()
+	{
+		$m_channel = new \app\models\M_channel;
+		$m_content = new \app\models\M_content;
+		$criteria = new \core\Criteria;
+		$criteria->add('ct_status', 2);
+		$cn_ids = $m_channel->getChildIds(self::CHANNEL_BLOG);
+		$criteria->addCondition("cn_id in ('".implode("','", $cn_ids)."')");
+		$criteria->order = 'ct_utime desc';
+		return $m_content->getList(0, 10, $criteria);
 	}
 
 	/**

@@ -9,6 +9,8 @@ namespace app\controllers;
 use core\Controller;
 use core\Request;
 use core\Response;
+use core\Criteria;
+use library\Psdk;
 use app\models\M_channel;
 use app\models\M_admin;
 
@@ -87,6 +89,35 @@ class ChannelController extends Controller
 				$response->setError('栏目不存在', Response::RES_NOHAS);
 			}
 			$response->json();
+		}
+	}
+
+	/**
+	* 获取栏目列表
+	* ======
+	* @author 洪波
+	* @version 16.08.12
+	*/
+	public function actionGetList()
+	{
+		if(Psdk::checkSign())
+		{
+			$response = new Response;
+			$offset = Request::inst()->getPost('offset', 0);
+			$limit = Request::inst()->getPost('limit', 99);
+			$cn_id = Request::inst()->getPost('cn_id');
+			if(strlen($cn_id) == 13)
+			{
+				$criteria = new Criteria;
+				$criteria->add('cn_fid', $cn_id);
+				$criteria->order = 'cn_sort asc';
+				$result = $this->m_channel->getList($offset, $limit, $criteria);
+				$this->m_channel->setResult($result, Response::RES_SUCCESS);
+			}
+			else
+			{
+				$response->setResult('参数错误', Response::RES_PARAMF);
+			}
 		}
 	}
 

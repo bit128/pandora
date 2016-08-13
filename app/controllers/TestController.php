@@ -18,9 +18,13 @@ class TestController extends Controller
 
 	public function actionIndex()
 	{
-		$m_stock = new \app\models\M_stock;
-		$rs = $m_stock->getStock('57abe7f60eef6');
-		print_r($rs);
+		$data = array(
+			'offset' => 0,
+			'limit' => 5,
+			'cn_id' => '57ad76d2a739f'
+			);
+		$psdk = new Psdk;
+		echo $psdk->post('content/searchList', $data);
 	}
 
 	public function actionUpload()

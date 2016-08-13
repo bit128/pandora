@@ -123,8 +123,41 @@ class M_channel extends Model
 				);
 			$tree[] = $item;
 		}
-
 		return $tree;
+	}
+
+	/**
+	* 获取栏目全部子孙节点
+	* ======
+	* @param $cn_id 	父栏目id
+	* @param $self 		是否包含父栏目id
+	* ======
+	* @author 洪波
+	* @version 16.08.12
+	*/
+	public function getChildIds($cn_id, $self = true)
+	{
+		$result = array();
+		if($self)
+		{
+			$result[] = $cn_id;
+		}
+		$condition = array($cn_id);
+		//迭代子目录
+		do {
+			$list = Orm::model($this->table_name)
+				->getDb()
+				->queryAll("select cn_id from t_channel where cn_fid in ('".implode("','", $condition)."')");
+			$rs = array();
+			foreach ($list as $v)
+			{
+				$result[] = $v->cn_id;
+				$rs[] = $v->cn_id;
+			}
+			$condition = $rs;
+		} while ($condition);
+		unset($condition);
+		return $result;
 	}
 
 	/**

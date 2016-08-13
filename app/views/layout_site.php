@@ -119,9 +119,10 @@
           <!-- Collect the nav links, forms, and other content for toggling -->
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-              <li><a href="/site/list">美食菜单</a></li>
-              <li><a href="/site/blog">美食博客</a></li>
-              <li><a href="/site/about">产品理念</a></li>
+              <li <?php if(\core\Autumn::app()->action=='list') echo 'class="active"'; ?>><a href="/site/list">美食菜单</a></li>
+              <li <?php if(\core\Autumn::app()->action=='blog') echo 'class="active"'; ?>><a href="/site/blog">美食博客</a></li>
+              <li <?php if(\core\Autumn::app()->action=='news') echo 'class="active"'; ?>><a href="/site/news">网站新闻</a></li>
+              <li <?php if(\core\Autumn::app()->action=='about') echo 'class="active"'; ?>><a href="/site/about">产品理念</a></li>
             </ul>
           </div>
           <!-- /.navbar-collapse --> 
