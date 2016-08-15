@@ -59,6 +59,12 @@
 				<p><strong style="font-size:16px;">商品</strong> <br><small>[权限：商品]</small></p>
 			</a>
 		</div>
+		<div class="col-md-2">
+			<a class="desk-item" href="/home/struct">
+				<p><img src="/app/statics/home/images/png-0011.png"></p>
+				<p><strong style="font-size:16px;">配置项</strong> <br><small>[权限：内容]</small></p>
+			</a>
+		</div>
 		<!--
 		<div class="col-md-2">
 			<a class="desk-item" href="javascript:;">

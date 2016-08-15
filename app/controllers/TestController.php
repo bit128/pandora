@@ -18,13 +18,11 @@ class TestController extends Controller
 
 	public function actionIndex()
 	{
-		$data = array(
-			'offset' => 0,
-			'limit' => 5,
-			'cn_id' => '57ad76d2a739f'
-			);
-		$psdk = new Psdk;
-		echo $psdk->post('content/searchList', $data);
+		$m_struct = new \app\models\M_struct;
+		//$m_struct->addHead();
+		//$m_struct->setName('57afc7ec763ac', '啵啵牛的配置2');
+		//$m_struct->setBody('57afc7ec763ac', '{"name":"hongbo", "hobby": ["aa","bb","cc"]}');
+		print_r($m_struct->getHeadList());
 	}
 
 	public function actionUpload()

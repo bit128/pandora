@@ -291,4 +291,15 @@ class HomeController extends Controller
 			View::layout()->render('album', $data);
 		}
 	}
+
+	/**
+	* 配置项（结构化数据管理）
+	* ======
+	* @author 洪波
+	* @version 16.08.13
+	*/
+	public function actionStruct()
+	{
+		View::layout()->render('struct');
+	}
 }
