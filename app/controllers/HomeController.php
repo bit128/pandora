@@ -280,7 +280,7 @@ class HomeController extends Controller
 			$criteria->add('by_id', $by_id);
 			$criteria->order = 'al_sort asc';
 			$offset = 0;
-			$limit = 8;
+			$limit = 60;
 			$result = $m_album->getList($offset, $limit, $criteria);
 			$data = array(
 				'by_id' => $by_id,

@@ -41,8 +41,9 @@ $(document).ready(function(){
 			config = data.result;
 			var html = '';
 			$.each(config, function(i, d){
-				html += '<tr><td>'+d.id+'</td><td><a href="javascript:;" class="set_name">'+d.name+'</a></td><td>'
+				html += '<tr><td><small>'+d.id+'</small></td><td><a href="javascript:;" class="set_name">'+d.name+'</a></td><td>'
 					+ '<button type="button" class="btn btn-xs btn-info config_edit">编辑</button> '
+					+ '<a href="/home/album/id/'+d.id+'/t/struct" class="btn btn-xs btn-default">图库</a> '
 					+ '<button type="button" class="btn btn-xs btn-warning config_delete">删除</button>'
 					+ '</td></tr>';
 			});
