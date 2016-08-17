@@ -28,7 +28,15 @@ class SiteController extends Controller
 	*/
 	public function actionIndex()
 	{
-		View::layout('layout_site')->render('index');
+		$m_struct = new \app\models\M_struct;
+		$rs = json_decode($m_struct->getBody('57afc7ec763ac'));
+		$data = array(
+			'banner' => $rs->banner,
+			'side' => $rs->side,
+			'promotion' => $rs->promotion,
+			'hot' => $rs->hot
+			);
+		View::layout('layout_site')->render('index', $data);
 	}
 
 	/**

@@ -13,6 +13,8 @@ class M_struct
 	const SAVE_PATH = './app/statics/files/struct.json'; //数据存储路径
 	const BUFFER = 1024; //文件缓冲大小
 
+	public function setMainImage($by_id, $image){}
+
 	/**
 	* 新增结构头
 	* ======

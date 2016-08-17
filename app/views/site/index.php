@@ -6,16 +6,18 @@
       <script src="/app/statics/site/js/flexslider.js"></script>
       <div class="flexslider">
         <ul class="slides">
-          <li><a href="javascript:;"><img src="/app/statics/site/img/msjd.jpg" alt="" /></a></li>
-          <li><a href="javascript:;"><img src="/app/statics/site/img/msjd.jpg" alt="" /></a></li>
+          <?php foreach ($banner as $v){ ?>
+          <li><a href="/site/item/id/<?php echo $v->id; ?>"><img src="/nfs/image/<?php echo $v->src; ?>" alt="" /></a></li>
+          <?php } ?>
         </ul>
       </div>
     </div>
     <!--promo01-->
     <div class="col-md-4" >
       <div class="cusbox">
-        <div><a href="javascript:;"><img src="/app/statics/site/img/b2.jpg" alt="" class="img-responsive" /></a></div>
-        <div class="t-line01"><a href="javascript:;"><img src="/app/statics/site/img/b1.jpg" alt="" class="img-responsive" /></a></div>
+        <?php foreach ($side as $v){ ?>
+          <div><a href="/site/item/id/<?php echo $v->id; ?>"><img src="/nfs/image/<?php echo $v->src; ?>" alt="" class="img-responsive" /></a></div>
+        <?php } ?>
       </div>
     </div>
     <!--promo01 end--> 
@@ -30,28 +32,19 @@
     </div>
   </div>
   <div class="row">
+    <?php foreach ($promotion as $v) { ?>
     <div class="col-md-6  mt10">
       <div class="media cusbox">
-        <div class="media-left"><a href="javascript:;"><img class="media-object" src="/app/statics/site/img/p01s.jpg" alt="..."></a></div>
+        <div class="media-left"><a href="/site/item/id/<?php echo $v->id; ?>"><img class="media-object" src="/nfs/image/<?php echo $v->src; ?>" style="width:230px;" alt="..."></a></div>
         <div class="media-body p15 pr25 mshow">
-          <h3 class="media-heading"><a href="javascript:;">佳欧空气炸锅</a></h3>
-          <p class="pt10">缓解疲劳眼护仪保护视力器美眼仪，给眼睛轻柔呵护。眼仪，给眼睛轻柔呵护。</p>
-          <p class="pt15 pricef "><span class="f30 text-danger">￥45.00</span> <del class="f14">￥95.00</del></p>
-          <p class="pt10"><a class="btn btn-primary" href="javascript:;">限时半价 立即抢购</a></p>
+          <h3 class="media-heading"><a href="/site/item/id/<?php echo $v->id; ?>"><?php echo $v->name; ?></a></h3>
+          <p class="pt10"><?php echo $v->summary; ?></p>
+          <p class="pt15 pricef "><span class="f30 text-danger">￥<?php echo $v->total; ?></span> <del class="f14">￥<?php echo $v->price; ?></del></p>
+          <p class="pt10"><a class="btn btn-primary" href="/site/item/id/<?php echo $v->id; ?>">限时半价 立即抢购</a></p>
         </div>
       </div>
     </div>
-    <div class="col-md-6  mt10" >
-      <div class="media cusbox">
-        <div class="media-left"><a href="javascript:;"><img class="media-object" src="/app/statics/site/img/p01s.jpg" alt="..."></a></div>
-        <div class="media-body p15 pr25 mshow">
-          <h3 class="media-heading"><a href="javascript:;">佳欧斯空气炸锅</a></h3>
-          <p class="pt10">缓解疲劳眼护仪保护视力器美眼仪，给眼睛轻柔呵护。眼仪，给眼睛轻柔呵护。</p>
-          <p class="pt15 pricef"><span class="f30 text-danger">￥45.00</span> <del class="f14">￥95.00</del></p>
-          <p class="pt10"><a class="btn btn-primary" href="javascript:;">限时半价 立即抢购</a></p>
-        </div>
-      </div>
-    </div>
+    <?php } ?>
   </div>
 </div>
 <!--promo02 end--> 
@@ -64,46 +57,18 @@
     </div>
   </div>
   <div class="row mt10">
+    <?php foreach ($hot as $v) { ?>
     <div class="col-md-3">
-      <div class="thumbnail"> <a href="item.html"><img src="/app/statics/site/img/p01.jpg" alt="..."></a>
+      <div class="thumbnail"> <a href="/site/item/id/<?php echo $v->id; ?>"><img src="/nfs/image/<?php echo $v->src; ?>" alt="..."></a>
         <div class="caption">
           <div class="productinfo clearfix pt10">
-            <h3 class="pull-left"><a href="item.html">杏仁果香</a></h3>
-            <p class=" pull-right text-danger mtb0 pricef">￥3.5</p>
+            <h3 class="pull-left"><a href="/site/item/id/<?php echo $v->id; ?>"><?php echo $v->name; ?></a></h3>
+            <p class=" pull-right text-danger mtb0 pricef">￥<?php echo $v->total; ?></p>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="thumbnail"> <a href="item.html"><img src="/app/statics/site/img/p01.jpg" alt="..."></a>
-        <div class="caption">
-          <div class="productinfo clearfix pt10">
-            <h3 class="pull-left"><a href="item.html">杏仁果香</a></h3>
-            <p class=" pull-right text-danger mtb0 pricef">￥3.5</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="thumbnail"> <a href="item.html"><img src="/app/statics/site/img/p01.jpg" alt="..."></a>
-        <div class="caption">
-          <div class="productinfo clearfix pt10">
-            <h3 class="pull-left"><a href="item.html">杏仁果香</a></h3>
-            <p class=" pull-right text-danger mtb0 pricef">￥3.5</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="thumbnail"> <a href="item.html"><img src="/app/statics/site/img/p01.jpg" alt="..."></a>
-        <div class="caption">
-          <div class="productinfo clearfix pt10">
-            <h3 class="pull-left"><a href="item.html">杏仁果香</a></h3>
-            <p class=" pull-right text-danger mtb0 pricef">￥3.5</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <?php } ?>
   </div>
 </div>
 

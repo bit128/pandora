@@ -43,7 +43,7 @@ $(document).ready(function(){
 			$.each(config, function(i, d){
 				html += '<tr><td><small>'+d.id+'</small></td><td><a href="javascript:;" class="set_name">'+d.name+'</a></td><td>'
 					+ '<button type="button" class="btn btn-xs btn-info config_edit">编辑</button> '
-					+ '<a href="/home/album/id/'+d.id+'/t/struct" class="btn btn-xs btn-default">图库</a> '
+					+ '<a href="/home/album/id/'+d.id+'/t/struct" class="btn btn-xs btn-default" target="_blank">图库</a> '
 					+ '<button type="button" class="btn btn-xs btn-warning config_delete">删除</button>'
 					+ '</td></tr>';
 			});
@@ -96,18 +96,20 @@ $(document).ready(function(){
 	});
 	//删除配置项
 	$('#head_list').on('click', '.config_delete', function(){
-		var id = $(this).parents('tr').find('td:eq(0)').text();
-		$.post(
-			'/config/delete',
-			{id: id},
-			function(data){
-				if(data.code == 1)
-					loadConfigList();
-			},
-			'json'
-			);
-		cf_id = '';
-		$('#struct').val('');
+		if(confirm('确定要删除配置项吗？操作不可恢复！')){
+			var id = $(this).parents('tr').find('td:eq(0)').text();
+			$.post(
+				'/config/delete',
+				{id: id},
+				function(data){
+					if(data.code == 1)
+						loadConfigList();
+				},
+				'json'
+				);
+			cf_id = '';
+			$('#struct').val('');
+		}
 	});
 	//保存配置项
 	$('#struct_save').on('click', function(){
