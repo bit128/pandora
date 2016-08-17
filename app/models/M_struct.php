@@ -156,6 +156,10 @@ class M_struct
 			{
 				$data = json_encode($data);
 			}
+			if($data != '')
+			{
+				$data = str_replace(array("\\r","\\n","\\t"), '', $data);
+			}
 			fwrite($file, $data);
 			fclose($file);
 		}
