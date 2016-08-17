@@ -63,11 +63,12 @@
     <div class="col-md-3"><a href="/" class="logo"></a></div>
     <div class="col-md-3"></div>
     <div class="col-md-4">
-      <div class="input-group mt30">
-        <input type="text" class="form-control" placeholder="请输入关键词…">
+      <form class="input-group mt30" action="/site/list" method="get">
+        <input type="text" class="form-control" placeholder="请输入关键词…" name="k">
         <span class="input-group-btn">
-        <button class="btn btn-default" type="button">搜索</button>
-        </span> </div>
+        <button class="btn btn-default" type="submit">搜索</button>
+        </span>
+      </form>
     </div>
     <div class="col-md-2">
       <div class="btn-group btn-block mt30"> <a  href="cart.html" class="btn btn-default  btn-block dropdown-toggle" data-toggle="dropdown" > <i class="fa fa-shopping-cart fa-lg"></i> 购物车 [ 2 ]</a>

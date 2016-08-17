@@ -32,6 +32,7 @@
 				<th>货号</th>
 				<th>图片</th>
 				<th style="width:40%;">名称</th>
+				<th>参考价</th>
 				<th>排序</th>
 				<th>状态</th>
 				<th>操作</th>
@@ -57,6 +58,7 @@
 					<strong><a class="pd_update" data-val="pd_name"><?php echo $v->pd_name; ?></a></strong>
 					<p><small class="pd_keyword"></small></p>
 				</td>
+				<td><input type="text" value="<?php echo $v->pd_price; ?>" style="width:70px;" class="set_price"></td>
 				<td><input type="text" value="<?php echo $v->pd_sort; ?>" style="width:50px;" class="set_sort"></td>
 				<td>
 					<span class="btn-group set_status">
@@ -166,6 +168,16 @@ $(document).ready(function(){
 			$(this).removeClass('btn-default').addClass('btn-warning');
 		}
 		setInfo(pd_id, 'pd_status', index);
+	});
+	//设置参考价
+	$('.set_price').on('blur', function(){
+		var value = $(this).val();
+		if(/^\d+\.?\d{0,2}$/.test(value)) {
+			var pd_id = $(this).parents('tr').find('td:eq(0)').text();
+			setInfo(pd_id, 'pd_price', value);
+		}else{
+			alert('价格格式：12.00或者12');
+		}
 	});
 	//设置排序
 	$('.set_sort').on('blur', function(){

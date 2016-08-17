@@ -19,7 +19,7 @@
         <div class="caption">
           <div class="productinfo clearfix pt10">
             <h3 class="pull-left"><a href="/site/item/id/<?php echo $v->pd_id; ?>"><?php echo $v->pd_name; ?></a></h3>
-            <p class=" pull-right text-danger mtb0 pricef">￥3.5</p>
+            <p class=" pull-right text-danger mtb0 pricef">￥<?php echo $v->pd_price; ?></p>
           </div>
         </div>
       </div>

@@ -12,8 +12,6 @@ $(function () {
         $("html, body").animate({ scrollTop: 0 }, 400);
         return false;
     });
-    
-	
     // wechat popover
    $(function () {  
               $('[data-toggle="popover"]').popover()  
@@ -33,9 +31,6 @@ $(function () {
                 });
 				
 			 }); 
-	
 	// others
     $('#kfyx').tooltip();
-	
-	
 });
