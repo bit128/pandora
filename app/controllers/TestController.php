@@ -16,15 +16,6 @@ class TestController extends Controller
 		header("Content-Type:text/html;charset=UTF-8");
 	}
 
-	public function actionIndex()
-	{
-		$m_struct = new \app\models\M_struct;
-		//$m_struct->addHead();
-		//$m_struct->setName('57afc7ec763ac', '啵啵牛的配置2');
-		//$m_struct->setBody('57afc7ec763ac', '{"name":"hongbo", "hobby": ["aa","bb","cc"]}');
-		print_r($m_struct->getHeadList());
-	}
-
 	public function actionUpload()
 	{
 		$data = array(
