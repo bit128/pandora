@@ -62,7 +62,7 @@ class CollectController extends Controller
 						}
 						else
 						{
-							$this->setError('创建失败', Response::RES_OPTF);
+							$this->setError('创建失败', Response::RES_FAIL);
 						}
 					}
 				}
