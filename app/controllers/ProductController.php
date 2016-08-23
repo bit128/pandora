@@ -70,7 +70,7 @@ class ProductController extends Controller
 	*/
 	public function actionSearchList()
 	{
-		if(Psdk::checkSign())
+		if(Request::inst()->isPostRequest())
 		{
 			$response = new Response;
 			$offset = Request::inst()->getPost('offset');
