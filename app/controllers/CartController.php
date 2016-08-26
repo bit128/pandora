@@ -1,9 +1,9 @@
 <?php
 /**
-* 收藏夹控制器
+* 购物车控制器
 * ======
 * @author 洪波
-* @version 16.08.18
+* @version 16.08.26
 */
 namespace app\controllers;
 use core\Controller;
@@ -11,23 +11,29 @@ use core\Request;
 use core\Response;
 use core\Criteria;
 use library\RedisCache;
-use app\models\M_collect;
+use app\models\M_cart;
 
-class CollectController extends Controller
+class CartController extends Controller
 {
 
-	private $m_collect;
+	private $m_cart;
 
 	public function init()
 	{
-		$this->m_collect = new M_collect;
+		$this->m_cart = new M_cart;
 	}
 
 	/**
-	* 添加商品到收藏夹
+	* 添加商品到购物车中
+	* ======
+	* @param $user_id 	用户id
+	* @param $token 	令牌
+	* @param $pd_id 	商品id
+	* @param $st_id 	库存id
+	* @param $cr_count 	数量
 	* ======
 	* @author 洪波
-	* @version 16.08.18
+	* @version 16.08.26
 	*/
 	public function actionAdd()
 	{
@@ -39,32 +45,64 @@ class CollectController extends Controller
 			if(RedisCache::model('token')->check($user_id, $token))
 			{
 				$pd_id = Request::inst()->getPost('pd_id');
-				$criteria = new Criteria;
-				$criteria->add('pd_id', $pd_id);
-				//判断商品是否存在
+				$st_id = Request::inst()->getPost('st_id');
+				$cr_count = Request::inst()->getPost('cr_count', 1);
+				//获取商品信息
 				$m_product = new \app\models\M_product;
-				if($m_product->count($criteria))
+				$product = $m_product->get($pd_id);
+				if($product)
 				{
-					$criteria->add('user_id', $user_id);
-					if($this->m_collect->count($criteria))
+					//获取商品库存信息
+					$m_stock = new \app\models\M_stock;
+					$stock = $m_stock->get($st_id);
+					if($stock)
 					{
-						$response->setError('商品已经收藏过了', Response::RES_NOCHAN);
-					}
-					else
-					{
-						$data = array(
-							'pd_id' => $pd_id,
-							'user_id' => $user_id,
-							'cl_time' => time()
-							);
-						if($cl_id = $this->m_collect->insert($data))
+						//判断有无相同库存
+						if($cart = $this->m_cart->matchItem($user_id, $pd_id, $st_id))
 						{
-							$response->setResult($cl_id, Response::RES_SUCCESS);
+							$cr_count += $cart->cr_count;
+							if($cr_count <= $stock->st_count)
+							{
+								$cr_id = $cart->cr_id;
+								$cart->cr_count = $cr_count;
+								$cart->save();
+								$response->setResult($cr_id, Response::RES_SUCCESS);
+							}
+							else
+							{
+								$response->setError('库存不足', Response::RES_NOHAS);
+							}
 						}
 						else
 						{
-							$response->setError('创建失败', Response::RES_FAIL);
+							if($cr_count <= $stock->st_count)
+							{
+								$data = array(
+									'cr_count' => $cr_count,
+									'cr_price' => $stock->st_price,
+									'cr_time' => time(),
+									'pd_id' => $pd_id,
+									'st_id' => $st_id,
+									'user_id' => $user_id
+									);
+								if($cr_id = $this->m_cart->insert($data))
+								{
+									$response->setResult($cr_id, Response::RES_SUCCESS);
+								}
+								else
+								{
+									$response->setError('添加失败', Response::RES_FAIL);
+								}
+							}
+							else
+							{
+								$response->setError('库存不足', Response::RES_NOHAS);
+							}
 						}
+					}
+					else
+					{
+						$response->setError('库存不存在', Response::RES_NOHAS);
 					}
 				}
 				else
@@ -81,7 +119,7 @@ class CollectController extends Controller
 	}
 
 	/**
-	* 获取收藏夹商品列表
+	* 获取购物车商品列表
 	* ======
 	* @author 洪波
 	* @version 16.08.18
@@ -97,7 +135,7 @@ class CollectController extends Controller
 			{
 				$offset = Request::inst()->getPost('offset', 0);
 				$limit = Request::inst()->getPost('limit', 99);
-				$result = $this->m_collect->getProductList($offset, $limit, $user_id);
+				$result = $this->m_cart->getProductList($offset, $limit, $user_id, '');
 				$response->setResult($result, Response::RES_SUCCESS);
 			}
 			else
@@ -109,7 +147,7 @@ class CollectController extends Controller
 	}
 
 	/**
-	* 从收藏夹中删除商品
+	* 从购物车中删除商品
 	* ======
 	* @author 洪波
 	* @version 16.08.26
@@ -123,13 +161,13 @@ class CollectController extends Controller
 			$token = Request::inst()->getPost('token');
 			if(RedisCache::model('token')->check($user_id, $token))
 			{
-				$cl_id = Request::inst()->getPost('cl_id');
-				$collect = $this->m_collect->get($cl_id);
-				if($collect)
+				$cr_id = Request::inst()->getPost('cr_id');
+				$cart = $this->m_cart->get($cr_id);
+				if($cart)
 				{
-					if($collect->user_id == $user_id)
+					if($cart->user_id == $user_id)
 					{
-						$this->m_collect->delete($cl_id);
+						$this->m_cart->delete($cr_id);
 						$response->setResult('删除成功', Response::RES_SUCCESS);
 					}
 					else

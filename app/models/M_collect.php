@@ -38,11 +38,11 @@ class M_collect extends Model
 		$criteria->limit = $limit;
 		$criteria->order = 'cl_time asc';
 		//获取数据列表
-		$list = Orm::model($this->table_name)->findAll();
+		$list = Orm::model($this->table_name)->findAll($criteria);
 
 		return array(
 			'count' => $count,
-			'result' => $result
+			'result' => $list
 			);
 	}
 }

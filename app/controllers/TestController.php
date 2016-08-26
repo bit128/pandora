@@ -42,8 +42,8 @@ class TestController extends Controller
 	public function actionLogin()
 	{
 		$data = array(
-			'user_phone' => '8613761497959',
-			'user_password' => '123',
+			'user_phone' => '18814887668',
+			'user_password' => 'hong_1987',
 			);
 		$psdk = new Psdk;
 		echo $psdk->post('user/login', $data);
@@ -68,5 +68,70 @@ class TestController extends Controller
 			);
 		$psdk = new Psdk;
 		echo $psdk->post('product/searchList', $data);
+	}
+
+	public function actionAddCollect()
+	{
+		$data = array(
+			'user_id' => '57ad684337eee',
+			'token' => '2a5de996f75cdd14ca3d1f2832e14c35',
+			'pd_id' => '57ac1d12914cf'
+			);
+		$psdk = new Psdk;
+		echo $psdk->post('collect/add', $data);
+	}
+
+	public function actionGetCollect()
+	{
+		$data = array(
+			'user_id' => '57ad684337eee',
+			'token' => '2a5de996f75cdd14ca3d1f2832e14c35',
+			);
+		$psdk = new Psdk;
+		echo $psdk->post('collect/getList', $data);
+	}
+
+	public function actionDeleteCollect()
+	{
+		$data = array(
+			'user_id' => '57ad684337eee',
+			'token' => '2a5de996f75cdd14ca3d1f2832e14c35',
+			'cl_id' => '57bfbbfc93c81'
+			);
+		$psdk = new Psdk;
+		echo $psdk->post('collect/delete', $data);
+	}
+
+	public function actionAddCart()
+	{
+		$data = array(
+			'user_id' => '57ad684337eee',
+			'token' => '2a5de996f75cdd14ca3d1f2832e14c35',
+			'pd_id' => '57ac1b5acd3a4',
+			'st_id' => '57ae9dc4a0845'
+			);
+		$psdk = new Psdk;
+		echo $psdk->post('cart/add', $data);
+	}
+
+	public function actionGetCart()
+	{
+		$data = array(
+			'user_id' => '57ad684337eee',
+			'token' => '2a5de996f75cdd14ca3d1f2832e14c35',
+			);
+		$psdk = new Psdk;
+		echo $psdk->post('cart/getList', $data);
+	}
+
+	public function actionDeleteCart()
+	{
+		$data = array(
+			'user_id' => '57ad684337eee',
+			'token' => '2a5de996f75cdd14ca3d1f2832e14c35',
+			'cr_id' => '57bfe191abfb6'
+			);
+		$psdk = new Psdk;
+		echo $psdk->post('cart/delete', $data);
 	}
 }
