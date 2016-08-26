@@ -70,7 +70,7 @@ CREATE TABLE `t_admin` (
 
 LOCK TABLES `t_admin` WRITE;
 /*!40000 ALTER TABLE `t_admin` DISABLE KEYS */;
-INSERT INTO `t_admin` VALUES ('hongbo','98b4a59cbf4d5b6293ecfc7de0db870b','洪波','产品',4159,1471223225,'127.0.0.1',1);
+INSERT INTO `t_admin` VALUES ('hongbo','98b4a59cbf4d5b6293ecfc7de0db870b','洪波','产品',4159,1472183268,'127.0.0.1',1);
 /*!40000 ALTER TABLE `t_admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,6 +129,7 @@ CREATE TABLE `t_cart` (
 
 LOCK TABLES `t_cart` WRITE;
 /*!40000 ALTER TABLE `t_cart` DISABLE KEYS */;
+INSERT INTO `t_cart` VALUES ('57bfeae315c75',1,48.00,1472195299,'57ac1b5acd3a4','57ae9dc4a0845','','57ad684337eee');
 /*!40000 ALTER TABLE `t_cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -290,6 +291,7 @@ CREATE TABLE `t_order` (
   `od_note` varchar(64) NOT NULL,
   `od_status` tinyint(4) NOT NULL,
   `user_id` char(13) NOT NULL,
+  `ad_id` char(13) NOT NULL,
   PRIMARY KEY (`od_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -362,7 +364,7 @@ CREATE TABLE `t_stock` (
 
 LOCK TABLES `t_stock` WRITE;
 /*!40000 ALTER TABLE `t_stock` DISABLE KEYS */;
-INSERT INTO `t_stock` VALUES ('57ac2ed696ee6','番茄酱','57ac194b7eefe.jpg','七分熟',60,76.00,1.00,1470901974,1,'57abe7f60eef6'),('57ac2e9b90a20','黑胡椒酱','57ac190ae7269.jpg','七分熟',30,78.00,1.00,1470901915,1,'57abe7f60eef6'),('57ac2f45004dd','黑胡椒酱','57ac190ae7269.jpg','五分熟',30,78.00,1.00,1470902084,1,'57abe7f60eef6'),('57ae9d81a7dc9','套餐A','57ac1b8871eee.jpg','默认规格',30,38.00,1.00,1471061377,1,'57ac1b5acd3a4'),('57ae9dc4a0845','套餐B','57ac1b8ee8da0.jpg','默认规格',0,48.00,1.00,1471061444,0,'57ac1b5acd3a4'),('57ae9df1bdb24','套餐A','57ac1a1132ea4.jpg','果酱',20,98.00,1.00,1471061489,1,'57ac19eba6e00'),('57ae9e18d6cfc','套餐B','57ac1a1132ea4.jpg','豆瓣酱',20,98.00,1.00,1471061528,1,'57ac19eba6e00'),('57ae9e438c6ed','儿童套餐','57ac1a1c63bdb.jpg','默认规格',10,78.00,1.00,1471061571,0,'57ac19eba6e00'),('57b3cd7adee64','A套餐','57ac1c761bf95.jpg','黑胡椒味',0,58.00,1.00,1471401338,1,'57ac1c3ef3547'),('57b3cdb3ef93c','B套餐','57ac1c7d46676.jpg','黑胡椒味',0,68.00,1.00,1471401395,1,'57ac1c3ef3547'),('57b3cde20fdb7','B套餐','57ac1c7d46676.jpg','孜然味',0,68.00,1.00,1471401442,1,'57ac1c3ef3547');
+INSERT INTO `t_stock` VALUES ('57ac2ed696ee6','番茄酱','57ac194b7eefe.jpg','七分熟',60,76.00,1.00,1470901974,1,'57abe7f60eef6'),('57ac2e9b90a20','黑胡椒酱','57ac190ae7269.jpg','七分熟',30,78.00,1.00,1470901915,1,'57abe7f60eef6'),('57ac2f45004dd','黑胡椒酱','57ac190ae7269.jpg','五分熟',30,78.00,1.00,1470902084,1,'57abe7f60eef6'),('57ae9d81a7dc9','套餐A','57ac1b8871eee.jpg','默认规格',30,38.00,1.00,1471061377,1,'57ac1b5acd3a4'),('57ae9dc4a0845','套餐B','57ac1b8ee8da0.jpg','默认规格',20,48.00,1.00,1471061444,0,'57ac1b5acd3a4'),('57ae9df1bdb24','套餐A','57ac1a1132ea4.jpg','果酱',20,98.00,1.00,1471061489,1,'57ac19eba6e00'),('57ae9e18d6cfc','套餐B','57ac1a1132ea4.jpg','豆瓣酱',20,98.00,1.00,1471061528,1,'57ac19eba6e00'),('57ae9e438c6ed','儿童套餐','57ac1a1c63bdb.jpg','默认规格',10,78.00,1.00,1471061571,0,'57ac19eba6e00'),('57b3cd7adee64','A套餐','57ac1c761bf95.jpg','黑胡椒味',0,58.00,1.00,1471401338,1,'57ac1c3ef3547'),('57b3cdb3ef93c','B套餐','57ac1c7d46676.jpg','黑胡椒味',0,68.00,1.00,1471401395,1,'57ac1c3ef3547'),('57b3cde20fdb7','B套餐','57ac1c7d46676.jpg','孜然味',0,68.00,1.00,1471401442,1,'57ac1c3ef3547');
 /*!40000 ALTER TABLE `t_stock` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -401,7 +403,7 @@ CREATE TABLE `t_user` (
 
 LOCK TABLES `t_user` WRITE;
 /*!40000 ALTER TABLE `t_user` DISABLE KEYS */;
-INSERT INTO `t_user` VALUES ('57ad448e02ee1','202cb962ac59075b964b07152d234b70','13761497959','','银莹',0,'',1470973070,1470973070,0,'127.0.0.1',4,'','','1.2','',1),('57ad684337eee','98b4a59cbf4d5b6293ecfc7de0db870b','18814887668','','hongbo',0,'',1470982211,1471060230,7,'127.0.0.1',0,'','','','',1);
+INSERT INTO `t_user` VALUES ('57ad448e02ee1','202cb962ac59075b964b07152d234b70','13761497959','','银莹',0,'',1470973070,1470973070,0,'127.0.0.1',4,'','','1.2','',1),('57ad684337eee','98b4a59cbf4d5b6293ecfc7de0db870b','18814887668','','hongbo',0,'',1470982211,1472182410,8,'127.0.0.1',0,'','','','',1);
 /*!40000 ALTER TABLE `t_user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -414,4 +416,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-08-23 13:45:04
+-- Dump completed on 2016-08-26 15:46:11
