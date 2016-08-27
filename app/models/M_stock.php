@@ -59,8 +59,33 @@ class M_stock extends Model
 			}
 		}
 		$result['price'] = $price;
-		//$result['list'] = $list;
 		return $result;
+	}
+
+	/**
+	* 减少库存
+	* ======
+	* @param $st_id 	库存id
+	* @param $count 	数量
+	* ======
+	* @author 洪波
+	* @version 16.08.27
+	*/
+	public function cutStock($st_id, $count)
+	{
+		$criteria = new Criteria;
+		$criteria->add('st_id', $st_id);
+		$stock = Orm::model($this->table_name)->find($criteria, true);
+		if($stock && $stock->st_count >= $count)
+		{
+			$stock->st_count -= $count;
+			$stock->save();
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	/**

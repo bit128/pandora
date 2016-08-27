@@ -80,6 +80,7 @@ class CartController extends Controller
 								$data = array(
 									'cr_count' => $cr_count,
 									'cr_price' => $stock->st_price,
+									'cr_discount' => $stock->st_discount,
 									'cr_time' => time(),
 									'pd_id' => $pd_id,
 									'st_id' => $st_id,

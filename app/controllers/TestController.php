@@ -16,6 +16,12 @@ class TestController extends Controller
 		header("Content-Type:text/html;charset=UTF-8");
 	}
 
+	public function actionCut()
+	{
+		$m_stock = new \app\models\M_stock;
+		echo $m_stock->cutStock('57ac2e9b90a20', 2);
+	}
+
 	public function actionUpload()
 	{
 		$data = array(
@@ -108,7 +114,7 @@ class TestController extends Controller
 			'user_id' => '57ad684337eee',
 			'token' => '2a5de996f75cdd14ca3d1f2832e14c35',
 			'pd_id' => '57ac1b5acd3a4',
-			'st_id' => '57ae9dc4a0845'
+			'st_id' => '57ae9d81a7dc9'
 			);
 		$psdk = new Psdk;
 		echo $psdk->post('cart/add', $data);
@@ -133,5 +139,15 @@ class TestController extends Controller
 			);
 		$psdk = new Psdk;
 		echo $psdk->post('cart/delete', $data);
+	}
+
+	public function actionAddOrder()
+	{
+		$data = array(
+			'user_id' => '57ad684337eee',
+			'token' => '2a5de996f75cdd14ca3d1f2832e14c35',
+			);
+		$psdk = new Psdk;
+		echo $psdk->post('order/add', $data);
 	}
 }

@@ -35,6 +35,48 @@ class M_cart extends Model
 	}
 
 	/**
+	* 关联订单成员
+	* ======
+	* @param $od_id 	订单id
+	* @param $cr_id 	购物车成员id
+	* ======
+	* @author 洪波
+	* @version 16.08.27
+	*/
+	public function unionOrder($od_id, $cr_id)
+	{
+		$criteria = new Criteria;
+		if(is_array($cr_id))
+		{
+			$criteria->addIn('cr_id', $cr_id);
+		}
+		else
+		{
+			$criteria->add('cr_id', $cr_id);
+		}
+		$data = array('od_id' => $od_id);
+
+		return Orm::model($this->table_name)->updateAll($data, $criteria);
+	}
+
+	/**
+	* 获取我的购物车全部商品列表
+	* ======
+	* @param $user_id 	用户id
+	* @param $od_id 	订单id
+	* ======
+	* @author 洪波
+	* @version 16.08.27
+	*/
+	public function getAllList($user_id, $od_id = '')
+	{
+		$criteria = new Criteria;
+		$criteria->add('user_id', $user_id);
+		$criteria->add('od_id', $od_id);
+		return Orm::model($this->table_name)->findAll($criteria);
+	}
+
+	/**
 	* 获取购物车商品列表
 	* ======
 	* @param $offset 	分页位置
