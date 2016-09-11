@@ -90,7 +90,10 @@ class M_cart extends Model
 	public function getProductList($offset, $limit, $user_id, $od_id)
 	{
 		$criteria = new Criteria;
-		$criteria->add('user_id', $user_id);
+		if(strlen($user_id) == 13)
+		{
+			$criteria->add('user_id', $user_id);
+		}
 		$criteria->add('od_id', $od_id);
 		//统计数量
 		$count = $this->count($criteria);

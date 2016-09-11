@@ -2,14 +2,14 @@
 	<div class="row">
 		<div class="col-md-6">
 			<span class="btn-group">
-				<a href="/home/order/s/1" class="btn btn-sm btn-default">新订单</a>
-				<a href="/home/order/s/2" class="btn btn-sm btn-info">已支付</a>
-				<a href="/home/order/s/3" class="btn btn-sm btn-default">已接受</a>
-				<a href="/home/order/s/4" class="btn btn-sm btn-default">已拒绝</a>
-				<a href="/home/order/s/5" class="btn btn-sm btn-default">已发货</a>
-				<a href="/home/order/s/6" class="btn btn-sm btn-default">已完成</a>
-				<a href="/home/order/s/7" class="btn btn-sm btn-default">已评论</a>
-				<a href="/home/order/s/0" class="btn btn-sm btn-default">已关闭</a>
+				<a href="/home/order/s/1" class="btn btn-sm <?php echo $status == 1 ? 'btn-info' : 'btn-default'; ?>">新订单</a>
+				<a href="/home/order/s/2" class="btn btn-sm <?php echo $status == 2 ? 'btn-info' : 'btn-default'; ?>">已支付</a>
+				<a href="/home/order/s/3" class="btn btn-sm <?php echo $status == 3 ? 'btn-info' : 'btn-default'; ?>">已接受</a>
+				<a href="/home/order/s/4" class="btn btn-sm <?php echo $status == 4 ? 'btn-info' : 'btn-default'; ?>">已拒绝</a>
+				<a href="/home/order/s/5" class="btn btn-sm <?php echo $status == 5 ? 'btn-info' : 'btn-default'; ?>">已发货</a>
+				<a href="/home/order/s/6" class="btn btn-sm <?php echo $status == 6 ? 'btn-info' : 'btn-default'; ?>">已完成</a>
+				<a href="/home/order/s/7" class="btn btn-sm <?php echo $status == 7 ? 'btn-info' : 'btn-default'; ?>">已评论</a>
+				<a href="/home/order/s/0" class="btn btn-sm <?php echo $status == 0 ? 'btn-info' : 'btn-default'; ?>">已关闭</a>
 			</span>
 		</div>
 		<div class="col-md-3">
@@ -43,7 +43,7 @@
 		<tbody>
 			<?php foreach ($order_list as $v) { ?>
 			<tr>
-				<td><a href="javascript:;"><?php echo $v->od_id; ?></a></td>
+				<td><a href="/home/orderDetail/id/<?php echo $v->od_id; ?>" target="_blank"><?php echo $v->od_id; ?></a></td>
 				<td><?php echo $v->od_total; ?></td>
 				<td><?php echo $v->od_paytype; ?></td>
 				<td><?php echo $v->od_flowid; ?></td>

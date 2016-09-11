@@ -269,6 +269,31 @@ class HomeController extends Controller
 	}
 
 	/**
+	* 订单详情页面
+	* ======
+	* @author 洪波
+	* @version 16.09.11
+	*/
+	public function actionOrderDetail()
+	{
+		$od_id = Request::inst()->getParam('id');
+		if(strlen($od_id) == 16)
+		{
+			$m_order = new \app\models\M_order;
+			$m_cart = new \app\models\M_cart;
+
+			$order = $m_order->get($od_id);
+			$product_list = $m_cart->getProductList(0, 99, '', $od_id);
+
+			$data = array(
+				'order' => $order,
+				'product_list' => $product_list['result']
+				);
+			View::layout()->render('order_detail', $data);
+		}
+	}
+
+	/**
 	* 库存管理页面
 	* ======
 	* @author 洪波
