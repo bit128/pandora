@@ -146,5 +146,6 @@ class OrderController extends Controller
 				$response->setError('令牌无效', Response::RES_TOKENF);
 			}
 			$response->json();
+		}
 	}
 }

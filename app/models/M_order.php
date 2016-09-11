@@ -17,7 +17,7 @@ class M_order extends Model
 	const STATUS_CREATE		= 1; //状态 - 新订单
 	const STATUS_PAY		= 2; //状态 - 已支付
 	const STATUS_ACCEPT		= 3; //状态 - 已接受
-	const STATUS_REFUSE		= 4; //状态 - 以拒绝
+	const STATUS_REFUSE		= 4; //状态 - 已拒绝
 	const STATUS_SEND		= 5; //状态 - 已发货
 	const STATUS_FINISH		= 6; //状态 - 已完成
 	const STATUS_COMMENT	= 7; //状态 - 已评论

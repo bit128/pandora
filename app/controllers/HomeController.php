@@ -234,6 +234,41 @@ class HomeController extends Controller
 	}
 
 	/**
+	* 订单管理页面
+	* ======
+	* @author 洪波
+	* @version 16.09.11
+	*/
+	public function actionOrder()
+	{
+		$m_order = new \app\models\M_order;
+		$page = Request::inst()->getQuery('page', 1);
+		$status = Request::inst()->getQuery('s', 2);
+		$keyword = Request::inst()->getQuery('k');
+		$limit = 10;
+		$offset = ($page - 1) * $limit;
+		$url = '/site/order/s/'.$status;
+		$criteria = new Criteria;
+		$criteria->add('od_status', $status);
+		if($keyword != '')
+		{
+			$criteria->add('od_id', $keyword);
+		}
+		$result = $m_order->getList($offset, $limit, $criteria);
+		//分页
+		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
+
+		$data = array(
+			'status' => $status,
+			'keyword' > $keyword,
+			'count' => $result['count'],
+			'order_list' => $result['result'],
+			'pages' => $pages->build()
+			);
+		View::layout()->render('order', $data);
+	}
+
+	/**
 	* 库存管理页面
 	* ======
 	* @author 洪波
