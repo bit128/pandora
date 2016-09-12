@@ -7,11 +7,17 @@
 		</p>
 		<p>
 			<label>订单总额：</label>
-			<strong class="text-info" style="font-size:18px;"><?php echo $order->od_total; ?></strong>
+			<strong class="text-success" style="font-size:18px;"><?php echo $order->od_total; ?></strong>
 		</p>
 		<p>
 			<label>订单备注：</label>
 			<textarea class="form-control" rows="4"></textarea>
+		</p>
+		<p>&nbsp;</p>
+		<legend>客户信息</legend>
+		<p>
+			<label>用户姓名：</label>
+			<strong><a href="/home/userDetail/id/<?php echo $user->user_id; ?>"><?php echo $user->user_name; ?></a></strong>
 		</p>
 	</div>
 	<div class="col-md-8">

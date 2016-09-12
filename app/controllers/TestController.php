@@ -150,4 +150,18 @@ class TestController extends Controller
 		$psdk = new Psdk;
 		echo $psdk->post('order/add', $data);
 	}
+
+	public function actionAddAddress()
+	{
+		$data = array(
+			'user_id' => '57ad684337eee',
+			'token' => '2a5de996f75cdd14ca3d1f2832e14c35',
+			'ad_content' => '海曙路128号仓溢绿苑',
+			'ad_post' => '000000',
+			'ad_phone' => '18814887668',
+			'ad_name' => '波哥'
+			);
+		$psdk = new Psdk;
+		echo $psdk->post('address/add', $data);
+	}
 }

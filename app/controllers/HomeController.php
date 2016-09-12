@@ -281,12 +281,15 @@ class HomeController extends Controller
 		{
 			$m_order = new \app\models\M_order;
 			$m_cart = new \app\models\M_cart;
+			$m_user = new \app\models\M_user;
 
 			$order = $m_order->get($od_id);
 			$product_list = $m_cart->getProductList(0, 99, '', $od_id);
+			$user = $m_user->get($order->user_id);
 
 			$data = array(
 				'order' => $order,
+				'user' => $user,
 				'product_list' => $product_list['result']
 				);
 			View::layout()->render('order_detail', $data);

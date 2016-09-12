@@ -10,10 +10,11 @@ use core\Controller;
 use core\Request;
 use core\Response;
 use core\Criteria;
+use library\RedisCache;
 use app\models\M_stock;
 use app\models\M_address;
 
-class StockController extends Controller
+class AddressController extends Controller
 {
 
 	private $m_address;
