@@ -28,7 +28,7 @@
 	<table class="table table-bordered">
 		<thead>
 			<tr>
-				<th>编号</th>
+				<th style="display:none;">编号</th>
 				<th>货号</th>
 				<th>图片</th>
 				<th style="width:40%;">名称</th>
@@ -41,7 +41,7 @@
 		<tbody id="product_list">
 			<?php foreach ($product_list as $v) { ?>
 			<tr>
-				<td><small><?php echo $v->pd_id; ?></small></td>
+				<td style="display:none;"><small><?php echo $v->pd_id; ?></small></td>
 				<td><a class="pd_update" data-val="pd_no"><?php echo $v->pd_no; ?></a></td>
 				<td>
 					<a href="/home/album/id/<?php echo $v->pd_id; ?>/t/product" target="_blank">

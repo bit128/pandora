@@ -13,6 +13,22 @@
 	background: #fff;
 	outline:none;
 }
+.btn-orange {
+	background-color: #fa6800;
+    color: #fff;
+}
+.btn-orange:hover {
+	background-color: #fa5500;
+    color: #fff;
+}
+.btn-grew {
+	background-color: #eee;
+    color: #333;
+}
+.btn-grew:hover {
+	background-color: #fa5500;
+    color: #fff;
+}
 </style>
 <link rel="stylesheet" type="text/css" href="/app/statics/home/css/prism.css">
 <div class="container" style="position:relative;">
