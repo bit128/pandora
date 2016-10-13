@@ -382,6 +382,7 @@ class SiteController extends Controller
 		$offset = ($page - 1) * $limit;
 		$criteria = new \core\Criteria;
 		$criteria->add('cn_id', self::CHANNEL_NEWS);
+		$criteria->add('ct_status', \app\models\M_content::STATUS_HIDE, '!=');
 		$criteria->order = 'ct_utime desc';
 		$content_list = $m_content->getList($offset, $limit, $criteria);
 		//分页

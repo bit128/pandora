@@ -19,6 +19,10 @@
 			<label>用户姓名：</label>
 			<strong><a href="/home/userDetail/id/<?php echo $user->user_id; ?>"><?php echo $user->user_name; ?></a></strong>
 		</p>
+		<p>
+			<label>联系电话：</label>
+			<strong><?php echo $user->user_phone; ?></strong>
+		</p>
 	</div>
 	<div class="col-md-8">
 		<legend>商品列表</legend>

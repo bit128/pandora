@@ -208,7 +208,7 @@ class HomeController extends Controller
 		$keyword = Request::inst()->getQuery('k');
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
-		$url = '/site/product/s/'.$status;
+		$url = '/home/product/s/'.$status;
 		$criteria = new Criteria;
 		if($status != -1)
 		{
