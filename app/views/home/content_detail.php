@@ -33,10 +33,15 @@
 <link rel="stylesheet" type="text/css" href="/app/statics/home/css/prism.css">
 <div class="container" style="position:relative;">
 	<div class="row" id="note_btns" style="text-align:center;">
-		<div class="col-md-4" style="padding-bottom:10px;">
+		<div class="col-md-3" style="padding-bottom:10px;">
 			<button type="button" class="btn btn-sm btn-grew">
-				<span class="glyphicon glyphicon-floppy-disk"></span> 保存
+				<span class="glyphicon glyphicon-floppy-disk"></span> 自动保存
 			</button>
+			<button type="button" class="btn btn-sm btn-grew" data-val="0">
+				<span class="glyphicon glyphicon-list-alt"></span> 代码
+			</button>
+		</div>
+		<div class="col-md-5" style="padding-bottom:10px;">
 			<span class="btn-group">
 				<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
 					字号 <span class="caret"></span>
@@ -97,8 +102,7 @@
 					<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff008a">#ff008a</a></li>
 				</ul>
 			</span>
-		</div>
-		<div class="col-md-4" style="padding-bottom:10px;">
+		
 			<button type="button" class="btn btn-sm btn-grew" title="粗体">
 				<span class="glyphicon glyphicon-bold"></span>
 			</button>

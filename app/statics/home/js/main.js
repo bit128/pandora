@@ -272,29 +272,32 @@ Note.prototype = {
 				case 0: //保存
 					f.update(f);
 					break;
-				case 4: //加粗
+				case 1:
+					f.codeView(f, $(this));
+					break;
+				case 5: //加粗
 					document.execCommand('bold');
 					f.setTimer(f);
 					break;
-				case 5: //斜体
+				case 6: //斜体
 					document.execCommand('italic');
 					f.setTimer(f);
 					break;
-				case 6: //大标题
+				case 7: //大标题
 					f.insertTitle(f, 1);
 					break;
-				case 7: //小标题
+				case 8: //小标题
 					f.insertTitle(f, 2);
 					break;
-				case 8: //左对齐
+				case 9: //左对齐
 					document.execCommand('justifyLeft');
 					f.setTimer(f);
 					break;
-				case 9: //居中
+				case 10: //居中
 					document.execCommand('justifyCenter');
 					f.setTimer(f);
 					break;
-				case 10: //右对齐
+				case 11: //右对齐
 					document.execCommand('justifyRight');
 					f.setTimer(f);
 					break;
@@ -320,6 +323,19 @@ Note.prototype = {
 		f.editarea.on('keyup', function(){
 			f.setTimer(f);
 		});
+	},
+	codeView: function(f, btn){
+		if(btn.attr('data-val') == '0'){
+			btn.removeClass('btn-grew').addClass("btn-orange").attr('data-val', '1');
+			f.editarea[0].contentEditable = false;
+			f.editarea.html('<textarea class="form-control" rows="22">'+f.editarea.html()+'</textarea>');
+			f.btns.find('button:gt(1)').hide();
+		}else{
+			btn.removeClass('btn-ornage').addClass("btn-grew").attr('data-val', '0');
+			f.editarea[0].contentEditable = true;
+			f.editarea.html(f.editarea.find('textarea').val());
+			f.btns.find('button:gt(1)').show();
+		}
 	},
 	refresh: function(){
 		this.ct_id = 0;
@@ -354,7 +370,7 @@ Note.prototype = {
 		if(f.timer == undefined && f.ct_id != 0) {
 			var limit = f.savetime;
 			var btn = f.btns.find('button:eq(0)');
-			btn.removeClass('btn-default').addClass('btn-info');
+			btn.removeClass('btn-grew').addClass('btn-orange');
 			f.timer = setInterval(function(){
 				if(--limit > 0) {
 					btn.html('<span class="glyphicon glyphicon-floppy-disk"></span> 自动保存('+limit+'s)');
@@ -382,8 +398,8 @@ Note.prototype = {
 	},
 	update: function(f){
 		var btn = f.btns.find('button:eq(0)');
-		btn.html('<span class="glyphicon glyphicon-floppy-disk"></span> 保存');
-		btn.removeClass('btn-info').addClass('btn-default');
+		btn.html('<span class="glyphicon glyphicon-floppy-disk"></span> 自动保存');
+		btn.removeClass('btn-orange').addClass('btn-grew');
 		clearInterval(f.timer);
 		f.timer = undefined;
 		$.post('/content/update', {ct_id: f.ct_id, field: 'ct_detail', value: f.editarea.html()});
