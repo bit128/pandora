@@ -402,7 +402,12 @@ Note.prototype = {
 		btn.removeClass('btn-orange').addClass('btn-grew');
 		clearInterval(f.timer);
 		f.timer = undefined;
-		$.post('/content/update', {ct_id: f.ct_id, field: 'ct_detail', value: f.editarea.html()});
+		var ta = f.editarea.find('textarea');
+		if(ta.val()){
+			$.post('/content/update', {ct_id: f.ct_id, field: 'ct_detail', value: ta.val()});
+		}else{
+			$.post('/content/update', {ct_id: f.ct_id, field: 'ct_detail', value: f.editarea.html()});
+		}
 	}
 };
 /*------ 滚动目录类 ------*/
