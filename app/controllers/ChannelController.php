@@ -112,7 +112,7 @@ class ChannelController extends Controller
 				$criteria->add('cn_fid', $cn_id);
 				$criteria->order = 'cn_sort asc';
 				$result = $this->m_channel->getList($offset, $limit, $criteria);
-				$this->m_channel->setResult($result, Response::RES_SUCCESS);
+				$response->setResult($result, Response::RES_SUCCESS);
 			}
 			else
 			{
