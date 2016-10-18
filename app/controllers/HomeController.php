@@ -176,7 +176,7 @@ class HomeController extends Controller
 		$criteria->order = $sort_arr[$sort];
 		$result = $m_dictionary->getList($offset, $limit, $criteria);
 		//分页
-		$url = '/site/dictionary/t/' . $type . '/s/' . $sort;
+		$url = '/home/dictionary/t/' . $type . '/s/' . $sort;
 		if($keyword != '')
 		{
 			$url .= '/k/' . $keyword;
