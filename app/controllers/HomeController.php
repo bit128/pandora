@@ -145,6 +145,9 @@ class HomeController extends Controller
 		}
 	}
 
+	public function actionContentNote()
+	{}
+
 	/**
 	* 搜索词库管理页面
 	* ======

@@ -101,10 +101,6 @@ Content.prototype = {
 				}
 			});
 		});
-		f.handle.on('click', '.edit_content', function(){
-			var ct_id = $(this).parent().find('small').text();
-			window.open('/home/contentDetail/id/'+ct_id);
-		});
 		f.pages.on('click', 'a', function(){
 			f.ct_np = parseInt($(this).text());
 			f.ct_offset = (f.ct_np - 1) * f.ct_limit;
@@ -158,9 +154,10 @@ Content.prototype = {
 					f.ct_pages = Math.ceil(f.ct_count / f.ct_limit);
 					var html = '';
 					$.each(data.result.result, function(i, d){
-						html += '<tr data-id="'+d.ct_id+'"><td style="text-align:center;">';
-						html += '<small>'+d.ct_id+'</small><br>';
-						html += '<button type="button" class="btn btn-info btn-xs edit_content"><span class="glyphicon glyphicon-pencil"></span> 编辑内容</button></td>';
+						html += '<tr data-id="'+d.ct_id+'"><td style="text-align:center;width:130px;">';
+						html += '<p>'+d.ct_id+'</p>';
+						html += '<a href="/home/contentDetail/id/'+d.ct_id+'" target="_blank" class="btn btn-info btn-xs edit_content"><span class="glyphicon glyphicon-pencil"></span> 编辑</a>'
+						html += ' <a href="/home/contentNote/id/'+d.ct_id+'" class="btn btn-default btn-xs edit_content"><span class="glyphicon glyphicon-comment"></span> 评论</button></td>';
 						html += '<td class="set_image"><input id="img_'+d.ct_id+'" type="file" style="position: absolute;filter: alpha(opacity=0);opacity:0;width:80px;height:60px;" name="file_name">';
 						if(d.ct_image == ''){
 							html += '<img src="/app/statics/files/images/default.jpg" class="img-responsive" style="max-width:80px;"></td>';
@@ -170,7 +167,7 @@ Content.prototype = {
 						html += '<td><strong class="set_text" data-field="ct_title">'+(d.ct_title != '' ? d.ct_title : f.default_title)+'</strong><br>';
 						html += '<small style="color:#999;" class="set_text" data-field="ct_subtit">'+(d.ct_subtit != '' ? d.ct_subtit : f.default_subtit)+'</small>';
 						html += '<div style="font-size:10px;color:#cc63c9;" class="set_text" data-field="ct_keyword">'+(d.ct_keyword != '' ? d.ct_keyword : f.default_keyword)+'</div></td>';
-						html += '<td><small>'+f.printTime(d.ct_ctime)+'</small></td><td><small>'+f.printTime(d.ct_utime)+'</small></td>';
+						html += '<td><small><span class="text-info">(创建)</span> '+f.printTime(d.ct_ctime)+'<br><span class="text-warning">(更新)</span> '+f.printTime(d.ct_utime)+'</small></td>';
 						html += '<td>'+d.ct_view+'</td>';
 						html += '<td style="width:50px;"><select class="set_status">';
 						for(var i=0; i<f.status_enum.length; i++){
