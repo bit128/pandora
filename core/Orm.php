@@ -32,18 +32,13 @@ class Orm
 	* @return object-self
 	* ======
 	* @author 洪波
-	* @version 16.02.25
+	* @version 16.02.25 - 16.12.07
 	*/
 	public static function model($table_name, $new = false, $db_config = 'database')
 	{
 		if(! (self::$_instance instanceof self) || $new)
 		{
-			if(self::$_instance)
-			{
-				self::$_instance->_db == null;
-				self::$_instance = null;
-			}	
-			self::$_instance = new self($table_name, $db_config);
+			self::$_instance = new self($db_config);
 		}
 		self::$_instance->setTable($table_name);
 		return self::$_instance;
@@ -56,37 +51,18 @@ class Orm
 	* @param $db_config 	数据库配置
 	* ======
 	* @author 洪波
-	* @version 16.02.25
+	* @version 16.02.25 - 16.12.07
 	*/
-	private function __construct($table_name, $db_config)
+	private function __construct($db_config)
 	{
-		//设置表名称
-		$this->table_name = $table_name;
 		//初始化化数据库驱动
-		$this->initDriver($db_config);
-		//获取表结构
-		$this->struct();
-	}
-
-	/**
-	* 初始化化数据库驱动
-	* ======
-	* @param $db_config 	数据库配置
-	* @param $new 			是否全新加载数据库驱动
-	* ======
-	* @author 洪波
-	* @version 16.07.06
-	*/
-	public function initDriver($db_config)
-	{
-		//加载数据库依赖
 		if(! Autumn::app()->config($db_config))
 		{
 			Autumn::app()->exception('缺少数据库配置文件');
 		}
-		$driver = '\core\\' . Autumn::app()->config($db_config)['driver'];
+		$driver = Autumn::app()->config($db_config)['driver'];
 		//载入数据库驱动（需要实现Db接口）
-		$this->_db = new $driver($db_config);
+		$this->setDb(Autumn::app()->$driver);
 	}
 	
 	/**
@@ -126,8 +102,7 @@ class Orm
 	}
 
 	/**
-	* 获取数据库驱动对象
-	* ======
+	* 获取数据库驱动
 	* ======
 	* @author 洪波
 	* @version 16.04.25
@@ -135,6 +110,19 @@ class Orm
 	public function getDb()
 	{
 		return $this->_db;
+	}
+
+	/**
+	* 设置数据库驱动
+	* ======
+	* @param $driver 	数据库驱动（需要实现Db接口）
+	* ======
+	* @author 洪波
+	* @version 16.04.25
+	*/
+	public function setDb(Db $driver)
+	{
+		return $this->_db = $driver;
 	}
 	
 	/**
@@ -165,7 +153,6 @@ class Orm
 			$this->table_name = $table_name;
 			$this->struct();
 		}
-		
 	}
 
 	/**
@@ -406,7 +393,6 @@ class Orm
 				$sql .= ' where ' . $condition;
 			}
 		}
-		//$this->flush();
 		return $this->_db->query($sql);
 	}
 
@@ -456,7 +442,6 @@ class Orm
 				$sql .= ' where ' . $condition;
 			}
 		}
-		//$this->flush();
 		return $this->_db->query($sql);
 	}
 

@@ -126,18 +126,18 @@ class Pagination
 			}
 		}
 		//最后一页
-		elseif($this->now_page == $this->all_page)
+		else if($this->now_page == $this->all_page)
 		{
-			$html = $this->item_checked.'<a href="'.$this->redirect.'/page/'.$this->now_page.'">'.$this->now_page.'</a>'.$this->item_end;
+			$tail = $this->item_checked.'<a href="'.$this->redirect.'/page/'.$this->now_page.'">'.$this->now_page.'</a>'.$this->item_end;
 			//页面总数大于1
 			if($this->all_page > 1)
 			{
-				if($this->all_page < $this->size)
+				if($this->all_page <= $this->size)
 					$start = 1;
 				else
 					$start = $this->now_page - $this->size;
 
-				$html = $this->outside_start.$this->buildSide($start, $this->now_page).$html;
+				$html .= $this->buildSide($start, $this->now_page).$tail;
 			}
 		}
 		//在中间位置
