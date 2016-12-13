@@ -25,11 +25,12 @@ class TestController extends Controller
 	public function actionUpload()
 	{
 		$data = array(
-			'by_id' => '112358',
-			'al_image' => 'default.jpg'
+			'phone' => '8618514025869',
+			'code' => '4340'
 			);
-		$psdk = new Psdk;
-		echo $psdk->post('album/add', $data);
+		$psdk = new \library\HttpRequest;
+		$rs = $psdk->post('http://sv3.wanzi.cc/message/checkCode', $data);
+		print_r($rs);
 	}
 
 	public function actionRegister()
@@ -164,4 +165,30 @@ class TestController extends Controller
 		$psdk = new Psdk;
 		echo $psdk->post('address/add', $data);
 	}
+
+	public function actionAddNote()
+	{
+		$data = array(
+				'tn_phone' => '18814887668',
+				'tn_email' => 'hongerbo@qq.com',
+				'tn_content' => '测试留言2',
+				'cn_id' => '57ae9a6b2a96b',
+				'ct_id' => '57ae9a845f7df',
+				'user_id' => '57ad684337eee',
+			);
+		$psdk = new Psdk;
+		echo $psdk->post('content/addNote', $data);
+	}
+
+	public function actionGetNoteList()
+	{
+		$data = array(
+			'offset' => 0,
+			'limit' => 10,
+			'ct_id' => '57ae9a845f7df'
+		);
+		$psdk = new Psdk;
+		echo $psdk->post('content/getNoteList', $data);
+	}
+
 }

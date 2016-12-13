@@ -6,9 +6,8 @@
 * @version 16.07.29
 */
 namespace app\controllers;
+use core\Autumn;
 use core\Controller;
-use core\View;
-use core\Request;
 use core\Criteria;
 
 class HomeController extends Controller
@@ -16,7 +15,7 @@ class HomeController extends Controller
 
 	public function init()
 	{
-		if(! Request::inst()->getSession('am_account'))
+		if(! Autumn::app()->request->getSession('am_account'))
 		{
 			header("Location:/admin/loginPage");
 		}
@@ -30,7 +29,7 @@ class HomeController extends Controller
 	*/
 	public function actionIndex()
 	{
-		View::layout()->render('index');
+		Autumn::app()->view->render('index');
 	}
 
 	/**
@@ -42,19 +41,19 @@ class HomeController extends Controller
 	public function actionAdmin()
 	{
 		$m_admin = new \app\models\M_admin;
-		$page = Request::inst()->getQuery('page', 1);
+		$page = Autumn::app()->request->getQuery('page', 1);
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
 		$result = $m_admin->getList($offset, $limit);
 		//分页
-		$url = '/site/admin';
+		$url = '/home/admin';
 		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
 
 		$data = array(
 			'admin_list' => $result['result'],
 			'pages' => $pages->build()
 			);
-		View::layout()->render('admin', $data);
+		Autumn::app()->view->render('admin', $data);
 	}
 
 	/**
@@ -66,12 +65,12 @@ class HomeController extends Controller
 	public function actionUser()
 	{
 		$m_user = new \app\models\M_user;
-		$page = Request::inst()->getQuery('page', 1);
-		$status = Request::inst()->getQuery('s', 1);
-		$keyword = Request::inst()->getQuery('k');
+		$page = Autumn::app()->request->getQuery('page', 1);
+		$status = Autumn::app()->request->getQuery('s', 1);
+		$keyword = Autumn::app()->request->getQuery('k');
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
-		$url = '/site/user/s/'.$status;
+		$url = '/home/user/s/'.$status;
 		$criteria = new Criteria;
 		$criteria->add('user_status', $status);
 		if($keyword != '')
@@ -90,7 +89,7 @@ class HomeController extends Controller
 			'user_list' => $result['result'],
 			'pages' => $pages->build()
 			);
-		View::layout()->render('user', $data);
+		Autumn::app()->view->render('user', $data);
 	}
 
 	/**
@@ -101,7 +100,7 @@ class HomeController extends Controller
 	*/
 	public function actionUserDetail()
 	{
-		$user_id = Request::inst()->getQuery('id');
+		$user_id = Autumn::app()->request->getQuery('id');
 		if(strlen($user_id) == 13)
 		{
 			$m_user = new \app\models\M_user;
@@ -111,7 +110,7 @@ class HomeController extends Controller
 				$data = array(
 					'user' => $user
 					);
-				View::layout()->render('user_detail', $data);
+				Autumn::app()->view->render('user_detail', $data);
 			}
 		}
 	}
@@ -124,7 +123,7 @@ class HomeController extends Controller
 	*/
 	public function actionContent()
 	{
-		View::layout()->render('content');
+		Autumn::app()->view->render('content');
 	}
 
 	/**
@@ -135,18 +134,43 @@ class HomeController extends Controller
 	*/
 	public function actionContentDetail()
 	{
-		$ct_id = Request::inst()->getParam('id');
+		$ct_id = Autumn::app()->request->getParam('id');
 		if(strlen($ct_id) == 13)
 		{
 			$data = array(
 				'ct_id' => $ct_id
 				);
-			View::layout()->render('content_detail', $data);
+			Autumn::app()->view->render('content_detail', $data);
 		}
 	}
 
 	public function actionContentNote()
-	{}
+	{
+		$ct_id = Autumn::app()->request->getQuery('id');
+		$status = Autumn::app()->request->getQuery('s', 0);
+		$page = Autumn::app()->request->getQuery('page', 1);
+		$limit = 10;
+		$offset = ($page - 1) * $limit;
+
+		$criteria = new Criteria;
+		$criteria->add('ct_id', $ct_id);
+		if ($status != -1)
+			$criteria->add('tn_status', $status);
+		$m_note = new \app\models\M_content_note;
+		$result = $m_note->getList($offset, $limit, $criteria);
+		//分页
+		$url = '/home/contentNote';
+		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
+
+		$data = array(
+			'ct_id' => $ct_id,
+			'status' => $status,
+			'count' => $result['count'],
+			'result' => $result['result'],
+			'pages' => $pages->build()
+		);
+		Autumn::app()->view->render('content_note', $data);
+	}
 
 	/**
 	* 搜索词库管理页面
@@ -157,10 +181,10 @@ class HomeController extends Controller
 	public function actionDictionary()
 	{
 		$m_dictionary = new \app\models\M_dictionary;
-		$page = Request::inst()->getQuery('page', 1);
-		$type = Request::inst()->getQuery('t', -1);
-		$sort = (int) Request::inst()->getQuery('s', 0);
-		$keyword = Request::inst()->getQuery('k');
+		$page = Autumn::app()->request->getQuery('page', 1);
+		$type = Autumn::app()->request->getQuery('t', -1);
+		$sort = (int) Autumn::app()->request->getQuery('s', 0);
+		$keyword = Autumn::app()->request->getQuery('k');
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
 		//查询数据列表
@@ -194,7 +218,7 @@ class HomeController extends Controller
 			'dictionary_list' => $result['result'],
 			'pages' => $pages->build()
 			);
-		View::layout()->render('dictionary', $data);
+		Autumn::app()->view->render('dictionary', $data);
 	}
 
 	/**
@@ -206,9 +230,9 @@ class HomeController extends Controller
 	public function actionProduct()
 	{
 		$m_product = new \app\models\M_product;
-		$page = Request::inst()->getQuery('page', 1);
-		$status = Request::inst()->getQuery('s', -1);
-		$keyword = Request::inst()->getQuery('k');
+		$page = Autumn::app()->request->getQuery('page', 1);
+		$status = Autumn::app()->request->getQuery('s', -1);
+		$keyword = Autumn::app()->request->getQuery('k');
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
 		$url = '/home/product/s/'.$status;
@@ -233,7 +257,7 @@ class HomeController extends Controller
 			'product_list' => $result['result'],
 			'pages' => $pages->build()
 			);
-		View::layout()->render('product', $data);
+		Autumn::app()->view->render('product', $data);
 	}
 
 	/**
@@ -245,12 +269,12 @@ class HomeController extends Controller
 	public function actionOrder()
 	{
 		$m_order = new \app\models\M_order;
-		$page = Request::inst()->getQuery('page', 1);
-		$status = Request::inst()->getQuery('s', 2);
-		$keyword = Request::inst()->getQuery('k');
+		$page = Autumn::app()->request->getQuery('page', 1);
+		$status = Autumn::app()->request->getQuery('s', 2);
+		$keyword = Autumn::app()->request->getQuery('k');
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
-		$url = '/site/order/s/'.$status;
+		$url = '/home/order/s/'.$status;
 		$criteria = new Criteria;
 		$criteria->add('od_status', $status);
 		if($keyword != '')
@@ -268,7 +292,7 @@ class HomeController extends Controller
 			'order_list' => $result['result'],
 			'pages' => $pages->build()
 			);
-		View::layout()->render('order', $data);
+		Autumn::app()->view->render('order', $data);
 	}
 
 	/**
@@ -279,7 +303,7 @@ class HomeController extends Controller
 	*/
 	public function actionOrderDetail()
 	{
-		$od_id = Request::inst()->getParam('id');
+		$od_id = Autumn::app()->request->getParam('id');
 		if(strlen($od_id) == 16)
 		{
 			$m_order = new \app\models\M_order;
@@ -295,7 +319,7 @@ class HomeController extends Controller
 				'user' => $user,
 				'product_list' => $product_list['result']
 				);
-			View::layout()->render('order_detail', $data);
+			Autumn::app()->view->render('order_detail', $data);
 		}
 	}
 
@@ -307,11 +331,11 @@ class HomeController extends Controller
 	*/
 	public function actionStock()
 	{
-		$pd_id = Request::inst()->getQuery('id');
+		$pd_id = Autumn::app()->request->getQuery('id');
 		if(strlen($pd_id) == 13)
 		{
 			$m_stock = new \app\models\M_stock;
-			$page = Request::inst()->getQuery('page', 1);
+			$page = Autumn::app()->request->getQuery('page', 1);
 			$limit = 10;
 			$offset = ($page - 1) * $limit;
 			$criteria = new Criteria;
@@ -326,7 +350,7 @@ class HomeController extends Controller
 				'stock_list' => $result['result'],
 				'pages' => $pages->build()
 				);
-			View::layout()->render('stock', $data);
+			Autumn::app()->view->render('stock', $data);
 		}
 	}
 
@@ -338,7 +362,7 @@ class HomeController extends Controller
 	*/
 	public function actionAlbum()
 	{
-		$by_id = Request::inst()->getQuery('id');
+		$by_id = Autumn::app()->request->getQuery('id');
 		if(strlen($by_id) == 13)
 		{
 			$m_album = new \app\models\M_album;
@@ -350,11 +374,11 @@ class HomeController extends Controller
 			$result = $m_album->getList($offset, $limit, $criteria);
 			$data = array(
 				'by_id' => $by_id,
-				'al_type' => Request::inst()->getQuery('t'),
+				'al_type' => Autumn::app()->request->getQuery('t'),
 				'count' => $result['count'],
 				'album_list' => $result['result']
 				);
-			View::layout()->render('album', $data);
+			Autumn::app()->view->render('album', $data);
 		}
 	}
 
@@ -366,6 +390,6 @@ class HomeController extends Controller
 	*/
 	public function actionStruct()
 	{
-		View::layout()->render('struct');
+		Autumn::app()->view->render('struct');
 	}
 }

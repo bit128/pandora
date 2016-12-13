@@ -54,8 +54,8 @@ class M_user extends Model
 	{
 		$criteria = new Criteria;
 		$criteria->add('user_id', $account);
-		$criteria->add('user_phone', $account, 'OR');
-		$criteria->add('user_email', $account, 'OR');
+		$criteria->add('user_phone', $account, '=', 'OR');
+		$criteria->add('user_email', $account, '=', 'OR');
 
 		return Orm::model($this->table_name)->find($criteria);
 	}

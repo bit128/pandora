@@ -157,7 +157,7 @@ Content.prototype = {
 						html += '<tr data-id="'+d.ct_id+'"><td style="text-align:center;width:130px;">';
 						html += '<p>'+d.ct_id+'</p>';
 						html += '<a href="/home/contentDetail/id/'+d.ct_id+'" target="_blank" class="btn btn-info btn-xs edit_content"><span class="glyphicon glyphicon-pencil"></span> 编辑</a>'
-						html += ' <a href="/home/contentNote/id/'+d.ct_id+'" class="btn btn-default btn-xs edit_content"><span class="glyphicon glyphicon-comment"></span> 评论</button></td>';
+						html += ' <a href="/home/contentNote/id/'+d.ct_id+'" target="_blank" class="btn btn-default btn-xs edit_content"><span class="glyphicon glyphicon-comment"></span> 评论</button></td>';
 						html += '<td class="set_image"><input id="img_'+d.ct_id+'" type="file" style="position: absolute;filter: alpha(opacity=0);opacity:0;width:80px;height:60px;" name="file_name">';
 						if(d.ct_image == ''){
 							html += '<img src="/app/statics/files/images/default.jpg" class="img-responsive" style="max-width:80px;"></td>';

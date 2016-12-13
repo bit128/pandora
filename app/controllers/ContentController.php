@@ -6,12 +6,14 @@
 * @version 16.07.29
 */
 namespace app\controllers;
+use core\Autumn;
 use core\Controller;
 use core\Request;
 use core\Response;
 use core\Criteria;
 use library\Psdk;
 use app\models\M_content;
+use app\models\M_content_note;
 use app\models\M_admin;
 
 class ContentController extends Controller
@@ -188,6 +190,104 @@ class ContentController extends Controller
 			{
 				$ct_id = Request::inst()->getPost('ct_id');
 				if($this->m_content->delete($ct_id))
+				{
+					$response->setResult('删除成功', Response::RES_SUCCESS);
+				}
+				else
+				{
+					$response->setError('删除失败', Response::RES_NOCHAN);
+				}
+			}
+			else
+			{
+				$response->setError('无权操作', Response::RES_REFUSE);
+			}
+			$response->json();
+		}
+	}
+
+	/**
+	* 提交评论
+	* ======
+	* @author 洪波
+	* @version 16.12.13
+	*/
+	public function actionAddNote()
+	{
+		if (Autumn::app()->request->isPostRequest())
+		{
+			$data = array(
+				'tn_phone' => Autumn::app()->request->getPost('tn_phone'),
+				'tn_email' => Autumn::app()->request->getPost('tn_email'),
+				'tn_content' => Autumn::app()->request->getPost('tn_content'),
+				'tn_time' => time(),
+				'tn_status' => M_content_note::STATUS_HIDE,
+				'cn_id' => Autumn::app()->request->getPost('cn_id'),
+				'ct_id' => Autumn::app()->request->getPost('ct_id'),
+				'user_id' => Autumn::app()->request->getPost('user_id'),
+			);
+			$response = new Response;
+			$m_note = new M_content_note;
+			if($m_note->insert($data))
+			{
+				$response->setResult('评论提交成功', Response::RES_SUCCESS);
+			}
+			else
+			{
+				$response->setError('操作失败', Response::RES_FAIL);
+			}
+			$response->json();
+		}
+	}
+
+	/**
+	* 获取评论列表
+	* ======
+	* @author 洪波
+	* @version 16.12.13
+	*/
+	public function actionGetNoteList()
+	{
+		if (Autumn::app()->request->isPostRequest())
+		{
+			$offset = Autumn::app()->request->getPost('offset');
+			$limit = Autumn::app()->request->getPost('limit');
+			$cn_id = Autumn::app()->request->getPost('cn_id');
+			$ct_id = Autumn::app()->request->getPost('ct_id');
+			$tn_status = Autumn::app()->request->getPost('tn_status' -1);
+
+			$criteria = new Criteria;
+			if (strlen($cn_id) == 13)
+				$criteria->add('cn_id', $cn_id);
+			if (strlen($ct_id) == 13)
+				$criteria->add('ct_id', $ct_id);
+			if ($tn_status != -1)
+				$criteria->add('tn_status', $tn_status);
+
+			$m_note = new M_content_note;
+			$result = $m_note->getList($offset, $limit, $criteria);
+			$response = new Response;
+			$response->setResult($result, Response::RES_SUCCESS);
+			$response->json();
+		}
+	}
+
+	/**
+	* 删除评论
+	* ======
+	* @author 洪波
+	* @version 16.12.13
+	*/
+	public function actionDeleteNote()
+	{
+		if(Request::inst()->isPostRequest())
+		{
+			$response = new Response;
+			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
+			{
+				$tn_id = Request::inst()->getPost('ct_id');
+				$m_note = new M_content_note;
+				if($m_note->delete($ct_id))
 				{
 					$response->setResult('删除成功', Response::RES_SUCCESS);
 				}
