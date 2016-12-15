@@ -50,9 +50,33 @@ $(document).ready(function(){
         var tr = $(this).parents('tr');
         var tn_id = tr.attr('data-val');
         if(status == -1) {
-            //删除
+            if(confirm('确定要删除吗？')) {
+                $.post(
+                    '/content/deleteNote',
+                    {tn_id: tn_id},
+                    function(data){
+                        if(data.code == 1){
+                            location.reload();
+                        }else{
+                            alert(data.error);
+                        }
+                    },
+                    'json'
+                );
+            }
         }else{
-            //更改
+            $.post(
+                '/content/setNoteStatus',
+                {tn_id: tn_id, tn_status: status},
+                function(data){
+                    if(data.code == 1){
+                        location.reload();
+                    }else{
+                        alert(data.error);
+                    }
+                },
+                'json'
+            );
         }
     });
 });

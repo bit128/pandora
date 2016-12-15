@@ -273,6 +273,41 @@ class ContentController extends Controller
 	}
 
 	/**
+	* 设置评论状态
+	* ======
+	* @author 洪波
+	* @version 16.12.15
+	*/
+	public function actionSetNoteStatus()
+	{
+		if(Request::inst()->isPostRequest())
+		{
+			$response = new Response;
+			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
+			{
+				$tn_id = Request::inst()->getPost('tn_id');
+				$tn_status = Request::inst()->getPost('tn_status');
+				$m_note = new M_content_note;
+				if($m_note->update($tn_id, array(
+					'tn_status' => $tn_status
+				)))
+				{
+					$response->setResult('删除成功', Response::RES_SUCCESS);
+				}
+				else
+				{
+					$response->setError('删除失败', Response::RES_NOCHAN);
+				}
+			}
+			else
+			{
+				$response->setError('无权操作', Response::RES_REFUSE);
+			}
+			$response->json();
+		}
+	}
+
+	/**
 	* 删除评论
 	* ======
 	* @author 洪波
@@ -285,9 +320,9 @@ class ContentController extends Controller
 			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$tn_id = Request::inst()->getPost('ct_id');
+				$tn_id = Request::inst()->getPost('tn_id');
 				$m_note = new M_content_note;
-				if($m_note->delete($ct_id))
+				if($m_note->delete($tn_id))
 				{
 					$response->setResult('删除成功', Response::RES_SUCCESS);
 				}
