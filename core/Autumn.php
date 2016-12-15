@@ -10,6 +10,7 @@ namespace core;
 class Autumn
 {
 	const FRAMEWORK_VERSION = 1.31;
+	const PRODUCT_VERSION 	= 1.10;
 
 	//Autumn实例
 	private static $_instance = null;

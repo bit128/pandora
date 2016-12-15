@@ -223,9 +223,8 @@ $(document).ready(function(){
 				fileElementId:'fileImage',
 				dataType: 'json',
 				success: function (data, status){
-					var path = data.src;
-					if(path != ''){
-						$('#note_editor').append('<p><img src="/nfs/image/'+path+'" style="max-width:100%;"></p><br>');
+					if(data.code == 1){
+						$('#note_editor').append('<p><img src="/nfs/image'+data.uri+'" style="max-width:100%;"></p><br>');
 						note.setTimer(note);
 					}else{
 						if(data.error != '')alert(data.error);

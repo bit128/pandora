@@ -49,7 +49,7 @@
 					if ($v->pd_image != '') {
 						echo '<img src="/nfs/image',$v->pd_image,'" style="max-width:80px;">';
 					} else {
-						echo '<img src="/app/statics/files/images/default.jpg" style="max-width:80px;">';
+						echo '<img src="/app/statics/files/default.jpg" style="max-width:80px;">';
 					}
 					?>
 					</a>

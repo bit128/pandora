@@ -92,9 +92,9 @@ Content.prototype = {
 				fileElementId:'img_'+ct_id,
 				dataType: 'json',
 				success: function (data, status){
-					if(data.code == '1') {
-						image.attr('src', '/nfs/image/'+data.src);
-						f.update(ct_id, 'ct_image', data.src);
+					if(data.code == 1) {
+						image.attr('src', '/nfs/image'+data.uri);
+						f.update(ct_id, 'ct_image', data.uri);
 					} else {
 						alert('图片可能损坏，请换一张图片');
 					}
@@ -160,9 +160,9 @@ Content.prototype = {
 						html += ' <a href="/home/contentNote/id/'+d.ct_id+'" target="_blank" class="btn btn-default btn-xs edit_content"><span class="glyphicon glyphicon-comment"></span> 评论</button></td>';
 						html += '<td class="set_image"><input id="img_'+d.ct_id+'" type="file" style="position: absolute;filter: alpha(opacity=0);opacity:0;width:80px;height:60px;" name="file_name">';
 						if(d.ct_image == ''){
-							html += '<img src="/app/statics/files/images/default.jpg" class="img-responsive" style="max-width:80px;"></td>';
+							html += '<img src="/app/statics/files/default.jpg" class="img-responsive" style="max-width:80px;"></td>';
 						}else{
-							html += '<img src="/nfs/image/'+d.ct_image+'" class="img-responsive" style="max-width:80px;"></td>';
+							html += '<img src="/nfs/image'+d.ct_image+'" class="img-responsive" style="max-width:80px;"></td>';
 						}
 						html += '<td><strong class="set_text" data-field="ct_title">'+(d.ct_title != '' ? d.ct_title : f.default_title)+'</strong><br>';
 						html += '<small style="color:#999;" class="set_text" data-field="ct_subtit">'+(d.ct_subtit != '' ? d.ct_subtit : f.default_subtit)+'</small>';
