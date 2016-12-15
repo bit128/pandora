@@ -6,14 +6,12 @@
 * @version 16.08.26
 */
 namespace app\controllers;
-use core\Controller;
-use core\Request;
-use core\Response;
+use core\Autumn;
 use core\Criteria;
 use library\RedisCache;
 use app\models\M_cart;
 
-class CartController extends Controller
+class CartController extends \core\Controller
 {
 
 	private $m_cart;
@@ -37,16 +35,16 @@ class CartController extends Controller
 	*/
 	public function actionAdd()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
 			$response = new Response;
-			$user_id = Request::inst()->getPost('user_id');
-			$token = Request::inst()->getPost('token');
+			$user_id = Autumn::app()->request->getPost('user_id');
+			$token = Autumn::app()->request->getPost('token');
 			if(RedisCache::model('token')->check($user_id, $token))
 			{
-				$pd_id = Request::inst()->getPost('pd_id');
-				$st_id = Request::inst()->getPost('st_id');
-				$cr_count = Request::inst()->getPost('cr_count', 1);
+				$pd_id = Autumn::app()->request->getPost('pd_id');
+				$st_id = Autumn::app()->request->getPost('st_id');
+				$cr_count = Autumn::app()->request->getPost('cr_count', 1);
 				//获取商品信息
 				$m_product = new \app\models\M_product;
 				$product = $m_product->get($pd_id);
@@ -66,11 +64,11 @@ class CartController extends Controller
 								$cr_id = $cart->cr_id;
 								$cart->cr_count = $cr_count;
 								$cart->save();
-								$response->setResult($cr_id, Response::RES_SUCCESS);
+								Autumn::app()->response->setResult($cr_id);
 							}
 							else
 							{
-								$response->setError('库存不足', Response::RES_NOHAS);
+								Autumn::app()->response->setResult(\core\Response::RES_NOHAS, '', '库存不足');
 							}
 						}
 						else
@@ -88,34 +86,34 @@ class CartController extends Controller
 									);
 								if($cr_id = $this->m_cart->insert($data))
 								{
-									$response->setResult($cr_id, Response::RES_SUCCESS);
+									Autumn::app()->response->setResult($cr_id);
 								}
 								else
 								{
-									$response->setError('添加失败', Response::RES_FAIL);
+									Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 								}
 							}
 							else
 							{
-								$response->setError('库存不足', Response::RES_NOHAS);
+								Autumn::app()->response->setResult(\core\Response::RES_NOHAS, '', '库存不足');
 							}
 						}
 					}
 					else
 					{
-						$response->setError('库存不存在', Response::RES_NOHAS);
+						Autumn::app()->response->setResult(\core\Response::RES_NOHAS, '', '库存不存在');
 					}
 				}
 				else
 				{
-					$response->setError('商品不存在', Response::RES_NOHAS);
+					Autumn::app()->response->setResult(\core\Response::RES_NOHAS, '', '商品不存在');
 				}
 			}
 			else
 			{
-				$response->setError('令牌无效', Response::RES_TOKENF);
+				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -127,23 +125,22 @@ class CartController extends Controller
 	*/
 	public function actionGetList()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
-			$user_id = Request::inst()->getPost('user_id');
-			$token = Request::inst()->getPost('token');
+			$user_id = Autumn::app()->request->getPost('user_id');
+			$token = Autumn::app()->request->getPost('token');
 			if(RedisCache::model('token')->check($user_id, $token))
 			{
-				$offset = Request::inst()->getPost('offset', 0);
-				$limit = Request::inst()->getPost('limit', 99);
+				$offset = Autumn::app()->request->getPost('offset', 0);
+				$limit = Autumn::app()->request->getPost('limit', 99);
 				$result = $this->m_cart->getProductList($offset, $limit, $user_id, '');
-				$response->setResult($result, Response::RES_SUCCESS);
+				Autumn::app()->response->setResult($result);
 			}
 			else
 			{
-				$response->setError('令牌无效', Response::RES_TOKENF);
+				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -155,37 +152,36 @@ class CartController extends Controller
 	*/
 	public function actionDelete()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
-			$user_id = Request::inst()->getPost('user_id');
-			$token = Request::inst()->getPost('token');
+			$user_id = Autumn::app()->request->getPost('user_id');
+			$token = Autumn::app()->request->getPost('token');
 			if(RedisCache::model('token')->check($user_id, $token))
 			{
-				$cr_id = Request::inst()->getPost('cr_id');
+				$cr_id = Autumn::app()->request->getPost('cr_id');
 				$cart = $this->m_cart->get($cr_id);
 				if($cart)
 				{
 					if($cart->user_id == $user_id)
 					{
 						$this->m_cart->delete($cr_id);
-						$response->setResult('删除成功', Response::RES_SUCCESS);
+						Autumn::app()->response->setResult(\core\Response::RES_OK);
 					}
 					else
 					{
-						$response->setError('越权操作', Response::RES_REFUSE);
+						Autumn::app()->response->setResult(\core\Response::RES_REFUSE, '', '越权操作');
 					}
 				}
 				else
 				{
-					$response->setError('参数错误', Response::RES_PARAMF);
+					Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
 				}
 			}
 			else
 			{
-				$response->setError('令牌无效', Response::RES_TOKENF);
+				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 }

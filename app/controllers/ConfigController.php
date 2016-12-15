@@ -6,13 +6,11 @@
 * @version 16.08.14
 */
 namespace app\controllers;
-use core\Controller;
-use core\Request;
-use core\Response;
+use core\Autumn;
 use app\models\M_struct;
 use app\models\M_admin;
 
-class ConfigController extends Controller
+class ConfigController extends \core\Controller
 {
 
 	private $m_struct;
@@ -30,20 +28,19 @@ class ConfigController extends Controller
 	*/
 	public function actionAdd()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$name = Request::inst()->getPost('name', '新配置项');
+				$name = Autumn::app()->request->getPost('name', '新配置项');
 				$this->m_struct->addHead($name);
-				$response->setResult('设置成功', Response::RES_SUCCESS);
+				Autumn::app()->response->setResult(\core\Response::RES_OK);
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -55,21 +52,20 @@ class ConfigController extends Controller
 	*/
 	public function actionSetName()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$id = Request::inst()->getPost('id');
-				$name = Request::inst()->getPost('name');
+				$id = Autumn::app()->request->getPost('id');
+				$name = Autumn::app()->request->getPost('name');
 				$this->m_struct->setName($id, $name);
-				$response->setResult('设置成功', Response::RES_SUCCESS);
+				Autumn::app()->response->setResult(\core\Response::RES_OK);
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -81,21 +77,20 @@ class ConfigController extends Controller
 	*/
 	public function actionSetBody()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$id = Request::inst()->getPost('id');
-				$body = Request::inst()->getPost('body');
+				$id = Autumn::app()->request->getPost('id');
+				$body = Autumn::app()->request->getPost('body');
 				$this->m_struct->setBody($id, $body);
-				$response->setResult('设置成功', Response::RES_SUCCESS);
+				Autumn::app()->response->setResult(\core\Response::RES_OK);
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -107,25 +102,25 @@ class ConfigController extends Controller
 	*/
 	public function actionGet()
 	{
-		$id = Request::inst()->getQuery('id');
+		$id = Autumn::app()->request->getQuery('id');
 		$response = new Response;
 		if(strlen($id) == 13)
 		{
 			$body = $this->m_struct->getBody($id);
 			if($body)
 			{
-				$response->setResult($body, Response::RES_SUCCESS);
+				Autumn::app()->response->setResult($body);
 			}
 			else
 			{
-				$response->setError('配置项不存在', Response::RES_NOHAS);
+				Autumn::app()->response->setResult(\core\Response::RES_NOHAS, '', '配置项不存在');
 			}
 		}
 		else
 		{
-			$response->setError('参数错误', Response::RES_PARAMF);
+			Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
 		}
-		$response->json();
+		Autumn::app()->response->json();
 	}
 
 	/**
@@ -136,9 +131,8 @@ class ConfigController extends Controller
 	*/
 	public function actionGetList()
 	{
-		$response = new Response;
-		$response->setResult($this->m_struct->getHeadList());
-		$response->json();
+		Autumn::app()->response->setResult($this->m_struct->getHeadList());
+		Autumn::app()->response->json();
 	}
 
 	/**
@@ -149,24 +143,23 @@ class ConfigController extends Controller
 	*/
 	public function actionDelete()
 	{
-		$id = Request::inst()->getPost('id');
-		$response = new Response;
+		$id = Autumn::app()->request->getPost('id');
 		if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 		{
 			if(strlen($id) == 13)
 			{
 				$body = $this->m_struct->deleteHead($id);
-				$response->setResult('操作成功', Response::RES_SUCCESS);
+				Autumn::app()->response->setResult(\core\Response::RES_OK);
 			}
 			else
 			{
-				$response->setError('参数错误', Response::RES_PARAMF);
+				Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
 			}
-			$response->json();
 		}
 		else
 		{
-			$response->setError('无权操作', Response::RES_REFUSE);
+			Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 		}
+		Autumn::app()->response->json();
 	}
 }

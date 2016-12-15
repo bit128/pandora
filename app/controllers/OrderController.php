@@ -6,14 +6,12 @@
 * @version 16.08.27
 */
 namespace app\controllers;
-use core\Controller;
-use core\Request;
-use core\Response;
+use core\Autumn;
 use core\Criteria;
 use library\RedisCache;
 use app\models\M_order;
 
-class OrderController extends Controller
+class OrderController extends \core\Controller
 {
 
 	private $m_order;
@@ -31,14 +29,13 @@ class OrderController extends Controller
 	*/
 	public function actionAdd()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
-			$user_id = Request::inst()->getPost('user_id');
-			$token = Request::inst()->getPost('token');
+			$user_id = Autumn::app()->request->getPost('user_id');
+			$token = Autumn::app()->request->getPost('token');
 			if(RedisCache::model('token')->check($user_id, $token))
 			{
-				$od_note = Request::inst()->getPost('od_note');
+				$od_note = Autumn::app()->request->getPost('od_note');
 				$m_cart = new \app\models\M_cart;
 				$m_stock = new \app\models\M_stock;
 				//获取收藏夹商品列表
@@ -49,7 +46,7 @@ class OrderController extends Controller
 					$total = 0;
 					$items = array();
 					//开启事务
-					\core\Orm::model($this->m_order->table_name)->getDb()->beginTransaction();
+					Autumn::app()->mysqli->beginTransaction();
 					//库存处理
 					foreach ($carts as $v)
 					{
@@ -62,9 +59,8 @@ class OrderController extends Controller
 						{
 							$falg = false;
 							//回滚库存
-							\core\Orm::model($this->m_order->table_name)->getDb()->rollback();
-
-							$response->setError('库存不足，或者参数错误', Response::RES_FAIL);
+							Autumn::app()->mysqli->rollback();
+							Autumn::app()->response->setResult(\core\Response::RES_FAIL, '', '库存不足或参数错误');
 							break;
 						}
 					}
@@ -72,7 +68,7 @@ class OrderController extends Controller
 					if($falg)
 					{
 						//提交库存事务
-						\core\Orm::model($this->m_order->table_name)->getDb()->commit();
+						Autumn::app()->mysqli->commit();
 
 						$od_id = $this->m_order->newOrderId();
 						$data = array(
@@ -87,25 +83,24 @@ class OrderController extends Controller
 						{
 							//关联订单成员
 							$m_cart->unionOrder($od_id, $items);
-							$response->setResult($od_id, Response::RES_SUCCESS);
+							Autumn::app()->response->setResult($od_id);
 						}
 						else
 						{
-							$falg = false;
-							$response->setError('创建失败', Response::RES_FAIL);
+							Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 						}
 					}
 				}
 				else
 				{
-					$response->setError('购物车中没有商品', Response::RES_NOHAS);
+					Autumn::app()->response->setResult(\core\Response::RES_NOHAS, '', '购物车中没有商品');
 				}
 			}
 			else
 			{
-				$response->setError('令牌无效', Response::RES_TOKENF);
+				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -117,16 +112,15 @@ class OrderController extends Controller
 	*/
 	public function actionGetList()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
-			$user_id = Request::inst()->getPost('user_id');
-			$token = Request::inst()->getPost('token');
+			$user_id = Autumn::app()->request->getPost('user_id');
+			$token = Autumn::app()->request->getPost('token');
 			if(RedisCache::model('token')->check($user_id, $token))
 			{
-				$offset = Request::inst()->getPost('offset');
-				$limit = Request::inst()->getPost('limit');
-				$od_status = Request::inst()->getPost('od_status');
+				$offset = Autumn::app()->request->getPost('offset');
+				$limit = Autumn::app()->request->getPost('limit');
+				$od_status = Autumn::app()->request->getPost('od_status');
 
 				$criteria = new Criteria;
 				$criteria->add('user_id', $user_id);
@@ -139,13 +133,14 @@ class OrderController extends Controller
 					$criteria->add('od_status', M_order::STATUS_CLOSE, '!=');
 				}
 				$criteria->order = 'order_ctime desc';
-				$response->setResult($this->m_order->getList($offset, $limit, $criteria), Response::RES_SUCCESS);
+				$result = $this->m_order->getList($offset, $limit, $criteria);
+				Autumn::app()->response->setResult($result);
 			}
 			else
 			{
-				$response->setError('令牌无效', Response::RES_TOKENF);
+				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 }

@@ -7,10 +7,9 @@
 */
 namespace app\controllers;
 use core\Autumn;
-use core\Controller;
 use core\Criteria;
 
-class HomeController extends Controller
+class HomeController extends \core\Controller
 {
 
 	public function init()

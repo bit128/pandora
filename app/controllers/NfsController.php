@@ -6,18 +6,9 @@
 * @version 16.08.02
 */
 namespace app\controllers;
-use core\Controller;
-use library\NetFile;
 
-class NfsController extends Controller
+class NfsController extends \core\Controller
 {
-
-	private $nfs;
-
-	public function init()
-	{
-		$this->nfs = new NetFile;
-	}
 
 	/**
 	* 上传文件
@@ -27,7 +18,8 @@ class NfsController extends Controller
 	*/
 	public function actionUpload()
 	{
-		$result = $this->nfs->upload(NetFile::POST_NAME);
+		$nfs = new \library\NetFile;
+		$result = $nfs->upload('./app/statics/files/', 'file_name', \library\NetFile::HASH_DATE);
 		echo json_encode($result);
 	}
 
@@ -39,11 +31,9 @@ class NfsController extends Controller
 	*/
 	public function actionImage()
 	{
-		$src = substr(strrchr($_SERVER['REQUEST_URI'], '/'), 1);
-		if($src)
-		{
-			$this->nfs->outputImage($src, NetFile::IMAGE_PATH);
-		}
+		$src = substr($_SERVER['REQUEST_URI'], 10);
+		$out = new \library\ImageOutput;
+		$out->render($src);
 	}
 
 }

@@ -1,18 +1,16 @@
 <?php
 /**
-* 内容控制器
+* 库存控制器
 * ======
 * @author 洪波
 * @version 16.07.29
 */
 namespace app\controllers;
-use core\Controller;
-use core\Request;
-use core\Response;
+use core\Autumn;
 use app\models\M_stock;
 use app\models\M_admin;
 
-class StockController extends Controller
+class StockController extends \core\Controller
 {
 
 	private $m_stock;
@@ -30,12 +28,11 @@ class StockController extends Controller
 	*/
 	public function actionAdd()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_PRODUCT))
 			{
-				$pd_id = Request::inst()->getPost('pd_id');
+				$pd_id = Autumn::app()->request->getPost('pd_id');
 				if(strlen($pd_id) == 13)
 				{
 					$data = array(
@@ -46,23 +43,23 @@ class StockController extends Controller
 						);
 					if($st_id = $this->m_stock->insert($data))
 					{
-						$response->setResult($st_id, Response::RES_SUCCESS);
+						Autumn::app()->response->setResult($st_id);
 					}
 					else
 					{
-						$response->setError('创建失败', Response::RES_FAIL);
+						Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 					}
 				}
 				else
 				{
-					$response->setError('参数错误', Response::RES_PARAMF);
+					Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -74,31 +71,30 @@ class StockController extends Controller
 	*/
 	public function actionSetInfo()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_PRODUCT))
 			{
-				$st_id = Request::inst()->getPost('st_id');
-				$field = Request::inst()->getPost('field');
-				$value = Request::inst()->getPost('value');
+				$st_id = Autumn::app()->request->getPost('st_id');
+				$field = Autumn::app()->request->getPost('field');
+				$value = Autumn::app()->request->getPost('value');
 				$data = array(
 					$field => $value
 					);
 				if($this->m_stock->update($st_id, $data))
 				{
-					$response->setResult('设置成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->setError('没有变更', Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 

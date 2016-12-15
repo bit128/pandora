@@ -7,16 +7,13 @@
 */
 namespace app\controllers;
 use core\Autumn;
-use core\Controller;
-use core\Request;
-use core\Response;
 use core\Criteria;
 use library\Psdk;
 use app\models\M_content;
 use app\models\M_content_note;
 use app\models\M_admin;
 
-class ContentController extends Controller
+class ContentController extends \core\Controller
 {
 
 	private $m_content;
@@ -34,14 +31,13 @@ class ContentController extends Controller
 	*/
 	public function actionAdd()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
 				$time = time();
 				$data = array(
-					'cn_id' => Request::inst()->getPost('cn_id'),
+					'cn_id' => Autumn::app()->request->getPost('cn_id'),
 					'ct_title' => '新建栏目内容',
 					'ct_ctime' => $time,
 					'ct_utime' => $time,
@@ -50,18 +46,18 @@ class ContentController extends Controller
 				$ct_id = $this->m_content->insert($data);
 				if(strlen($ct_id) == 13)
 				{
-					$response->setResult($ct_id, Response::RES_SUCCESS);
+					Autumn::app()->response->setResult($ct_id);
 				}
 				else
 				{
-					$response->setError('创建失败', Response::RES_FAIL);
+					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -73,51 +69,55 @@ class ContentController extends Controller
 	*/
 	public function actionUpdate()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$ct_id = Request::inst()->getPost('ct_id');
-				$field = Request::inst()->getPost('field');
-				$value = Request::inst()->getPost('value');
+				$ct_id = Autumn::app()->request->getPost('ct_id');
+				$field = Autumn::app()->request->getPost('field');
+				$value = Autumn::app()->request->getPost('value');
 				$data = array(
 					$field => $value,
 					'ct_utime' => time()
 					);
 				if($this->m_content->update($ct_id, $data))
 				{
-					$response->setResult('更新成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->setError('没有变更', Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
+	/**
+	* 获取内容详情
+	* ======
+	* @author 洪波
+	* @version 16.12.15
+	*/
 	public function actionGet()
 	{
-		$ct_id = Request::inst()->getParam('ct_id');
+		$ct_id = Autumn::app()->request->getParam('ct_id');
 		if(strlen($ct_id) == 13)
 		{
-			$response = new Response;
 			$result = $this->m_content->get($ct_id);
 			if($result)
 			{
-				$response->setResult($result, Response::RES_SUCCESS);
+				Autumn::app()->response->setResult($result);
 			}
 			else
 			{
-				$response->setError('内容不存在', Response::RES_NOHAS);
+				Autumn::app()->response->setResult(\core\Response::RES_NOHAS);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -131,24 +131,23 @@ class ContentController extends Controller
 	{
 		if(Psdk::checkSign())
 		{
-			$response = new Response;
-			$offset = Request::inst()->getPost('offset', 0);
-			$limit = Request::inst()->getPost('limit', 99);
-			$cn_id = Request::inst()->getPost('cn_id');
-			$keyword = Request::inst()->getPost('keyword');
+			$offset = Autumn::app()->request->getPost('offset', 0);
+			$limit = Autumn::app()->request->getPost('limit', 99);
+			$cn_id = Autumn::app()->request->getPost('cn_id');
+			$keyword = Autumn::app()->request->getPost('keyword');
 
 			$criteria = new Criteria;
-			$criteria->addCondition('ct_status > 0');
+			$criteria->add('ct_status', '0', '>');
 			if(strlen($cn_id) == 13)
 			{
 				$m_channel = new \app\models\M_channel;
 				$cn_ids = $m_channel->getChildIds($cn_id);
-				$criteria->addCondition("cn_id in ('".implode("','", $cn_ids)."')");
+				$criteria->addIn('cn_id', $cn_ids);
 			}
 			$criteria->order = 'ct_utime desc';
 			$result = $this->m_content->getList($offset, $limit, $criteria);
-			$response->setResult($result, Response::RES_SUCCESS);
-			$response->json();
+			Autumn::app()->response->setResult($result);
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -160,18 +159,17 @@ class ContentController extends Controller
 	*/
 	public function actionGetList()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$offset = Request::inst()->getPost('offset');
-			$limit = Request::inst()->getPost('limit');
-			$cn_id = Request::inst()->getPost('cn_id');
-			$sort = (int) Request::inst()->getPost('sort', 0);
-			$ct_status = (int) Request::inst()->getPost('ct_status', -1);
+			$offset = Autumn::app()->request->getPost('offset');
+			$limit = Autumn::app()->request->getPost('limit');
+			$cn_id = Autumn::app()->request->getPost('cn_id');
+			$sort = (int) Autumn::app()->request->getPost('sort', 0);
+			$ct_status = (int) Autumn::app()->request->getPost('ct_status', -1);
 
-			$response = new Response;
 			$result = $this->m_content->getContentList($offset, $limit, $cn_id, $sort, $ct_status);
-			$response->setResult($result, Response::RES_SUCCESS);
-			$response->json();
+			Autumn::app()->response->setResult($result);
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -183,26 +181,25 @@ class ContentController extends Controller
 	*/
 	public function actionDelete()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$ct_id = Request::inst()->getPost('ct_id');
+				$ct_id = Autumn::app()->request->getPost('ct_id');
 				if($this->m_content->delete($ct_id))
 				{
-					$response->setResult('删除成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->setError('删除失败', Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -226,17 +223,16 @@ class ContentController extends Controller
 				'ct_id' => Autumn::app()->request->getPost('ct_id'),
 				'user_id' => Autumn::app()->request->getPost('user_id'),
 			);
-			$response = new Response;
 			$m_note = new M_content_note;
 			if($m_note->insert($data))
 			{
-				$response->setResult('评论提交成功', Response::RES_SUCCESS);
+				Autumn::app()->response->setResult(\core\Response::RES_OK);
 			}
 			else
 			{
-				$response->setError('操作失败', Response::RES_FAIL);
+				Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -266,9 +262,8 @@ class ContentController extends Controller
 
 			$m_note = new M_content_note;
 			$result = $m_note->getList($offset, $limit, $criteria);
-			$response = new Response;
-			$response->setResult($result, Response::RES_SUCCESS);
-			$response->json();
+			Autumn::app()->response->setResult($result);
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -280,30 +275,29 @@ class ContentController extends Controller
 	*/
 	public function actionSetNoteStatus()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$tn_id = Request::inst()->getPost('tn_id');
-				$tn_status = Request::inst()->getPost('tn_status');
+				$tn_id = Autumn::app()->request->getPost('tn_id');
+				$tn_status = Autumn::app()->request->getPost('tn_status');
 				$m_note = new M_content_note;
 				if($m_note->update($tn_id, array(
 					'tn_status' => $tn_status
 				)))
 				{
-					$response->setResult('删除成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->setError('删除失败', Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -315,27 +309,26 @@ class ContentController extends Controller
 	*/
 	public function actionDeleteNote()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$tn_id = Request::inst()->getPost('tn_id');
+				$tn_id = Autumn::app()->request->getPost('tn_id');
 				$m_note = new M_content_note;
 				if($m_note->delete($tn_id))
 				{
-					$response->setResult('删除成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->setError('删除失败', Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 }

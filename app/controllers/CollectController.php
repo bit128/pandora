@@ -6,14 +6,12 @@
 * @version 16.08.18
 */
 namespace app\controllers;
-use core\Controller;
-use core\Request;
-use core\Response;
+use core\Autumn;
 use core\Criteria;
 use library\RedisCache;
 use app\models\M_collect;
 
-class CollectController extends Controller
+class CollectController extends \core\Controller
 {
 
 	private $m_collect;
@@ -31,14 +29,13 @@ class CollectController extends Controller
 	*/
 	public function actionAdd()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
-			$user_id = Request::inst()->getPost('user_id');
-			$token = Request::inst()->getPost('token');
+			$user_id = Autumn::app()->request->getPost('user_id');
+			$token = Autumn::app()->request->getPost('token');
 			if(RedisCache::model('token')->check($user_id, $token))
 			{
-				$pd_id = Request::inst()->getPost('pd_id');
+				$pd_id = Autumn::app()->request->getPost('pd_id');
 				$criteria = new Criteria;
 				$criteria->add('pd_id', $pd_id);
 				//判断商品是否存在
@@ -48,7 +45,7 @@ class CollectController extends Controller
 					$criteria->add('user_id', $user_id);
 					if($this->m_collect->count($criteria))
 					{
-						$response->setError('商品已经收藏过了', Response::RES_NOCHAN);
+						Autumn::app()->response->setResult(\core\Response::RES_NOCHAN, '', '商品已经收藏过了');
 					}
 					else
 					{
@@ -59,24 +56,24 @@ class CollectController extends Controller
 							);
 						if($cl_id = $this->m_collect->insert($data))
 						{
-							$response->setResult($cl_id, Response::RES_SUCCESS);
+							Autumn::app()->response->setResult($cl_id);
 						}
 						else
 						{
-							$response->setError('创建失败', Response::RES_FAIL);
+							Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 						}
 					}
 				}
 				else
 				{
-					$response->setError('商品不存在', Response::RES_NOHAS);
+					Autumn::app()->response->setResult(Response::RES_NOHAS, '', '商品不存在');
 				}
 			}
 			else
 			{
-				$response->setError('令牌无效', Response::RES_TOKENF);
+				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -88,23 +85,22 @@ class CollectController extends Controller
 	*/
 	public function actionGetList()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
-			$user_id = Request::inst()->getPost('user_id');
-			$token = Request::inst()->getPost('token');
+			$user_id = Autumn::app()->request->getPost('user_id');
+			$token = Autumn::app()->request->getPost('token');
 			if(RedisCache::model('token')->check($user_id, $token))
 			{
-				$offset = Request::inst()->getPost('offset', 0);
-				$limit = Request::inst()->getPost('limit', 99);
+				$offset = Autumn::app()->request->getPost('offset', 0);
+				$limit = Autumn::app()->request->getPost('limit', 99);
 				$result = $this->m_collect->getProductList($offset, $limit, $user_id);
-				$response->setResult($result, Response::RES_SUCCESS);
+				Autumn::app()->response->setResult($result);
 			}
 			else
 			{
-				$response->setError('令牌无效', Response::RES_TOKENF);
+				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -116,37 +112,36 @@ class CollectController extends Controller
 	*/
 	public function actionDelete()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
-			$user_id = Request::inst()->getPost('user_id');
-			$token = Request::inst()->getPost('token');
+			$user_id = Autumn::app()->request->getPost('user_id');
+			$token = Autumn::app()->request->getPost('token');
 			if(RedisCache::model('token')->check($user_id, $token))
 			{
-				$cl_id = Request::inst()->getPost('cl_id');
+				$cl_id = Autumn::app()->request->getPost('cl_id');
 				$collect = $this->m_collect->get($cl_id);
 				if($collect)
 				{
 					if($collect->user_id == $user_id)
 					{
 						$this->m_collect->delete($cl_id);
-						$response->setResult('删除成功', Response::RES_SUCCESS);
+						Autumn::app()->response->setResult(\core\Response::RES_OK);
 					}
 					else
 					{
-						$response->setError('越权操作', Response::RES_REFUSE);
+						Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 					}
 				}
 				else
 				{
-					$response->setError('参数错误', Response::RES_PARAMF);
+					Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
 				}
 			}
 			else
 			{
-				$response->setError('令牌无效', Response::RES_TOKENF);
+				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 }

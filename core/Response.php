@@ -10,7 +10,7 @@ namespace core;
 class Response
 {
 	const RES_UNKNOW	= 0;	//响应码 - 未知
-	const RES_SUCCESS	= 1;	//响应码 - 成功
+	const RES_OK		= 1;	//响应码 - 成功
 	const RES_FAIL		= 2;	//响应码 - 失败
 	const RES_PARAMF	= 3; 	//响应码 - 参数错误
 	const RES_TOKENF	= 4;	//响应码 - 令牌错误
@@ -23,6 +23,19 @@ class Response
 	protected $code;
 	protected $result;
 	protected $error;
+
+	public $code_discription = array(
+		self::RES_UNKNOW 	=> '未知状态',
+		self::RES_OK 		=> '操作成功',
+		self::RES_FAIL 		=> '操作失败',
+		self::RES_PARAMF 	=> '参数错误',
+		self::RES_TOKENF 	=> '令牌错误',
+		self::RES_NOHAS		=> '不存在',
+		self::RES_REFUSE	=> '拒绝服务',
+		self::RES_NAMEDF	=> '重名',
+		self::RES_PWDF		=> '密码错误',
+		self::RES_NOCHAN	=> '未变更'
+		);
 
 	/**
 	* 构造方法，刷新响应结果集
@@ -59,51 +72,47 @@ class Response
 	}
 
 	/**
-	* 设置响应码
-	* ======
-	* @param $code 	响应码
-	* ======
-	* @author 洪波
-	* @version 16.07.13
-	*/
-	public function setCode($code)
-	{
-		$this->code = $code;
-	}
-
-	/**
 	* 设置结果集
 	* ======
+	* @param $code 		响应码
 	* @param $result 	结果集
-	* @param $code 		响应码
+	* @param $error 	保存集
 	* ======
 	* @author 洪波
 	* @version 16.07.13
 	*/
-	public function setResult($result, $code = 0)
+	public function setResult($code = 0, $result = '', $error = '')
 	{
-		$this->result = $result;
-		if($code !== 0)
+		if(in_array($code, array_keys($this->code_discription), true))
 		{
 			$this->code = $code;
+			if($this->code == self::RES_OK)
+			{
+				if($result != '')
+				{
+					$this->result = $result;
+				}
+				else
+				{
+					$this->result = $this->code_discription[self::RES_OK];
+				}
+			}
+			else
+			{
+				if($error != '')
+				{
+					$this->error = $error;
+				}
+				else
+				{
+					$this->error = $this->code_discription[$code];
+				}
+			}
 		}
-	}
-
-	/**
-	* 设置报错信息
-	* ======
-	* @param error 	报错信息
-	* @param $code 		响应码
-	* ======
-	* @author 洪波
-	* @version 16.07.13
-	*/
-	public function setError($error, $code = 0)
-	{
-		$this->error = $error;
-		if($code !== 0)
+		else
 		{
-			$this->code = $code;
+			$this->code = self::RES_OK;
+			$this->result = $code;
 		}
 	}
 

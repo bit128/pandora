@@ -6,12 +6,10 @@
 * @version 16.08.27
 */
 namespace app\controllers;
-use core\Controller;
-use core\Request;
-use core\Response;
+use core\Autumn;
 use app\models\M_order;
 
-class PayController extends Controller
+class PayController extends \core\Controller
 {
 
 	private $m_order;
@@ -29,8 +27,7 @@ class PayController extends Controller
 	*/
 	public function actionAlipay()
 	{
-		$od_id = Request::inst()->getParam('id');
-		$response = new Response;
+		$od_id = Autumn::app()->request->getParam('id');
 		if(strlen($od_id) == 16)
 		{
 			$order = $this->m_order->get($od_id);
@@ -45,28 +42,28 @@ class PayController extends Controller
 						);
 					if($this->m_order->update($od_id, $data))
 					{
-						$response->setResult('操作成功', Response::RES_SUCCESS);
+						Autumn::app()->response->setResult(\core\Response::RES_OK);
 					}
 					else
 					{
-						$response->setResult('操作失败', Response::RES_FAIL);
+						Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 					}
 				}
 				else
 				{
-					$response->setError('状态错误', Response::RES_REFUSE);
+					Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 				}
 			}
 			else
 			{
-				$response->setError('订单不存在', Response::RES_NOHAS);
+				Autumn::app()->response->setResult(\core\Response::RES_NOHAS);
 			}
 		}
 		else
 		{
-			$response->setError('参数错误', Response::RES_PARAMF);
+			Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
 		}
-		$response->json();
+		Autumn::app()->response->json();
 	}
 
 	/**

@@ -16,7 +16,7 @@
 		?>
 		<div class="col-md-2" data-val="<?php echo $v->al_id; ?>">
 			<div class="thumbnail">
-				<img src="/nfs/image/<?php echo $v->al_image; ?>">
+				<img src="/nfs/image<?php echo $v->al_image; ?>">
 				<div style="text-align:center;padding:10px 0 10px;">
 					<strong><?php echo $v->al_image; ?></strong>
 				</div>
@@ -45,7 +45,7 @@
 		<?php } else { ?>
 		<div class="col-md-2">
 			<div class="thumbnail">
-				<img src="/app/statics/files/images/default.jpg">
+				<img src="/app/statics/files/default.jpg">
 				<div style="text-align:center;padding:10px 0 10px;">
 					<strong><!--添加图片--></strong>
 				</div>
@@ -72,11 +72,10 @@ $(document).ready(function(){
 			fileElementId:'fileImage',
 			dataType: 'json',
 			success: function (data, status){
-				var path = data.src;
-				if(path != ''){
+				if(data.uri != ''){
 					$.post(
 						'/album/add',
-						{by_id: by_id, al_type: al_type, al_image: path},
+						{by_id: by_id, al_type: al_type, al_image: data.uri},
 						function(data){
 							if(data.code == 1)
 								location.reload();
@@ -107,7 +106,7 @@ $(document).ready(function(){
 	});
 	//设置排序
 	$('.set_sort').on('click', function(){
-		var al_id = $(this).parents('.col-md-3').attr('data-val');
+		var al_id = $(this).parents('.col-md-2').attr('data-val');
 		var type = $(this).attr('data-val');
 		$.post(
 			'/album/setSort',

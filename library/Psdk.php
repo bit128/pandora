@@ -110,10 +110,8 @@ class Psdk
 			curl_setopt($curl, CURLOPT_POSTFIELDS, $this->params);
 		}
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-		//curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-		//url_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
 		$result = curl_exec($curl);
-		$response = curl_getinfo($curl);
+		//$response = curl_getinfo($curl);
 		curl_close($curl);
 
 		return $result;

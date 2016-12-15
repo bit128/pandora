@@ -47,7 +47,7 @@
 					<a href="/home/album/id/<?php echo $v->pd_id; ?>/t/product" target="_blank">
 					<?php
 					if ($v->pd_image != '') {
-						echo '<img src="/nfs/image/',$v->pd_image,'" style="max-width:80px;">';
+						echo '<img src="/nfs/image',$v->pd_image,'" style="max-width:80px;">';
 					} else {
 						echo '<img src="/app/statics/files/images/default.jpg" style="max-width:80px;">';
 					}

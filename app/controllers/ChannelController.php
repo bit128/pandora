@@ -6,15 +6,13 @@
 * @version 16.07.29
 */
 namespace app\controllers;
-use core\Controller;
-use core\Request;
-use core\Response;
+use core\Autumn;
 use core\Criteria;
 use library\Psdk;
 use app\models\M_channel;
 use app\models\M_admin;
 
-class ChannelController extends Controller
+class ChannelController extends \core\Controller
 {
 
 	private $m_channel;
@@ -32,7 +30,7 @@ class ChannelController extends Controller
 	*/
 	public function actionGetChannelTree()
 	{
-		$id = Request::inst()->getParam('id', '0');
+		$id = Autumn::app()->request->getParam('id', '0');
  		echo json_encode($this->m_channel->getTreeList($id));
 	}
 
@@ -44,27 +42,26 @@ class ChannelController extends Controller
 	*/
 	public function actionAdd()
 	{
-		if(Request::inst()->isPostrequest())
+		if(Autumn::app()->request->isPostrequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$cn_fid = Request::inst()->getPost('cn_fid');
-				$cn_name = Request::inst()->getPost('cn_name');
+				$cn_fid = Autumn::app()->request->getPost('cn_fid');
+				$cn_name = Autumn::app()->request->getPost('cn_name');
 				if(strlen($cn_id = $this->m_channel->add($cn_fid, $cn_name)) === 13)
 				{
-					$response->setResult($cn_id, Response::RES_SUCCESS);
+					Autumn::app()->response->setResult($cn_id);
 				}
 				else
 				{
-					$response->setError('创建失败', Response::RES_FAIL);
+					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -76,19 +73,18 @@ class ChannelController extends Controller
 	*/
 	public function actionGet()
 	{
-		$cn_id = Request::inst()->getParam('cn_id', -1);
+		$cn_id = Autumn::app()->request->getParam('cn_id', -1);
 		if($cn_id != -1)
 		{
-			$response = new Response;
 			if($channel = $this->m_channel->get($cn_id))
 			{
-				$response->setResult($channel, Response::RES_SUCCESS);
+				Autumn::app()->response->setResult(\core\Response::RES_OK);
 			}
 			else
 			{
-				$response->setError('栏目不存在', Response::RES_NOHAS);
+				Autumn::app()->response->setResult(\core\Response::RES_NOHAS, '', '栏目不存在');
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -102,21 +98,20 @@ class ChannelController extends Controller
 	{
 		if(Psdk::checkSign())
 		{
-			$response = new Response;
-			$offset = Request::inst()->getPost('offset', 0);
-			$limit = Request::inst()->getPost('limit', 99);
-			$cn_id = Request::inst()->getPost('cn_id');
+			$offset = Autumn::app()->request->getPost('offset', 0);
+			$limit = Autumn::app()->request->getPost('limit', 99);
+			$cn_id = Autumn::app()->request->getPost('cn_id');
 			if(strlen($cn_id) == 13)
 			{
 				$criteria = new Criteria;
 				$criteria->add('cn_fid', $cn_id);
 				$criteria->order = 'cn_sort asc';
 				$result = $this->m_channel->getList($offset, $limit, $criteria);
-				$response->setResult($result, Response::RES_SUCCESS);
+				Autumn::app()->response->setResult($result);
 			}
 			else
 			{
-				$response->setResult('参数错误', Response::RES_PARAMF);
+				Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
 			}
 		}
 	}
@@ -129,31 +124,30 @@ class ChannelController extends Controller
 	*/
 	public function actionUpdate()
 	{
-		if(Request::inst()->isPostrequest())
+		if(Autumn::app()->request->isPostrequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$cn_id = Request::inst()->getPost('cn_id');
+				$cn_id = Autumn::app()->request->getPost('cn_id');
 				$data = array(
-					'cn_nick' => Request::inst()->getPost('cn_nick'),
-					'cn_url' => Request::inst()->getPost('cn_url'),
-					//'cn_status' => Request::inst()->getPost('cn_status', 2)
+					'cn_nick' => Autumn::app()->request->getPost('cn_nick'),
+					'cn_url' => Autumn::app()->request->getPost('cn_url'),
+					//'cn_status' => Autumn::app()->request->getPost('cn_status', 2)
 					);
 				if($this->m_channel->update($cn_id, $data))
 				{
-					$response->setResult('更新成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->setError('栏目没有更新', Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -165,29 +159,28 @@ class ChannelController extends Controller
 	*/
 	public function actionRename()
 	{
-		if(Request::inst()->isPostrequest())
+		if(Autumn::app()->request->isPostrequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$cn_id = Request::inst()->getPost('cn_id');
+				$cn_id = Autumn::app()->request->getPost('cn_id');
 				$data = array(
-					'cn_name' => Request::inst()->getPost('cn_name')
+					'cn_name' => Autumn::app()->request->getPost('cn_name')
 					);
 				if($this->m_channel->update($cn_id, $data))
 				{
-					$response->setResult('操作成功', RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_SUCCESS);
 				}
 				else
 				{
-					$response->setError('栏目没有更新', Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -199,24 +192,23 @@ class ChannelController extends Controller
 	*/
 	public function actionSetSort()
 	{
-		if(Request::inst()->isPostrequest())
+		if(Autumn::app()->request->isPostrequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$cn_id = Request::inst()->getPost('cn_id');
-				$cn_fid = Request::inst()->getPost('cn_fid');
-				$by_id = Request::inst()->getPost('by_id');
-				$type = Request::inst()->getPost('type');
+				$cn_id = Autumn::app()->request->getPost('cn_id');
+				$cn_fid = Autumn::app()->request->getPost('cn_fid');
+				$by_id = Autumn::app()->request->getPost('by_id');
+				$type = Autumn::app()->request->getPost('type');
 
 				$this->m_channel->setSort($cn_id, $cn_fid, $by_id, $type);
-				$response->setResult('操作成功', Response::RES_SUCCESS);
+				Autumn::app()->response->setResult(\core\Response::RES_OK);
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -228,12 +220,11 @@ class ChannelController extends Controller
 	*/
 	public function actionDelete()
 	{
-		if(Request::inst()->isPostrequest())
+		if(Autumn::app()->request->isPostrequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$cn_id = Request::inst()->getPost('cn_id');
+				$cn_id = Autumn::app()->request->getPost('cn_id');
 				//判断有没有子栏目
 				if(! $this->m_channel->isParent($cn_id))
 				{
@@ -243,28 +234,28 @@ class ChannelController extends Controller
 					{
 						if($this->m_channel->delete($cn_id))
 						{
-							$response->setResult('删除成功', Response::RES_SUCCESS);
+							Autumn::app()->response->setResult(\core\Response::RES_OK);
 						}
 						else
 						{
-							$response->setError('删除失败', Response::RES_FAIL);
+							Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 						}
 					}
 					else
 					{
-						$response->setError('栏目下有内容，请先删除内容', Response::RES_FAIL);
+						Autumn::app()->response->setResult(\core\Response::RES_FAIL, '', '栏目下有内容，请先删除内容');
 					}
 				}
 				else
 				{
-					$response->setError('存在子栏目，请先删除子栏目', Response::RES_FAIL);
+					Autumn::app()->response->setResult(\core\Response::RES_FAIL, '', '存在子栏目，请先删除子栏目');
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult('无权操作', Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 }

@@ -40,9 +40,9 @@
 					<a href="javascript:;" class="chiose_img">
 					<?php
 					if ($v->st_image != '') {
-						echo '<img src="/nfs/image/',$v->st_image,'" style="max-width:80px;">';
+						echo '<img src="/nfs/image',$v->st_image,'" style="max-width:80px;">';
 					} else {
-						echo '<img src="/app/statics/files/images/default.jpg" style="max-width:80px;">';
+						echo '<img src="/app/statics/files/default.jpg" style="max-width:80px;">';
 					}
 					?>
 					</a>
@@ -212,7 +212,7 @@ $(document).ready(function(){
 				if(data.code == 1) {
 					var html = '<div class="row">';
 					$.each(data.result.result, function(i, d){
-						html += '<div class="col-md-3 se_img" data-val="'+d.al_image+'"><img src="/nfs/image/'
+						html += '<div class="col-md-3 se_img" data-val="'+d.al_image+'"><img src="/nfs/image'
 							+d.al_image+'" class="img-responsive img-thumbnail"></div>';
 					});
 					if(html != '')

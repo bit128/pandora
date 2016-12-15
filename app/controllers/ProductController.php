@@ -6,15 +6,13 @@
 * @version 16.08.04
 */
 namespace app\controllers;
-use core\Controller;
-use core\Request;
-use core\Response;
+use core\Autumn;
 use core\Criteria;
 use library\Psdk;
 use app\models\M_product;
 use app\models\M_admin;
 
-class ProductController extends Controller
+class ProductController extends \core\Controller
 {
 
 	private $m_product;
@@ -32,13 +30,12 @@ class ProductController extends Controller
 	*/
 	public function actionAdd()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_PRODUCT))
 			{
 				$data = array(
-					'pd_name' => Request::inst()->getPost('pd_name', '新上商品'),
+					'pd_name' => Autumn::app()->request->getPost('pd_name', '新上商品'),
 					'pd_time' => time(),
 					'pd_status' => M_product::STATUS_HIDE
 					);
@@ -47,18 +44,18 @@ class ProductController extends Controller
 					//生成产品详情（扩展内容）
 					$m_content = new \app\models\M_content;
 					$m_content->addExtra($pd_id);
-					$response->setResult($pd_id, Response::RES_SUCCESS);
+					Autumn::app()->response->setResult($pd_id);
 				}
 				else
 				{
-					$response->setError('创建失败', Response::RES_FAIL);
+					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -70,12 +67,11 @@ class ProductController extends Controller
 	*/
 	public function actionSearchList()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
-			$offset = Request::inst()->getPost('offset');
-			$limit = Request::inst()->getPost('limit');
-			$keyword = urldecode(Request::inst()->getPost('keyword'));
+			$offset = Autumn::app()->request->getPost('offset');
+			$limit = Autumn::app()->request->getPost('limit');
+			$keyword = urldecode(Autumn::app()->request->getPost('keyword'));
 			//关键词分析
 			$m_dictionary = new \app\models\M_dictionary;
 			$kr = explode(' ', trim($keyword));
@@ -89,12 +85,13 @@ class ProductController extends Controller
 				{
 					$pd_ids[] = '';
 				}
-				$criteria->addCondition("pd_id in ('".implode("','", $pd_ids)."')");
+				$criteria->addIn('pd_id', $pd_ids);
 			}
 			$criteria->order = 'pd_sort asc';
 			
-			$response->setResult($this->m_product->getList($offset, $limit, $criteria), Response::RES_SUCCESS);
-			$response->json();
+			$result = $this->m_product->getList($offset, $limit, $criteria);
+			Autumn::app()->response->setResult($result);
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -106,8 +103,7 @@ class ProductController extends Controller
 	*/
 	public function actionGetDetail()
 	{
-		$response = new Response;
-		$pd_id = Request::inst()->getParam('id');
+		$pd_id = Autumn::app()->request->getParam('id');
 		if(strlen($pd_id) == 13)
 		{
 			$product = $this->m_product->get($pd_id);
@@ -124,18 +120,18 @@ class ProductController extends Controller
 					'detail' => $detail->ct_detail,
 					'stock' => $m_stock->getStock($pd_id)
 					);
-				$response->setResult($result, Response::RES_SUCCESS);
+				Autumn::app()->response->setResult($result);
 			}
 			else
 			{
-				$response->setError('商品不存在', Response::RES_NOHAS);
+				Autumn::app()->response->setResult(\core\Response::RES_NOHAS, '', '商品不存在');
 			}
 		}
 		else
 		{
-			$response->setError('参数错误', Response::RES_PARAMF);
+			Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
 		}
-		$response->json();
+		Autumn::app()->response->json();
 	}
 
 	/**
@@ -146,31 +142,30 @@ class ProductController extends Controller
 	*/
 	public function actionSetInfo()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_PRODUCT))
 			{
-				$pd_id = Request::inst()->getPost('pd_id');
-				$field = Request::inst()->getPost('field');
-				$value = Request::inst()->getPost('value');
+				$pd_id = Autumn::app()->request->getPost('pd_id');
+				$field = Autumn::app()->request->getPost('field');
+				$value = Autumn::app()->request->getPost('value');
 				$data = array(
 					$field => $value
 					);
 				if($this->m_product->update($pd_id, $data))
 				{
-					$response->setResult('设置成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->setError('没有变更', Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -182,12 +177,11 @@ class ProductController extends Controller
 	*/
 	public function actionDelete()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_PRODUCT))
 			{
-				$pd_id = Request::inst()->getPost('pd_id');
+				$pd_id = Autumn::app()->request->getPost('pd_id');
 				if($this->m_product->delete($pd_id))
 				{
 					//删除扩展内容
@@ -203,18 +197,18 @@ class ProductController extends Controller
 					$m_index = new \app\models\M_index;
 					$m_index->deleteIndex($pd_id);
 
-					$response->setResult('删除成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->setError('删除变更', Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 }

@@ -6,16 +6,13 @@
 * @version 16.07.29
 */
 namespace app\controllers;
-use core\Controller;
-use core\View;
-use core\Request;
-use core\Response;
+use core\Autumn;
 use core\Criteria;
 use app\models\M_dictionary;
 use app\models\M_index;
 use app\models\M_admin;
 
-class DictionaryController extends Controller
+class DictionaryController extends \core\Controller
 {
 
 	private $m_dictionary;
@@ -33,30 +30,29 @@ class DictionaryController extends Controller
 	*/
 	public function actionAdd()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$dc_keyword = Request::inst()->getPost('dc_keyword');
-				$dc_type = (int) Request::inst()->getPost('dc_type', M_dictionary::TYPE_NORMAL);
+				$dc_keyword = Autumn::app()->request->getPost('dc_keyword');
+				$dc_type = (int) Autumn::app()->request->getPost('dc_type', M_dictionary::TYPE_NORMAL);
 				if($dc_keyword != '' && ! $this->m_dictionary->getId($dc_keyword))
 				{
 					if($this->m_dictionary->add($dc_keyword, $dc_type))
 					{
-						$response->setResult('创建成功', Response::RES_SUCCESS);
+						Autumn::app()->response->setResult(\core\Response::RES_OK);
 					}
 					else
 					{
-						$response->serError('创建失败', Response::RES_FAIL);
+						Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 					}
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -68,15 +64,15 @@ class DictionaryController extends Controller
 	*/
 	public function actionMatchKeywordList()
 	{
-		$keyword = urldecode(Request::inst()->getParam('keyword'));
+		$keyword = urldecode(Autumn::app()->request->getParam('keyword'));
 		if($keyword != '')
 		{
-			$response = new Response;
 			$criteria = new Criteria;
 			$criteria->addCondition("dc_keyword like '%{$keyword}%'");
 			$criteria->order = 'dc_count desc';
-			$response->setResult($this->m_dictionary->getList(0, 10, $criteria), Response::RES_SUCCESS);
-			$response->json();
+			$result = $this->m_dictionary->getList(0, 10, $criteria);
+			Autumn::app()->response->setResult($result);
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -88,29 +84,28 @@ class DictionaryController extends Controller
 	*/
 	public function actionDelete()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$dc_id = Request::inst()->getPost('dc_id');
+				$dc_id = Autumn::app()->request->getPost('dc_id');
 				if($this->m_dictionary->delete($dc_id))
 				{
 					//删除索引
 					$m_index = new M_index;
 					$m_index->deleteByDic($dc_id);
-					$response->setResult('删除成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->serError('删除失败', Response::RES_FAIL);
+					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -122,13 +117,12 @@ class DictionaryController extends Controller
 	*/
 	public function actionAddIndex()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$by_id = Request::inst()->getPost('by_id');
-				$keywords = Request::inst()->getPost('keywords');
+				$by_id = Autumn::app()->request->getPost('by_id');
+				$keywords = Autumn::app()->request->getPost('keywords');
 				if(strlen($by_id) == 13)
 				{
 					$m_index = new M_index;
@@ -148,18 +142,18 @@ class DictionaryController extends Controller
 								));
 						}
 					}
-					$response->setResult('操作成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->setError('参数错误', Response::RES_PARAMF);
+					Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
 				}
 			}
 			else
 			{
-				$response->setError('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -171,13 +165,13 @@ class DictionaryController extends Controller
 	*/
 	public function actionGetIndex()
 	{
-		$by_id = Request::inst()->getParam('id');
+		$by_id = Autumn::app()->request->getParam('id');
 		if(strlen($by_id) == 13)
 		{
-			$response = new Response;
 			$m_index = new M_index;
-			$response->setResult($m_index->getIndex($by_id), Response::RES_SUCCESS);
-			$response->json();
+			$result = $m_index->getIndex($by_id);
+			Autumn::app()->response->setResult($result);
+			Autumn::app()->response->json();
 		}
 	}
 

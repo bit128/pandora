@@ -6,14 +6,12 @@
 * @version 16.07.29
 */
 namespace app\controllers;
-use core\Controller;
-use core\Request;
-use core\Response;
+use core\Autumn;
 use core\Criteria;
 use app\models\M_album;
 use app\models\M_admin;
 
-class AlbumController extends Controller
+class AlbumController extends \core\Controller
 {
 
 	private $m_album;
@@ -50,16 +48,15 @@ class AlbumController extends Controller
 	*/
 	public function actionAdd()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$by_id = Request::inst()->getPost('by_id');
+				$by_id = Autumn::app()->request->getPost('by_id');
 				$data = array(
 					'by_id' => $by_id,
-					'al_type' => Request::inst()->getPost('al_type'),
-					'al_image' => Request::inst()->getPost('al_image'),
+					'al_type' => Autumn::app()->request->getPost('al_type'),
+					'al_image' => Autumn::app()->request->getPost('al_image'),
 					'al_sort' => $this->m_album->maxSort($by_id),
 					'al_status' => M_album::STATUS_SHOW
 					);
@@ -68,23 +65,23 @@ class AlbumController extends Controller
 					if($al_id = $this->m_album->insert($data))
 					{
 						$this->updateMainImage($by_id);
-						$response->setResult($al_id, Response::RES_SUCCESS);
+						Autumn::app()->response->setResult($al_id);
 					}
 					else
 					{
-						$response->setError('添加图片失败', Response::RES_FAIL);
+						Autumn::app()->response->setResult(\core\Response::RES_FAIL, '', '添加图片失败');
 					}
 				}
 				else
 				{
-					$response->setError('参数错误', Response::RES_PARAMF);
+					Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
 				}
 			}
 			else
 			{
-				$response->setError('需要内容权限', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE, '', '需要内容权限');
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -96,24 +93,24 @@ class AlbumController extends Controller
 	*/
 	public function actionGetList()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$offset = Request::inst()->getPost('offset', 0);
-				$limit = Request::inst()->getPost('limit', 10);
-				$by_id = Request::inst()->getPost('by_id');
+				$offset = Autumn::app()->request->getPost('offset', 0);
+				$limit = Autumn::app()->request->getPost('limit', 10);
+				$by_id = Autumn::app()->request->getPost('by_id');
 				$criteria = new Criteria;
 				$criteria->add('by_id', $by_id);
 				$criteria->order = 'al_sort asc';
-				$response->setResult($this->m_album->getList($offset, $limit, $criteria), Response::RES_SUCCESS);
+				$result = $this->m_album->getList($offset, $limit, $criteria);
+				Autumn::app()->response->setResult($result);
 			}
 			else
 			{
-				$response->setError('需要内容权限', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE, '', '需要内容权限');
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -125,31 +122,30 @@ class AlbumController extends Controller
 	*/
 	public function actionSetInfo()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$al_id = Request::inst()->getPost('al_id');
-				$field = Request::inst()->getPost('field');
-				$value = Request::inst()->getPost('value');
+				$al_id = Autumn::app()->request->getPost('al_id');
+				$field = Autumn::app()->request->getPost('field');
+				$value = Autumn::app()->request->getPost('value');
 				$data = array(
 					$field => $value
 					);
 				if($this->m_album->update($al_id, $data))
 				{
-					$response->setResult('更新成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->setError('没有变更', Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				$response->setError('需要内容权限', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -161,29 +157,28 @@ class AlbumController extends Controller
 	*/
 	public function actionSetSort()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$al_id = Request::inst()->getPost('al_id');
-				$by_id = Request::inst()->getPost('by_id');
-				$type = Request::inst()->getPost('type');
+				$al_id = Autumn::app()->request->getPost('al_id');
+				$by_id = Autumn::app()->request->getPost('by_id');
+				$type = Autumn::app()->request->getPost('type');
 				if($this->m_album->setSort($al_id, $by_id, $type))
 				{
 					$this->updateMainImage($by_id);
-					$response->setResult('设置成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->setError('没有变更', Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				$response->setError('需要内容权限', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 
@@ -195,26 +190,25 @@ class AlbumController extends Controller
 	*/
 	public function actionDelete()
 	{
-		if(Request::inst()->isPostRequest())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$response = new Response;
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$al_id = Request::inst()->getPost('al_id');
+				$al_id = Autumn::app()->request->getPost('al_id');
 				if($this->m_album->delete($al_id))
 				{
-					$response->setResult('删除成功', Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
 				{
-					$response->setError('删除失败', Response::RES_FAIL);
+					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				$response->setError('需要内容权限', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
 			}
-			$response->json();
+			Autumn::app()->response->json();
 		}
 	}
 }
