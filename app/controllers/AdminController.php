@@ -155,6 +155,28 @@ class AdminController extends \core\Controller
 	}
 
 	/**
+	* 获取管理员账号列表
+	* ======
+	* @author 洪波
+	* @version 16.12.18
+	*/
+	public function actionGetAccountList()
+	{
+		if(M_admin::checkRole(M_admin::ROLE_ADMIN + M_admin::ROLE_CONTENT))
+		{
+			$criteria = new \core\Criteria;
+			$criteria->select = 'am_account,am_name';
+			$admin_list = $this->m_admin->getList(0, 99, $criteria);
+			Autumn::app()->response->setResult($admin_list['result']);
+		}
+		else
+		{
+			Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+		}
+		Autumn::app()->response->json();
+	}
+
+	/**
 	* 变更管理员权限
 	* ======
 	* @author 洪波

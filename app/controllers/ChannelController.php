@@ -78,7 +78,7 @@ class ChannelController extends \core\Controller
 		{
 			if($channel = $this->m_channel->get($cn_id))
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_OK);
+				Autumn::app()->response->setResult($channel);
 			}
 			else
 			{
@@ -132,7 +132,8 @@ class ChannelController extends \core\Controller
 				$data = array(
 					'cn_nick' => Autumn::app()->request->getPost('cn_nick'),
 					'cn_url' => Autumn::app()->request->getPost('cn_url'),
-					//'cn_status' => Autumn::app()->request->getPost('cn_status', 2)
+					'cn_admin' => Autumn::app()->request->getPost('cn_admin'),
+					'cn_status' => Autumn::app()->request->getPost('cn_status')
 					);
 				if($this->m_channel->update($cn_id, $data))
 				{
@@ -225,35 +226,42 @@ class ChannelController extends \core\Controller
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
 				$cn_id = Autumn::app()->request->getPost('cn_id');
-				//判断有没有子栏目
-				if(! $this->m_channel->isParent($cn_id))
+				if($cn_id != '1')
 				{
-					$m_content = new \app\models\M_content;
-					//判断有没有内容
-					if($m_content->countContent($cn_id) == 0)
+					//判断有没有子栏目
+					if(! $this->m_channel->isParent($cn_id))
 					{
-						if($this->m_channel->delete($cn_id))
+						$m_content = new \app\models\M_content;
+						//判断有没有内容
+						if($m_content->countContent($cn_id) == 0)
 						{
-							Autumn::app()->response->setResult(\core\Response::RES_OK);
+							if($this->m_channel->delete($cn_id))
+							{
+								Autumn::app()->response->setResult(\core\Response::RES_OK);
+							}
+							else
+							{
+								Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+							}
 						}
 						else
 						{
-							Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+							Autumn::app()->response->setResult(\core\Response::RES_FAIL, '', '栏目下有内容，请先删除内容');
 						}
 					}
 					else
 					{
-						Autumn::app()->response->setResult(\core\Response::RES_FAIL, '', '栏目下有内容，请先删除内容');
+						Autumn::app()->response->setResult(\core\Response::RES_FAIL, '', '存在子栏目，请先删除子栏目');
 					}
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_FAIL, '', '存在子栏目，请先删除子栏目');
+					Autumn::app()->response->setResult(\core\Response::RES_REFUSE, '', '不能删除根目录，不然就没得玩了');
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult('无权操作', Response::RES_REFUSE);
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE, '', '无权操作');
 			}
 			Autumn::app()->response->json();
 		}

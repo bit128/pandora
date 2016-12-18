@@ -84,6 +84,7 @@ class M_channel extends Model
 			'cn_url' => '',
 			'cn_time' => time(),
 			'cn_sort' => $this->maxSort($cn_fid),
+			'cn_admin' => '',
 			'cn_status' => self::STATUS_OPEN
 			);
 

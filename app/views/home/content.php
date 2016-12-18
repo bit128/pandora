@@ -123,8 +123,16 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-				<button type="button" class="btn btn-primary" id="update_channel">更新栏目</button>
+				<div class="row">
+					<div class="col-md-4"></div>
+					<div class="col-md-4">
+						<select class="form-control" id="cn_admin"></select>
+					</div>
+					<div class="col-md-4">
+						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+						<button type="button" class="btn btn-primary" id="update_channel">更新栏目</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -272,6 +280,7 @@ $(document).ready(function(){
 					$('#cn_name').val(data.result.cn_name);
 					$('#cn_nick').val(data.result.cn_nick);
 					$('#cn_url').val(data.result.cn_url);
+					loadAdminList(data.result.cn_admin);
 					if(data.result.cn_status == '1') {
 						$('#cn_status').html('<input type="radio" name="cn_status" value="1" checked> 启用 <input type="radio" name="cn_status" value="0"> 禁用');
 					} else if(data.result.cn_status == '0') {
@@ -287,15 +296,31 @@ $(document).ready(function(){
 		);
 		$('#channel_box').modal('show');
 	}
+	//加载管理员列表
+	function loadAdminList(select){
+		$.get('/admin/getAccountList', function(data){
+			if(data.code == 1) {
+				var html = '<option value="">公开读写</option>';
+				$.each(data.result, function(i, d){
+					if(select != d.am_account)
+						html += '<option value="'+d.am_account+'">'+d.am_name+'</option>';
+					else
+						html += '<option value="'+d.am_account+'" selected>'+d.am_name+'</option>';
+				});
+				$('#cn_admin').html(html);
+			}
+		}, 'json');
+	}
 	//更新栏目详情
 	$('#update_channel').on('click', function(){
 		if(cn_id) {
 			var cn_nick = $('#cn_nick').val();
 			var cn_url = $('#cn_url').val();
+			var cn_admin = $('#cn_admin').val();
 			var cn_status = $('input[name="cn_status"]:checked').val();
 			$.post(
 				'/channel/update',
-				{cn_id: cn_id, cn_nick: cn_nick, cn_url: cn_url, cn_status: cn_status},
+				{cn_id: cn_id, cn_nick: cn_nick, cn_url: cn_url, cn_admin: cn_admin, cn_status: cn_status},
 				function(){
 					$('#channel_form')[0].reset();
 				},
