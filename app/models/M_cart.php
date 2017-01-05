@@ -77,7 +77,7 @@ class M_cart extends Model
 	}
 
 	/**
-	* 获取购物车商品列表
+	* 【后期废弃】获取购物车商品列表
 	* ======
 	* @param $offset 	分页位置
 	* @param $limit 	偏移量
@@ -111,5 +111,27 @@ class M_cart extends Model
 			'count' => $count,
 			'result' => $list
 			);
+	}
+
+	/**
+	* 获取购物车详细列表
+	* ======
+	* @param $od_id 订单id
+	* ======
+	* @author 洪波
+	* @version 17.01.05
+	*/
+	public function getDetailList($od_id)
+	{
+		$select_cart = 't_cart.*';
+		$select_product = 't_product.pd_name,t_product.pd_image';
+		$select_stock = 't_stock.st_name,t_stock.st_size';
+		$condition = "t_cart.od_id='{$od_id}' and t_cart.pd_id=t_product.pd_id and t_cart.st_id=t_stock.st_id";
+
+		$sql = 'select ' . $select_cart . ',' . $select_product . ',' 
+			. $select_stock . ' from t_cart,t_product,t_stock where ' . $condition 
+			. ' order by t_cart.cr_time asc';
+
+		return \core\Autumn::app()->mysqli->queryAll($sql);
 	}
 }

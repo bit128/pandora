@@ -132,7 +132,7 @@ class OrderController extends \core\Controller
 				{
 					$criteria->add('od_status', M_order::STATUS_CLOSE, '!=');
 				}
-				$criteria->order = 'order_ctime desc';
+				$criteria->order = 'od_ctime desc';
 				$result = $this->m_order->getList($offset, $limit, $criteria);
 				Autumn::app()->response->setResult($result);
 			}

@@ -77,8 +77,7 @@ class UserController extends \core\Controller
 			$info['user_gender'] = Autumn::app()->request->getPost('user_gender', 0);
 			$info['user_avatar'] = Autumn::app()->request->getPost('user_avatar');
 			//检查重名
-			$user = $this->m_user->getUser($user_phone);
-			if(! $user)
+			if(! $this->m_user->exist($user_phone))
 			{
 				$token_info = $info;
 				$info['user_phone'] = $user_phone;
