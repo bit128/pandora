@@ -31,7 +31,8 @@
 				<th style="display:none;">编号</th>
 				<th>货号</th>
 				<th>图片</th>
-				<th style="width:40%;">名称</th>
+				<th>名称</th>
+				<th>产品摘要</th>
 				<th>参考价</th>
 				<th>排序</th>
 				<th>状态</th>
@@ -58,6 +59,7 @@
 					<strong><a class="pd_update" data-val="pd_name"><?php echo $v->pd_name; ?></a></strong>
 					<p><small class="pd_keyword"></small></p>
 				</td>
+				<td><textarea class="form-control ct_title" style="font-size:12px;"><?php echo $v->ct_title; ?></textarea></td>
 				<td><input type="text" value="<?php echo $v->pd_price; ?>" style="width:70px;" class="set_price"></td>
 				<td><input type="text" value="<?php echo $v->pd_sort; ?>" style="width:50px;" class="set_sort"></td>
 				<td>
@@ -301,5 +303,20 @@ $(document).ready(function(){
 			});
 		}
 	})();
+	//设置产品摘要
+	$('#product_list').on('blur', '.ct_title', function(){
+		var pd_id = $(this).parents('tr').find('td:eq(0)').text();
+		var ct_title = $(this).val();
+		$.post(
+			'/content/update',
+			{ct_id: pd_id, field: 'ct_title', value: ct_title},
+			function(data){
+				if(data.code != 1) {
+					alert(data.error);
+				}
+			},
+			'json'
+		);
+	});
 });
 </script>

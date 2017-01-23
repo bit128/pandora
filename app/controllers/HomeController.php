@@ -235,17 +235,8 @@ class HomeController extends \core\Controller
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
 		$url = '/home/product/s/'.$status;
-		$criteria = new Criteria;
-		if($status != -1)
-		{
-			$criteria->add('pd_status', $status);
-		}
-		if($keyword != '')
-		{
-			$criteria->addCondition("pd_name like '%{$keyword}%'");
-			$url .= '/k/' . $keyword;
-		}
-		$result = $m_product->getList($offset, $limit, $criteria);
+		//获取数据列表
+		$result = $m_product->getProductList($offset, $limit, '', $keyword, true);
 		//分页
 		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
 
