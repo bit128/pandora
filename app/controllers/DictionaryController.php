@@ -1,6 +1,6 @@
 <?php
 /**
-* 管理员控制器
+*  索引词控制器
 * ======
 * @author 洪波
 * @version 16.07.29
@@ -57,21 +57,54 @@ class DictionaryController extends \core\Controller
 	}
 
 	/**
-	* 模糊查找索引词列表
+	* 搜索索引词列表
 	* ======
 	* @author 洪波
-	* @version 16.08.08
+	* @version 17.01.23
 	*/
-	public function actionMatchKeywordList()
+	public function actionGetKeywordList()
 	{
-		$keyword = urldecode(Autumn::app()->request->getParam('keyword'));
-		if($keyword != '')
+		$types = urldecode(Autumn::app()->request->getParam('t', -1));
+
+		$criteria = new Criteria;
+		if ($types != -1)
 		{
-			$criteria = new Criteria;
-			$criteria->addCondition("dc_keyword like '%{$keyword}%'");
-			$criteria->order = 'dc_count desc';
-			$result = $this->m_dictionary->getList(0, 10, $criteria);
-			Autumn::app()->response->setResult($result);
+			$criteria->add('dc_type', $types);
+		}
+		$criteria->order = 'dc_count desc';
+		$result = $this->m_dictionary->getList(0, 60, $criteria);
+		Autumn::app()->response->setResult($result['result']);
+		Autumn::app()->response->json();
+	}
+
+	/**
+	* 更新索引词信息
+	* ======
+	* @author 洪波
+	* @version 17.01.01
+	*/
+	public function actionUpdate()
+	{
+		if(Autumn::app()->request->isPostRequest())
+		{
+			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
+			{
+				$dc_id = Autumn::app()->request->getPost('dc_id');
+				$field = Autumn::app()->request->getPost('field');
+				$value = Autumn::app()->request->getPost('value');
+				if($this->m_dictionary->update($dc_id, array($field => $value)))
+				{
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
+				}
+				else
+				{
+					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
+				}
+			}
+			else
+			{
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+			}
 			Autumn::app()->response->json();
 		}
 	}
@@ -93,7 +126,7 @@ class DictionaryController extends \core\Controller
 				{
 					//删除索引
 					$m_index = new M_index;
-					$m_index->deleteByDic($dc_id);
+					$m_index->deleteIndex($dc_id, '');
 					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
@@ -121,33 +154,14 @@ class DictionaryController extends \core\Controller
 		{
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
+				$dc_id = Autumn::app()->request->getPost('dc_id');
 				$by_id = Autumn::app()->request->getPost('by_id');
-				$keywords = Autumn::app()->request->getPost('keywords');
-				if(strlen($by_id) == 13)
-				{
-					$m_index = new M_index;
-					$m_index->deleteIndex($by_id);
-					foreach (explode(' ', $keywords) as $v)
-					{
-						if(trim($v) == '')
-						{
-							continue;
-						}
-						$dc_id = $this->m_dictionary->getId($v, true);
-						if($dc_id && ! $m_index->exist($dc_id, $by_id))
-						{
-							$m_index->insert(array(
-								'dc_id' => $dc_id,
-								'by_id' => $by_id
-								));
-						}
-					}
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
-				}
-				else
-				{
-					Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
-				}
+				$m_index = new M_index;
+				$m_index->insert(array(
+					'dc_id' => $dc_id,
+					'by_id' => $by_id
+					));
+				Autumn::app()->response->setResult(\core\Response::RES_OK);
 			}
 			else
 			{
@@ -171,6 +185,33 @@ class DictionaryController extends \core\Controller
 			$m_index = new M_index;
 			$result = $m_index->getIndex($by_id);
 			Autumn::app()->response->setResult($result);
+			Autumn::app()->response->json();
+		}
+	}
+
+	/**
+	* 删除词汇索引
+	* ======
+	* @author 洪波
+	* @version 17.01.23
+	*/
+	public function actionDeleteIndex()
+	{
+		if(Autumn::app()->request->isPostRequest())
+		{
+			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
+			{
+				$dc_id = Autumn::app()->request->getPost('dc_id');
+				$by_id = Autumn::app()->request->getPost('by_id');
+
+				$m_index = new M_index;
+				$m_index->deleteIndex($dc_id, $by_id);
+				Autumn::app()->response->setResult(\core\Response::RES_OK);
+			}
+			else
+			{
+				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+			}
 			Autumn::app()->response->json();
 		}
 	}

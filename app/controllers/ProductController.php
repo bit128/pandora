@@ -195,7 +195,7 @@ class ProductController extends \core\Controller
 					$m_stock->deleteByPd($pd_id);
 					//删除索引
 					$m_index = new \app\models\M_index;
-					$m_index->deleteIndex($pd_id);
+					$m_index->deleteIndex('', $pd_id);
 
 					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}

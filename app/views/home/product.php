@@ -35,8 +35,8 @@
 				<th>产品摘要</th>
 				<th>参考价</th>
 				<th>排序</th>
-				<th>状态</th>
-				<th>操作</th>
+				<th style="width:90px;">状态</th>
+				<th style="width:215px;">操作</th>
 			</tr>
 		</thead>
 		<tbody id="product_list">
@@ -69,8 +69,10 @@
 					</span>
 				</td>
 				<td>
-					<a href="/home/contentDetail/id/<?php echo $v->pd_id; ?>" class="btn btn-info btn-xs" target="_blank">详情</a>
 					<a href="/home/stock/id/<?php echo $v->pd_id; ?>" class="btn btn-success btn-xs" target="_blank">库存</a>
+					<a href="/home/contentDetail/id/<?php echo $v->pd_id; ?>" class="btn btn-default btn-xs" target="_blank">详情</a>
+					<a href="/home/contentDetail/id/<?php echo $v->pd_id; ?>0" class="btn btn-default btn-xs" target="_blank">解答</a>
+					<a href="/home/contentNote/id/<?php echo $v->pd_id; ?>" class="btn btn-default btn-xs" target="_blank">资讯</a>
 					<button type="button" class="btn btn-warning btn-xs pd_delete">删除</button>
 				</td>
 			</tr>
@@ -88,31 +90,29 @@
 				<h4 class="modal-title">设置关键词</h4>
 			</div>
 			<div class="modal-body" style="padding-bottom:0px;">
-				<div style="position:relative;margin-bottom:10px;">
-					<label>输入关键词：</label>
-					<div class="input-group">
-						<input type="text" class="form-control" id="input_keyword">
-						<span class="input-group-btn">
-							<button type="button" class="btn btn-success" id="add_keyword">
-								<span class="glyphicon glyphicon-plus"></span> 确认
-							</button>
-						</span>
+				<div class="row">
+					<div class="col-md-6">
+						<p>
+							<label>备选关键词：</label>
+							<select class="form-control" id="change_keyword_type">
+								<option value="-1">全部关键词</option>
+								<?php foreach (\app\models\M_dictionary::$_types as $k => $v) {
+									echo '<option value="',$k,'">',$v,'</option>';
+								}?>
+							</select>
+							<div id="select_keywords"></div>
+						</p>
 					</div>
-					<div class="list-group" style="position:absolute;display:none;" id="keyword_list">
-						<li class="list-group-item"><small>[默认]</small> <strong>Cras justo odio</strong></li>
-						<li class="list-group-item"><small>[默认]</small> <strong>Cras justo odio</strong></li>
-						<li class="list-group-item"><small>[默认]</small> <strong>Cras justo odio</strong></li>
-						<li class="list-group-item"><small>[默认]</small> <strong>Cras justo odio</strong></li>
+					<div class="col-md-6">
+						<p>
+							<label>已选关键词：</label>
+							<div id="keywords"></div>
+						</p>
 					</div>
 				</div>
-				<p>
-					<label>已选关键词：</label>
-					<textarea class="form-control" rows="7" id="keywords"></textarea>
-				</p>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-				<button type="button" class="btn btn-info" id="update_keyword">保存关键词</button>
 			</div>
 		</div>
 	</div>
@@ -225,67 +225,91 @@ $(document).ready(function(){
 	(function(){
 		var pd_id = '';
 		var last_keyword = '';
+		var ignore = [];
 		//弹框
 		$('#product_list').on('click', '.pd_keyword', function(){
 			pd_id = $(this).parents('tr').find('td:eq(0)').text();
 			$('#keyword_box').modal('show');
-			$('#keywords').val($(this).text() != '设置关键词' ? $(this).text() : '');
-		});
-		//键入关键字事件
-		$('#input_keyword').on('keyup', function(){
-			var keyword = $(this).val();
-			if(keyword != '' && keyword != last_keyword){
-				last_keyword = keyword;
-				$.get('/dictionary/matchKeywordList/keyword/'+keyword, function(data){
-					if(data.code == 1){
-						var html = '';
-						$.each(data.result.result, function(i, d){
-							html += '<a class="list-group-item"><strong>'+d.dc_keyword+'</strong></a>';
-						});
-						if(html != '') {
-							$('#keyword_list').html(html).show();
-						}else{
-							$('#keyword_list').hide();
-						}
-					}
-				}, 'json');
-			}
-		});
-		//选择关键词
-		$('#keyword_box').on('click', '.list-group-item', function(){
-			$('#input_keyword').val($(this).text());
-			$('#keyword_list').hide();
+			$.get('/dictionary/getIndex/id/'+pd_id, function(data){
+				if(data.code == 1){
+					var html = '';
+					ignore = [];
+					$.each(data.result, function(i, d){
+						html += '<a href="javascript:;" class="label label-info" data-val="'+d.dc_id+'">'+d.dc_keyword+' x</a> ';
+						ignore.push(d.dc_id);
+					});
+					$('#keywords').html(html);
+					//备选关键词
+					searchKeywords(-1);
+				}
+			}, 'json');
 		});
 		//添加关键字
-		$('#add_keyword').on('click', function(){
-			var keyword = $('#input_keyword').val();
-			if(keyword != '')
-			{
-				$('#keywords').val($('#keywords').val()+' '+keyword);
-				$('#input_keyword').val('');
-				$('#keyword_list').hide();
-			}
-		});
-		//更新关键字
-		$('#update_keyword').on('click', function(){
-			var keyword = $('#keywords').val();
+		$('#select_keywords').on('click', 'a', function(){
+			var dc_id = $(this).attr('data-val');
+			var a = $(this);
+			var a_t = $(this).text();
 			$.post(
 				'/dictionary/addIndex',
-				{by_id: pd_id, keywords: keyword},
+				{dc_id: dc_id, by_id: pd_id},
 				function(data){
 					if(data.code == 1){
-						$('#keyword_box').modal('hide');
-						$('#keywords').val('');
-						loadKeyword();
+						ignore.push(dc_id)
+						a.remove();
+						$('#keywords').append('<a href="javascript:;" class="label label-info" data-val="'
+							+dc_id+'">'+a_t.split(' ')[0]+' x</a> ');
+						loadKeywordList();
 					}else{
 						alert(data.error);
 					}
 				},
 				'json'
-				);
+			);
 		});
-		loadKeyword();
-		function loadKeyword() {
+		//删除关键字
+		$('#keywords').on('click', 'a', function(){
+			var dc_id = $(this).attr('data-val');
+			var a = $(this);
+			var a_t = $(this).text();
+			$.post(
+				'/dictionary/deleteIndex',
+				{dc_id: dc_id, by_id: pd_id},
+				function(data){
+					if(data.code == 1){
+						for (var i=0; i<ignore.length; i++) {
+							if (ignore[i] == dc_id)
+								ignore.splice(i, 1);
+						}
+						a.remove();
+						$('#select_keywords').append('<a href="javascript:;" class="label label-success" data-val="'
+							+dc_id+'">'+a_t.split(' ')[0]+' +</a> ');
+						loadKeywordList();
+					}else{
+						alert(data.error);
+					}
+				},
+				'json'
+			);
+		});
+		//搜索关键字
+		$('#change_keyword_type').on('change', function(){
+			searchKeywords($(this).val());
+		});
+		//搜索备选关键字
+		function searchKeywords(type) {
+			$.get('/dictionary/getKeywordList/t/'+type, function(data){
+				if(data.code == 1){
+					var html = '';
+					$.each(data.result, function(i, d){
+						if(ignore.indexOf(d.dc_id) == -1)
+							html += '<a href="javascript:;" class="label label-success" data-val="'+d.dc_id+'">'+d.dc_keyword+' +</a> ';
+					});
+					$('#select_keywords').html(html);
+				}
+			}, 'json');
+		}
+		//加载商品列表关键字
+		function loadKeywordList() {
 			$('#product_list').find('tr').each(function(){
 				var tr = $(this);
 				var pd_id = tr.find('td:eq(0)').text();
@@ -293,7 +317,7 @@ $(document).ready(function(){
 					if(data.code == 1){
 						var html = '';
 						$.each(data.result, function(i, d){
-							html += ' '+d.dc_keyword;
+							html += '<a href="javascript:;" class="label label-info">'+d.dc_keyword+'</a> ';
 						});
 						if(html.replace(' ', '') == '')
 							html = '设置关键词';
@@ -302,6 +326,7 @@ $(document).ready(function(){
 				}, 'json');
 			});
 		}
+		loadKeywordList();
 	})();
 	//设置产品摘要
 	$('#product_list').on('blur', '.ct_title', function(){

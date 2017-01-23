@@ -1,6 +1,6 @@
 <div class="container">
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-8">
 			<button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#dict_box">
 				<span class="glyphicon glyphicon-plus"></span> 增加索引词
 			</button>
@@ -8,21 +8,17 @@
 				<a href="/home/dictionary/s/0/t/<?php echo $type; ?>" class="btn btn-sm <?php echo $sort == 0 ? 'btn-info' : 'btn-default'; ?>">默认排序</a>
 				<a href="/home/dictionary/s/1/t/<?php echo $type; ?>" class="btn btn-sm <?php echo $sort == 1 ? 'btn-info' : 'btn-default'; ?>">用量排序</a>
 			</span>
-		</div>
-		<div class="col-md-2">
-			<select class="form-control input-sm" id="change_type">
-				<option value="/home/dictionary/t/-1/s/1">全部词汇</option>
-				<?php foreach (\app\models\M_dictionary::$_types as $k => $v) {
-					echo '<option value="/home/dictionary/t/',$k,'/s/',$sort,'" ';
-					if($type == $k) { echo 'selected'; }
-					echo '>',$v,'</option>';
-				} ?>
-			</select>
+			<span class="btn-group">
+				<a href="/home/dictionary/t/-1/s/1" class="btn btn-sm <?php echo $type == -1 ? 'btn-info' : 'btn-default'; ?>">全部词汇</a>
+				<?php foreach (\app\models\M_dictionary::$_types as $k => $v) { ?>
+				<a href="/home/dictionary/t/<?php echo $k; ?>/s/1" class="btn btn-sm <?php echo $type == $k ? 'btn-info' : 'btn-default'; ?>"><?php echo $v; ?></a>
+				<?php } ?>
+			</span>
 		</div>
 		<div class="col-md-2">
 			<div style="padding-top:4px;">词汇总数：<strong><?php echo $count; ?></strong> 个</div>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-2">
 			<form class="input-group" method="get" action="">
 				<input type="text" class="form-control input-sm" name="k" value="<?php echo $keyword; ?>">
 				<span class="input-group-btn">
