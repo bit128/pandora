@@ -1,3 +1,12 @@
+<style type="text/css">
+#keywords a,#select_keywords a {
+    display: block;
+    float: left;
+    margin-right: 5px;
+    margin-top: 10px;
+    padding: 5px;
+}
+</style>
 <div class="container">
 	<div class="row">
 		<div class="col-md-4">
