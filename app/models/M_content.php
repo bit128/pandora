@@ -20,6 +20,20 @@ class M_content extends Model
 	public $table_name = 't_content';
 
 	/**
+	* 增加内容访问量
+	* ======
+	* @param $ct_id 内容id
+	* ======
+	* @author 洪波
+	* @version 17.02.09
+	*/
+	public function addViewCount($ct_id)
+	{
+		$sql = "update {$this->table_name} set ct_view=ct_view+1 where ct_id = '{$ct_id}'";
+		return \core\Autumn::app()->mysqli->query($sql);
+	}
+
+	/**
 	* 统计栏目包含内容数量
 	* ======
 	* @param $cn_id 	栏目id
@@ -99,10 +113,17 @@ class M_content extends Model
 		$criteria->order = $sorts[$sort];
 		//获取数据列表
 		$list = Orm::model($this->table_name)->findAll($criteria);
+		$result = array();
+		$m_index = new M_index;
+		foreach ($list as $k => $v)
+		{
+			$result[$k] = $v;
+			$result[$k]->indexs = $m_index->getIndex($v->ct_id);
+		}
 
 		return array(
 			'count' => $count,
-			'result' => $list
+			'result' => $result
 			);
 	}
 

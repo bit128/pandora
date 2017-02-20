@@ -1,12 +1,106 @@
+/*------ 关键词管理 ------*/
+var Keyword = function(handle){
+	this.handle = handle;
+
+	this.by_id = '';
+	this.last_keyword = '';
+	this.ignore = [];
+	this.bindEvent();
+}
+Keyword.prototype = {
+	constructor: Keyword,
+	bindEvent: function(){
+		var f = this;
+		f.handle.on('change', '#change_keyword_type', function(){
+			f.searchKeywords(f, $(this).val());
+		});
+		f.handle.on('click', '#select_keywords a', function(){
+			var dc_id = $(this).attr('data-val');
+			var a = $(this);
+			var a_t = $(this).text();
+			$.post(
+				'/dictionary/addIndex',
+				{dc_id: dc_id, by_id: f.by_id},
+				function(data){
+					if(data.code == 1){
+						ignore.push(dc_id)
+						a.remove();
+						$('#keywords').append('<a href="javascript:;" class="label label-info" data-val="'
+							+dc_id+'">'+a_t.split(' ')[0]+' x</a> ');
+						//loadKeywordList();
+					}else{
+						alert(data.error);
+					}
+				},
+				'json'
+			);
+		});
+		f.handle.on('click', '#keywords a', function(){
+			var dc_id = $(this).attr('data-val');
+			var a = $(this);
+			var a_t = $(this).text();
+			$.post(
+				'/dictionary/deleteIndex',
+				{dc_id: dc_id, by_id: f.by_id},
+				function(data){
+					if(data.code == 1){
+						for (var i=0; i<ignore.length; i++) {
+							if (ignore[i] == dc_id)
+								ignore.splice(i, 1);
+						}
+						a.remove();
+						$('#select_keywords').append('<a href="javascript:;" class="label label-success" data-val="'
+							+dc_id+'">'+a_t.split(' ')[0]+' +</a> ');
+						//loadKeywordList();
+					}else{
+						alert(data.error);
+					}
+				},
+				'json'
+			);
+		});
+	},
+	open: function(by_id){
+		var f = this;
+		f.by_id = by_id;
+		f.handle.modal('show');
+		$.get('/dictionary/getIndex/id/'+by_id, function(data){
+			if(data.code == 1){
+				var html = '';
+				ignore = [];
+				$.each(data.result, function(i, d){
+					html += '<a href="javascript:;" class="label label-info" data-val="'+d.dc_id+'">'+d.dc_keyword+' x</a> ';
+					ignore.push(d.dc_id);
+				});
+				f.handle.find('#keywords').html(html);
+				//备选关键词
+				f.searchKeywords(f, -1);
+			}
+		}, 'json');
+	},
+	searchKeywords: function(f, types){
+		$.get('/dictionary/getKeywordList/t/'+types, function(data){
+			if(data.code == 1){
+				var html = '';
+				$.each(data.result, function(i, d){
+					if(ignore.indexOf(d.dc_id) == -1)
+						html += '<a href="javascript:;" class="label label-success" data-val="'+d.dc_id+'">'+d.dc_keyword+' +</a> ';
+				});
+				f.handle.find('#select_keywords').html(html);
+			}
+		}, 'json');
+	}
+};
 /*------ 内容管理类 ------*/
-var Content = function(handle, btns, pages){
+var Content = function(handle, btns, pages, keyword_box){
 	this.handle = handle;
 	this.btns = btns;
 	this.pages = pages;
+	this.keyword = new Keyword(keyword_box);
 
 	this.default_title = '请填写内容标题';
 	this.default_subtit = '在这里可以选择插入副标题';
-	this.default_keyword = '可以选填关键字多个使用空格隔开';
+	this.default_keyword = '点击可设置关键词';
 	this.status_enum = [[2, '推荐'], [1, '公开'], [0, '隐藏'], [-1, '删除']];
 
 	this.cn_id 		= 0;	//栏目编号
@@ -101,6 +195,10 @@ Content.prototype = {
 				}
 			});
 		});
+		f.handle.on('click', '.set_keyword', function(){
+			var ct_id = $(this).parents('tr').attr('data-id');
+			f.keyword.open(ct_id);
+		});
 		f.pages.on('click', 'a', function(){
 			f.ct_np = parseInt($(this).text());
 			f.ct_offset = (f.ct_np - 1) * f.ct_limit;
@@ -166,7 +264,14 @@ Content.prototype = {
 						}
 						html += '<td><strong class="set_text" data-field="ct_title">'+(d.ct_title != '' ? d.ct_title : f.default_title)+'</strong><br>';
 						html += '<small style="color:#999;" class="set_text" data-field="ct_subtit">'+(d.ct_subtit != '' ? d.ct_subtit : f.default_subtit)+'</small>';
-						html += '<div style="font-size:10px;color:#cc63c9;" class="set_text" data-field="ct_keyword">'+(d.ct_keyword != '' ? d.ct_keyword : f.default_keyword)+'</div></td>';
+						html += '<div style="font-size:10px;color:#cc63c9;" class="set_keyword">';
+						if (d.indexs.length > 0) {
+							for (kv in d.indexs)
+								html += d.indexs[kv]['dc_keyword'] + ' ';
+						} else {
+							html += f.default_keyword;
+						}
+						html += '</div></td>';
 						html += '<td><small><span class="text-info">(创建)</span> '+f.printTime(d.ct_ctime)+'<br><span class="text-warning">(更新)</span> '+f.printTime(d.ct_utime)+'</small></td>';
 						html += '<td>'+d.ct_view+'</td>';
 						html += '<td style="width:50px;"><select class="set_status">';
@@ -205,7 +310,7 @@ Content.prototype = {
 		var min = date.getMinutes();
 		if (min < 10)
 			min = '0' + min;
-		return date.getMonth()+'月'+date.getDate()+'日 '+date.getHours()+':'+min;
+		return (date.getMonth()+1)+'月'+date.getDate()+'日 '+date.getHours()+':'+min;
 	},
 	buildPage: function() {
 		var f = this;

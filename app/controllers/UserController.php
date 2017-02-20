@@ -7,7 +7,6 @@
 */
 namespace app\controllers;
 use core\Autumn;
-use library\RedisCache;
 use library\Psdk;
 use app\models\M_user;
 use app\models\M_admin;
@@ -194,7 +193,7 @@ class UserController extends \core\Controller
 			if($user)
 			{
 				unset($user->user_password);
-				if(! RedisCache::model('token')->check($user_id, $token))
+				if(! $this->m_user->checkToken($user_id, $token))
 				{
 					unset($user->user_phone, $user->user_email, $user->user_devid, $user->user_note, $user->user_ip);
 				}
@@ -213,7 +212,7 @@ class UserController extends \core\Controller
 	}
 
 	/**
-	* 设置用户信息
+	* [管理员]设置用户信息
 	* ======
 	* @author 洪波
 	* @version 16.07.28
@@ -255,13 +254,82 @@ class UserController extends \core\Controller
 	}
 
 	/**
-	* 更新用户信息
+	* 设置用户信息
 	* ======
 	* @author 洪波
-	* @version 16.07.28
+	* @version 17.02.14
 	*/
-	public function actionUpdateInfo()
-	{}
+	private function setInfo($field)
+	{
+		if (Autumn::app()->request->isPostRequest())
+		{
+			$user_id = Autumn::app()->request->getPost('user_id');
+			$token = Autumn::app()->request->getPost('token');
+			if ($this->m_user->checkToken($user_id, $token))
+			{
+				$data = array(
+					$field => Autumn::app()->request->getPost($field)
+				);
+				if ($this->m_user->update($user_id, $data))
+				{
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
+				}
+				else
+				{
+					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
+				}
+			}
+			else
+			{
+				Autumn::app()->response->setResult(\core\Response::RES_TOKENF, '', '令牌错误');
+			}
+			Autumn::app()->response->json();
+		}
+	}
+
+	/**
+	* 设置用户姓名
+	* ======
+	* @author 洪波
+	* @version 17.02.14
+	*/
+	public function actionSetName()
+	{
+		$this->setInfo('user_name');
+	}
+
+	/**
+	* 设置用户头像
+	* ======
+	* @author 洪波
+	* @version 17.02.14
+	*/
+	public function actionSetAvatar()
+	{
+		$this->setInfo('user_avatar');
+	}
+
+	/**
+	* 设置用户性别
+	* ======
+	* @author 洪波
+	* @version 17.02.14
+	*/
+	public function actionSetGender()
+	{
+		$this->setInfo('user_gender');
+	}
+
+	/**
+	* 设置用户签名
+	* ======
+	* @author 洪波
+	* @version 17.02.14
+	*/
+	public function actionSetNote()
+	{
+		$this->setInfo('user_note');
+	}
 
 	/**
 	* 变更密码
@@ -270,5 +338,32 @@ class UserController extends \core\Controller
 	* @version 16.07.28
 	*/
 	public function actionChangePassword()
-	{}
+	{
+		if (Autumn::app()->request->isPostRequest())
+		{
+			$user_id = Autumn::app()->request->getPost('user_id');
+			$token = Autumn::app()->request->getPost('token');
+			if ($this->m_user->checkToken($user_id, $token))
+			{
+				$old_password = md5(Autumn::app()->request->getPost('old_password'));
+				$new_password = md5(Autumn::app()->request->getPost('new_password'));
+				$user = $this->m_user->get($user_id);
+				if ($user->user_password == $old_password)
+				{
+					$data = array('user_password' => $new_password);
+					$this->m_user->update($user_id, $data);
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
+				}
+				else
+				{
+					Autumn::app()->response->setResult(\core\Response::RES_PWDF, '', '原密码不正确');
+				}
+			}
+			else
+			{
+				Autumn::app()->response->setResult(\core\Response::RES_TOKENF, '', '令牌错误');
+			}
+			Autumn::app()->response->json();
+		}
+	}
 }

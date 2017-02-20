@@ -53,6 +53,7 @@
 				<p><strong style="font-size:16px;">搜索词库</strong> <br><small>[权限：内容]</small></p>
 			</a>
 		</div>
+		<!--
 		<div class="col-md-2">
 			<a class="desk-item" href="/home/product">
 				<p><img src="/app/statics/home/images/png-0950.png"></p>
@@ -64,7 +65,7 @@
 				<p><img src="/app/statics/home/images/png-0841.png"></p>
 				<p><strong style="font-size:16px;">订单</strong> <br><small>[权限：订单]</small></p>
 			</a>
-		</div>
+		</div>-->
 		<div class="col-md-2">
 			<a class="desk-item" href="/home/struct">
 				<p><img src="/app/statics/home/images/png-0011.png"></p>

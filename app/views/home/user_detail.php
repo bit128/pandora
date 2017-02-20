@@ -6,7 +6,7 @@
 			<?php if ($user->user_avatar == '') { ?>
 			<img src="/app/statics/files/images/default.jpg" class="img-responsive" id="user_avatar">
 			<?php } else { ?>
-			<img src="/nfs/image/<?php echo $user->user_avatar; ?>" class="img-responsive" id="user_avatar">
+			<img src="/nfs/image<?php echo $user->user_avatar; ?>" class="img-responsive" id="user_avatar">
 			<?php } ?>
 			<div id="upload_image" style="position:relative;margin-top:10px;">
 				<input id="fileImage" type="file" style="position:absolute;left:0;filter:alpha(opacity=0);opacity:0;width:83px;height:30px;" name="file_name">

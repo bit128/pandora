@@ -6,6 +6,7 @@
 * @version 16.07.28
 */
 namespace app\models;
+use core\Autumn;
 use core\Model;
 use core\Orm;
 use core\Criteria;
@@ -24,6 +25,9 @@ class M_user extends Model
 	const STATUS_OPEN		= 2;		//开放平台账户
 	const STATUS_SHOP		= 3;		//商家
 
+	const TOKEN_LIMIT 		= 1296000; 	//令牌缓存有效期
+	const TOKEN_PREFIX 		= 'token_'; //令牌缓存前缀
+
 	public $table_name = 't_user';
 
 	/**
@@ -38,7 +42,7 @@ class M_user extends Model
 	{
 		$criteria = new Criteria;
 		$criteria->add('user_phone', $account);
-		$criteria->add('user_email', $account, 'OR');
+		$criteria->add('user_email', $account, '=', 'OR');
 		return $this->count($criteria);
 	}
 
@@ -72,8 +76,69 @@ class M_user extends Model
 	public function login($account, $password)
 	{
 		$criteria = new Criteria;
-		$criteria->add('user_phone', $account);
+		$criteria->add('user_email', $account);
 		$criteria->add('user_password', $password);
 		return Orm::model($this->table_name)->find($criteria);
+	}
+
+	/**
+	* 构建令牌
+	* ======
+	* @param $user_id 	用户id
+	* @param $info 		登录信息
+	* ======
+	* @author 洪波
+	* @version 16.07.25
+	*/
+	public function buildToken($user_id, $info = array())
+	{
+		if($user_id == '')
+		{
+			return 0;
+		}
+		$key = self::TOKEN_PREFIX . $user_id;
+		$token_string = time() . $user_id . rand(1000, 9999);
+		$data = array(
+			'user_id' => $user_id,
+			'token' => md5($token_string),
+			'validity' => time() + self::TOKEN_LIMIT,
+			);
+		if(is_array($info) && count($info))
+		{
+			$data += $info;
+		}
+		//缓存token
+		Autumn::app()->redis->hSetAll($key, $data, self::TOKEN_LIMIT);
+
+		return $data;
+	}
+
+	/**
+	* 构建令牌
+	* ======
+	* @param $user_id 	用户id
+	* @param $info 		登录信息
+	* ======
+	* @author 洪波
+	* @version 16.07.25
+	*/
+	public function checkToken($user_id, $token)
+	{
+		$tokens = Autumn::app()->redis->hGetAll(self::TOKEN_PREFIX . $user_id);
+		if($tokens)
+		{
+			if($tokens['token'] == $token)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

@@ -19,7 +19,7 @@ class M_dictionary extends Model
 
 	public static $_types = array(
 		self::TYPE_NORMAL => '默认',
-		self::TYPE_PRODUCT => '产品分类'
+		self::TYPE_PRODUCT => '课程分类'
 		);
 
 	/**

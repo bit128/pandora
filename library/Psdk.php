@@ -10,7 +10,7 @@ namespace library;
 class Psdk
 {
 	//服务地址
-	const DOMAIN 			= 'http://p.cc/';
+	const DOMAIN 			= 'http://1doc.cc/';
 	const METHOD_POST		= 1;
 	const METHOD_GET		= 0;
 	//HTTP请求参数

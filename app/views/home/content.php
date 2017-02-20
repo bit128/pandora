@@ -10,9 +10,11 @@
 			</div>
 		</div>
 		<div class="col-md-9">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					内容管理列表 <strong id="channel_name">- 站点根目录</strong>
+			<div class="row">
+				<div class="col-md-6">
+					<span style="font-size:18px;">内容管理列表 <strong id="channel_name">- 站点根目录</strong></span>
+				</div>
+				<div class="col-md-6">
 					<div class="pull-right" style="margin-top:-5px;" id="content_btns">
 						<a href="javascript:;" class="btn btn-info btn-sm" id="content_add">
 							<span class="glyphicon glyphicon-plus"></span> <strong>新增内容</strong>
@@ -27,55 +29,53 @@
 						</span>
 					</div>
 				</div>
-				<div class="panel-body">
-					<table class="table table-bordered table-hover">
-						<thead>
-							<tr>
-								<th style="width:100px;">编号</th>
-								<th>封面</th>
-								<th>标题</th>
-								<th>时间</th>
-								<th>点击量</th>
-								<th>操作</th>
-							</tr>
-						</thead>
-						<tbody id="content_list">
-							<!--
-							<tr>
-								<td style="text-align:center;">
-									<select>
-										<option>请选择</option>
-										<option>文本</option>
-										<option>相册</option>
-										<option>视屏</option>
-									</select>
-									<a href="javascript:;"><span class="glyphicon glyphicon-edit"></span> 编辑文本</a>
-									<small>112358132652a</small>
-								</td>
-								<td>
-									<img src="/app/statics/files/images/default.jpg" class="img-responsive" style="max-width:80px;">
-								</td>
-								<td>
-									<strong>这里是标题</strong><br>
-									<small style="color:#999;">这里是副标题，可以很长很长的哦</small>
-									<div style="font-size:10px;color:#cc63c9;">Java 架构 数据库</div>
-								</td>
-								<td><small>12月26日 12:56</small></td>
-								<td><small>12月26日 12:56</small></td>
-								<td>17</td>
-								<td style="width:50px;">
-									<select>
-										<option>公开</option>
-										<option>隐藏</option>
-										<option>删除</option>
-									</select>
-								</td>
-							</tr>-->
-						</tbody>
-					</table>
-					<div id="pages"></div>
-				</div>
-			</div>
+			</div>	
+			<table class="table table-bordered table-hover" style="margin-top:16px;">
+				<thead>
+					<tr>
+						<th style="width:100px;">编号</th>
+						<th>封面</th>
+						<th>标题</th>
+						<th>时间</th>
+						<th>浏览量</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="content_list">
+					<!--
+					<tr>
+						<td style="text-align:center;">
+							<select>
+								<option>请选择</option>
+								<option>文本</option>
+								<option>相册</option>
+								<option>视屏</option>
+							</select>
+							<a href="javascript:;"><span class="glyphicon glyphicon-edit"></span> 编辑文本</a>
+							<small>112358132652a</small>
+						</td>
+						<td>
+							<img src="/app/statics/files/images/default.jpg" class="img-responsive" style="max-width:80px;">
+						</td>
+						<td>
+							<strong>这里是标题</strong><br>
+							<small style="color:#999;">这里是副标题，可以很长很长的哦</small>
+							<div style="font-size:10px;color:#cc63c9;">Java 架构 数据库</div>
+						</td>
+						<td><small>12月26日 12:56</small></td>
+						<td><small>12月26日 12:56</small></td>
+						<td>17</td>
+						<td style="width:50px;">
+							<select>
+								<option>公开</option>
+								<option>隐藏</option>
+								<option>删除</option>
+							</select>
+						</td>
+					</tr>-->
+				</tbody>
+			</table>
+			<div id="pages" style="text-align:center;"></div>
 		</div>
 	</div>
 </div>
@@ -137,6 +137,43 @@
 		</div>
 	</div>
 </div>
+<!-- 设置关键词 -->
+<div id="keyword_box" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+				<h4 class="modal-title">设置关键词</h4>
+			</div>
+			<div class="modal-body" style="padding-bottom:0px;">
+				<div class="row">
+					<div class="col-md-6">
+						<p>
+							<label>备选关键词：</label>
+							<select class="form-control" id="change_keyword_type">
+								<option value="-1">全部关键词</option>
+								<?php foreach (\app\models\M_dictionary::$_types as $k => $v) {
+									echo '<option value="',$k,'">',$v,'</option>';
+								}?>
+							</select>
+							<div id="select_keywords"></div>
+						</p>
+					</div>
+					<div class="col-md-6">
+						<p>
+							<label>已选关键词：</label>
+							<div id="keywords"></div>
+						</p>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 设置关键词 -->
 <!-- 栏目详情 -->
 <script type="text/javascript" src="/app/statics/home/js/jquery.ztree.core-3.5.min.js"></script>
 <script type="text/javascript" src="/app/statics/home/js/jquery.ztree.excheck-3.5.min.js"></script>
@@ -148,7 +185,7 @@ $(document).ready(function(){
 	var cn_id = 1;
 	var ct_id = 0;
 // ====== ====== 内容管理 ====== ======
-	var content = new Content($('#content_list'), $('#content_btns'), $('#pages'));
+	var content = new Content($('#content_list'), $('#content_btns'), $('#pages'), $('#keyword_box'));
 // ====== ====== 栏目管理 ====== ======
 	//栏目树设置
 	var setting = {

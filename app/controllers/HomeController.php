@@ -143,6 +143,12 @@ class HomeController extends \core\Controller
 		}
 	}
 
+	/**
+	* 内容留言列表
+	* ======
+	* @author 洪波
+	* @version 16.08.01
+	*/
 	public function actionContentNote()
 	{
 		$ct_id = Autumn::app()->request->getQuery('id');

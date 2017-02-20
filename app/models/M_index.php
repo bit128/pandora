@@ -51,30 +51,23 @@ class M_index extends Model
 	/**
 	* 删除实体索引
 	* ======
+	* @param $dc_id 	词汇id
 	* @param $by_id 	实体id
 	* ======
 	* @author 洪波
-	* @version 16.08.10
+	* @version 17.01.23
 	*/
-	public function deleteIndex($by_id)
+	public function deleteIndex($dc_id, $by_id)
 	{
 		$criteria = new Criteria;
-		$criteria->add('by_id', $by_id);
-		return Orm::model($this->table_name)->deleteAll($criteria);
-	}
-
-	/**
-	* 通过词汇删除索引
-	* ======
-	* @param $dc_id 	词汇id
-	* ======
-	* @author 洪波
-	* @version 16.08.10
-	*/
-	public function deleteByDic($dc_id)
-	{
-		$criteria = new Criteria;
-		$criteria->add('dc_id', $dc_id);
+		if($dc_id != '')
+		{
+			$criteria->add('dc_id', $dc_id);
+		}
+		if ($by_id != '')
+		{
+			$criteria->add('by_id', $by_id);
+		}
 		return Orm::model($this->table_name)->deleteAll($criteria);
 	}
 

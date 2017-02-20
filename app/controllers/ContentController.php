@@ -11,16 +11,21 @@ use core\Criteria;
 use library\Psdk;
 use app\models\M_content;
 use app\models\M_content_note;
+use app\models\M_user;
 use app\models\M_admin;
 
 class ContentController extends \core\Controller
 {
 
 	private $m_content;
+	private $m_content_note;
+	private $m_user;
 
 	public function init()
 	{
 		$this->m_content = new M_content;
+		$this->m_content_note = new M_content_note;
+		$this->m_user = new M_user;
 	}
 
 	/**
@@ -188,6 +193,15 @@ class ContentController extends \core\Controller
 				$ct_id = Autumn::app()->request->getPost('ct_id');
 				if($this->m_content->delete($ct_id))
 				{
+					//删除索引
+					$m_index = new \app\models\M_index;
+					$m_index->deleteIndex('', $ct_id);
+					//删除收藏
+					$m_collect = new \app\models\M_collect;
+					$m_collect->deleteByEntry(\app\models\M_collect::TYPE_CONTENT, $ct_id);
+					//删除评论
+					$this->m_content_note->deleteByContent($ct_id);
+
 					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}
 				else
@@ -213,24 +227,30 @@ class ContentController extends \core\Controller
 	{
 		if (Autumn::app()->request->isPostRequest())
 		{
-			$data = array(
-				'tn_phone' => Autumn::app()->request->getPost('tn_phone'),
-				'tn_email' => Autumn::app()->request->getPost('tn_email'),
-				'tn_content' => Autumn::app()->request->getPost('tn_content'),
-				'tn_time' => time(),
-				'tn_status' => M_content_note::STATUS_HIDE,
-				'cn_id' => Autumn::app()->request->getPost('cn_id'),
-				'ct_id' => Autumn::app()->request->getPost('ct_id'),
-				'user_id' => Autumn::app()->request->getPost('user_id'),
-			);
-			$m_note = new M_content_note;
-			if($m_note->insert($data))
+			$user_id = Autumn::app()->request->getPost('user_id');
+			$token = Autumn::app()->request->getPost('token');
+			if($this->m_user->checkToken($user_id, $token))
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_OK);
+				$data = array(
+					'tn_content' => Autumn::app()->request->getPost('tn_content'),
+					'tn_time' => time(),
+					'tn_status' => M_content_note::STATUS_HIDE,
+					'cn_id' => Autumn::app()->request->getPost('cn_id'),
+					'ct_id' => Autumn::app()->request->getPost('ct_id'),
+					'user_id' => $user_id,
+				);
+				if($this->m_content_note->insert($data))
+				{
+					Autumn::app()->response->setResult(\core\Response::RES_OK);
+				}
+				else
+				{
+					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
 			}
 			Autumn::app()->response->json();
 		}
@@ -248,42 +268,58 @@ class ContentController extends \core\Controller
 		{
 			$offset = Autumn::app()->request->getPost('offset');
 			$limit = Autumn::app()->request->getPost('limit');
-			$cn_id = Autumn::app()->request->getPost('cn_id');
 			$ct_id = Autumn::app()->request->getPost('ct_id');
-			$tn_status = Autumn::app()->request->getPost('tn_status' -1);
 
-			$criteria = new Criteria;
-			if (strlen($cn_id) == 13)
-				$criteria->add('cn_id', $cn_id);
-			if (strlen($ct_id) == 13)
-				$criteria->add('ct_id', $ct_id);
-			if ($tn_status != -1)
-				$criteria->add('tn_status', $tn_status);
-
-			$m_note = new M_content_note;
-			$result = $m_note->getList($offset, $limit, $criteria);
+			$result = $this->m_content_note->getNoteList($offset, $limit, $ct_id);
 			Autumn::app()->response->setResult($result);
 			Autumn::app()->response->json();
 		}
 	}
 
 	/**
-	* 设置评论状态
+	* 获取我的评论列表
+	* ======
+	* @author 洪波
+	* @version 17.02.14
+	*/
+	public function actionMyNoteList()
+	{
+		if (Autumn::app()->request->isPostRequest())
+		{
+			$user_id = Autumn::app()->request->getPost('user_id');
+			$token = Autumn::app()->request->getPost('token');
+			if($this->m_user->checkToken($user_id, $token))
+			{
+				$offset = Autumn::app()->request->getPost('offset');
+				$limit = Autumn::app()->request->getPost('limit');
+
+				$result = $this->m_content_note->myNoteList($offset, $limit, $user_id);
+				Autumn::app()->response->setResult($result);
+			}
+			else
+			{
+				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
+			}
+			Autumn::app()->response->json();
+		}
+	}
+
+	/**
+	* [管理员]设置评论信息
 	* ======
 	* @author 洪波
 	* @version 16.12.15
 	*/
-	public function actionSetNoteStatus()
+	private function setNote($field)
 	{
 		if(Autumn::app()->request->isPostRequest())
 		{
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
 				$tn_id = Autumn::app()->request->getPost('tn_id');
-				$tn_status = Autumn::app()->request->getPost('tn_status');
-				$m_note = new M_content_note;
-				if($m_note->update($tn_id, array(
-					'tn_status' => $tn_status
+				
+				if($this->m_content_note->update($tn_id, array(
+					$field => Autumn::app()->request->getPost($field)
 				)))
 				{
 					Autumn::app()->response->setResult(\core\Response::RES_OK);
@@ -302,7 +338,29 @@ class ContentController extends \core\Controller
 	}
 
 	/**
-	* 删除评论
+	* [管理员]设置评论状态
+	* ======
+	* @author 洪波
+	* @version 16.12.15
+	*/
+	public function actionSetNoteStatus()
+	{
+		$this->setNote('tn_status');
+	}
+
+	/**
+	* [管理员]设置评论回复
+	* ======
+	* @author 洪波
+	* @version 16.12.15
+	*/
+	public function actionSetNoteRemark()
+	{
+		$this->setNote('tn_remark');
+	}
+
+	/**
+	* [管理员]删除评论
 	* ======
 	* @author 洪波
 	* @version 16.12.13
@@ -314,8 +372,7 @@ class ContentController extends \core\Controller
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
 				$tn_id = Autumn::app()->request->getPost('tn_id');
-				$m_note = new M_content_note;
-				if($m_note->delete($tn_id))
+				if($this->m_content_note->delete($tn_id))
 				{
 					Autumn::app()->response->setResult(\core\Response::RES_OK);
 				}

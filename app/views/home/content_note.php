@@ -14,22 +14,20 @@
     <table class="table table-bordered">
         <thead>
             <tr>
+                <th style="width:100px;">用户</th>
                 <th>内容</th>
-                <th>时间</th>
-                <th>电话</th>
-                <th>邮箱</th>
-                <th>用户</th>
-                <th>操作</th>
+                <th style="width:120px;">时间</th>
+                <th style="width:200px;">回复</th>
+                <th style="width:100px;">操作</th>
             </tr>
         </thead>
         <tbody id="note_list">
             <?php foreach ($result as $item) { ?>
             <tr data-val="<?php echo $item->tn_id; ?>">
+                <td><?php echo $item->user_id; ?></td>
                 <td><?php echo $item->tn_content; ?></td>
                 <td><?php echo date('m月d日 H:i', $item->tn_time); ?></td>
-                <td><?php echo $item->tn_phone; ?></td>
-                <td><?php echo $item->tn_email; ?></td>
-                <td><?php echo $item->user_id; ?></td>
+                <td class="set_remark"><?php echo $item->tn_remark; ?></td>
                 <td>
                     <select class="set_status">
                         <option value="-1">删除</option>
@@ -45,6 +43,7 @@
 </div>
 <script type="text/javascript">
 $(document).ready(function(){
+    //变更状态
     $('#note_list').on('change', '.set_status', function(){
         var status= parseInt($(this).val());
         var tr = $(this).parents('tr');
@@ -78,6 +77,28 @@ $(document).ready(function(){
                 'json'
             );
         }
+    });
+    //回复留言
+    $('#note_list').on('click', '.set_remark', function(){
+        var td = $(this);
+        var ov = td.text();
+        var tn_id = td.parents('tr').attr('data-val');
+        var textarea = td.html('<textarea class="form-control">'+ov+'</textarea>').find('textarea');
+        textarea.on('click', function(e){
+            e.stopPropagation();
+        });
+        textarea.focus();
+        textarea.one('blur', function(){
+            var tn_remark = $(this).val();
+            $.post(
+                '/content/setNoteRemark',
+                {tn_id: tn_id, tn_remark: tn_remark},
+                function(){
+                    td.html(tn_remark);
+                }
+            );
+            textarea.unbind();
+        });
     });
 });
 </script>

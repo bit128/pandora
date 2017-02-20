@@ -9,9 +9,8 @@ namespace core;
 
 class Request
 {
-
+	//cookie生存时间
 	private $cookie_limit = 7200;
-	
 	//类静态实例
 	private static $_instance;
 
@@ -101,12 +100,26 @@ class Request
 	}
 
 	/**
+	* 设置请求参数
+	* ======
+	* @param $key 		参数名称
+	* @param $value 	值
+	* ======
+	* @author 洪波
+	* @version 16.12.16
+	*/
+	public function setParam($key, $value)
+	{
+		Autumn::app()->query_params[$key] = $value;
+	}
+
+	/**
 	* 获取客户端名称
 	* ======
 	* @author 洪波
 	* @version 16.07.13
 	*/
-	public function getName()
+	public function getAgent()
 	{
 		return isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
 	}

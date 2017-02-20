@@ -9,8 +9,7 @@ namespace core;
 
 class Autumn
 {
-	const FRAMEWORK_VERSION = 1.31;
-	const PRODUCT_VERSION 	= 1.10;
+	const FRAMEWORK_VERSION = 1.4;
 
 	//Autumn实例
 	private static $_instance = null;
@@ -119,6 +118,17 @@ class Autumn
 		//解析url
 		$this->parseUrl();
 		//路由控制器
+		$this->start();
+	}
+
+	/**
+	* 执行控制器action
+	* ======
+	* @author 洪波
+	* @version 16.12.16
+	*/
+	private function start()
+	{
 		$class = 'app\controllers\\' . ucfirst($this->controller) . 'Controller';
 		if($this->controller != '' && class_exists($class))
 		{
@@ -155,6 +165,9 @@ class Autumn
 	private function parseUrl()
 	{
 		$rc = $this->config('router');
+		//用户路由规则
+		$custom_key = isset($rc['custom_route']) ? array_keys($rc['custom_route']) : null;
+
 		$url = str_replace($rc['index'], '', $_SERVER['REQUEST_URI']);
 		//去除query string
 		if($c = strpos($url, '?'))
@@ -163,7 +176,7 @@ class Autumn
 		}
 		$url_param = explode('/', $url);
 		$parse_count = 2;
-		$query = '';
+		$query = ''; 
 		foreach ($url_param as $v)
 		{
 			if($v == '')
@@ -186,8 +199,28 @@ class Autumn
 			//获取controller名称
 			else if ($parse_count == 2)
 			{
-				$this->controller = $v;
-				-- $parse_count;
+				if ($custom_key && in_array($v, $custom_key))
+				{
+					$dc = explode('/', $rc['custom_route'][$v]);
+					if($dc)
+					{
+						$this->controller = $dc[0];
+						if (count($dc) > 1)
+						{
+							$this->action = $dc[1];
+						}
+						else
+						{
+							$this->action = 'index';
+						}
+						$parse_count = 0;
+					}
+				}
+				else
+				{
+					$this->controller = $v;
+					-- $parse_count;
+				}
 			}
 			//获取action名称
 			else if ($parse_count == 1)
@@ -236,15 +269,30 @@ class Autumn
 	* 系统异常处理
 	* ======
 	* @author 洪波
-	* @version 16.03.30
+	* @version 17.01.10
 	*/
 	public function exception($content, $interrupt = true)
 	{
 		header("Content-Type:text/html; charset=utf-8");
-		echo '<div style="text-align:center;padding:10px;border:1px dashed #ccc;color:#ff4e00;background:#eee;">',
-			'<p style="color:#666;"><strong style="font-size:20px;">警告：系统异常</strong></p>',
-			'<div style="border-top:1px dashed #ccc; padding:20px;">',$content,'</div>',
-			'<p style="color:#999;"><small>Autumn版本：',self::FRAMEWORK_VERSION,'</small></p></div>';
+		$view = 'app/views/exception.php';
+		if(is_file($view))
+		{
+			extract(array(
+				'error_detail' => $content,
+				'system_version' => self::FRAMEWORK_VERSION
+			), EXTR_PREFIX_SAME, 'data');
+			ob_start();
+			ob_implicit_flush(false);
+			require($view);
+			echo ob_get_clean();
+		}
+		else
+		{
+			echo '<div style="text-align:center;padding:10px;border:1px dashed #ccc;color:#ff4e00;background:#eee;">',
+				'<p style="color:#666;"><strong style="font-size:20px;">警告：系统异常</strong></p>',
+				'<div style="border-top:1px dashed #ccc; padding:20px;">',$content,'</div>',
+				'<p style="color:#999;"><small>Autumn版本：',self::FRAMEWORK_VERSION,'</small></p></div>';
+		}
 		if($interrupt)
 		{
 			exit;

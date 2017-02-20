@@ -18,8 +18,7 @@ class TestController extends \core\Controller
 
 	public function actionTest()
 	{
-		Autumn::app()->response->setResult('haha');
-		Autumn::app()->response->json();
+		echo \library\MbString::substr('我是中国人hello', 2, 5);
 	}
 	/*
 	public function actionGetNoteList()
