@@ -32,7 +32,7 @@ $config = array(
 		'driver' => 'Mysqli',
 		'host' => '127.0.0.1',
 		'user' => 'root',
-		'password' => '',
+		'password' => 'hong_1987',
 		'dbname' => 'pandora'
 		),
 	//缓存服务配置

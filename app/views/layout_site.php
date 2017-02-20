@@ -43,8 +43,8 @@
     <?php echo $content; ?>
     
     <footer class="blog-footer">
-      <p>&copy; 程序员手稿[1doc.cc] 原创内容<strong>版权所有</strong> 未经允许不得转载 联系邮箱：admin@1doc.cc</p>
-      <p>浙ICP备16017720号</p>
+      <p>&copy; 程序员手稿[1doc.cc] 原创内容<strong>版权所有</strong> 未经允许不得转载 联系邮箱：xxx@1doc.cc</p>
+      <p>浙ICP备160177xx号</p>
     </footer>
   </body>
 </html>
