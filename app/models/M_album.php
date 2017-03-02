@@ -6,11 +6,9 @@
 * @version 16.08.03
 */
 namespace app\models;
-use core\Model;
-use core\Criteria;
-use core\Orm;
+use core\db\Criteria;
 
-class M_album extends Model
+class M_album extends \core\web\Model
 {
 	const STATUS_SHOW	= 1;
 	const STATUS_HIDE	= 0;
@@ -28,7 +26,7 @@ class M_album extends Model
 	public function maxSort($by_id)
 	{
 		$sql = "select max(al_sort) from " . $this->table_name . " where by_id='{$by_id}'";
-		$max = Orm::model($this->table_name)
+		$max = $this->orm
 			->getDb()
 			->queryScalar($sql);
 		if($max)
@@ -52,7 +50,7 @@ class M_album extends Model
 	public function getMinImage($by_id)
 	{
 		$sql = "select al_type,al_image from ".$this->table_name." where by_id='{$by_id}' order by al_sort asc limit 1";
-		return Orm::model($this->table_name)
+		return $this->orm
 			->getDb()
 			->queryRow($sql);
 	}
@@ -70,7 +68,7 @@ class M_album extends Model
 		$criteria = new Criteria;
 		$criteria->add('by_id', $by_id);
 		$criteria->order = 'al_sort asc';
-		$list = Orm::model($this->table_name)->findAll($criteria);
+		$list = $this->orm->findAll($criteria);
 		$result = array();
 		foreach ($list as $v)
 		{
@@ -92,7 +90,7 @@ class M_album extends Model
 	public function setSort($al_id, $by_id, $type)
 	{
 		//获取作用对象序号
-		$pointer = Orm::model($this->table_name)
+		$pointer = $this->orm
 			->getDb()
 			->queryScalar("select al_sort from t_album where al_id = '{$al_id}'");
 		//相对位置前
@@ -106,7 +104,7 @@ class M_album extends Model
 			$sql = "select al_id,al_sort from t_album where al_sort > {$pointer} and by_id = '{$by_id}' order by al_sort asc limit 1";
 		}
 		//获取被作用对象序号
-		$oppo = Orm::model($this->table_name)
+		$oppo = $this->orm
 			->getDb()
 			->queryRow($sql);
 		if($oppo)
@@ -136,7 +134,7 @@ class M_album extends Model
 	{
 		$criteria = new Criteria;
 		$criteria->add('by_id', $by_id);
-		return Orm::model($this->table_name)->deleteAll($criteria);
+		return $this->orm->deleteAll($criteria);
 	}
 
 }

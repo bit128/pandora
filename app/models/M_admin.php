@@ -6,12 +6,10 @@
 * @version 16.07.29
 */
 namespace app\models;
-use core\Model;
-use core\Request;
-use core\Criteria;
-use core\Orm;
+use core\Autumn;
+use core\db\Criteria;
 
-class M_admin extends Model
+class M_admin extends \core\web\Model
 {
 	const ROLE_ADMIN	= 1; 	//权限 - 管理员
 	const ROLE_USER		= 2; 	//权限 - 用户
@@ -75,7 +73,7 @@ class M_admin extends Model
 	*/
 	public static function checkRole($role)
 	{
-		if($am_role = Request::inst()->getSession('am_role'))
+		if($am_role = Autumn::app()->request->getSession('am_role'))
 		{
 			if($am_role & $role)
 				return true;
@@ -103,15 +101,15 @@ class M_admin extends Model
 		$criteria->add('am_account', $account);
 		$criteria->add('am_password', $password);
 		$criteria->add('am_status', 1);
-		$admin = Orm::model($this->table_name)->find($criteria, true);
+		$admin = $this->orm->find($criteria);
 		if ($admin)
 		{
 			//缓存管理员信息
-			Request::inst()->setSession('am_account', $admin->am_account);
-			Request::inst()->setSession('am_name', $admin->am_name);
-			Request::inst()->setSession('am_role', $admin->am_role);
-			Request::inst()->setSession('am_time', date('Y-m-d H:i',$admin->am_time));
-			Request::inst()->setSession('am_ip', $admin->am_ip);
+			Autumn::app()->request->setSession('am_account', $admin->am_account);
+			Autumn::app()->request->setSession('am_name', $admin->am_name);
+			Autumn::app()->request->setSession('am_role', $admin->am_role);
+			Autumn::app()->request->setSession('am_time', date('Y-m-d H:i',$admin->am_time));
+			Autumn::app()->request->setSession('am_ip', $admin->am_ip);
 			//更新登录信息
 			$admin->am_time = time();
 			$admin->am_ip = $_SERVER['REMOTE_ADDR'];
@@ -149,9 +147,7 @@ class M_admin extends Model
 				$r -= $role;
 			}
 			//保存权限
-			return $this->update($account, array(
-				'am_role' => $r
-				));
+			return $this->update($account, ['am_role' => $r]);
 		}
 		else
 		{

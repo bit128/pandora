@@ -7,12 +7,12 @@
 */
 namespace app\controllers;
 use core\Autumn;
-use core\Criteria;
-use library\Psdk;
+use core\db\Criteria;
+use core\http\Response;
 use app\models\M_channel;
 use app\models\M_admin;
 
-class ChannelController extends \core\Controller
+class ChannelController extends \core\web\Controller
 {
 
 	private $m_channel;
@@ -54,12 +54,12 @@ class ChannelController extends \core\Controller
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -82,7 +82,7 @@ class ChannelController extends \core\Controller
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_NOHAS, '', '栏目不存在');
+				Autumn::app()->response->setResult(Response::RES_NOHAS, '', '栏目不存在');
 			}
 			Autumn::app()->response->json();
 		}
@@ -96,22 +96,22 @@ class ChannelController extends \core\Controller
 	*/
 	public function actionGetList()
 	{
-		if(Psdk::checkSign())
+		if(Autumn::app()->request->isPostRequest())
 		{
-			$offset = Autumn::app()->request->getPost('offset', 0);
-			$limit = Autumn::app()->request->getPost('limit', 99);
+			$criteria = new Criteria;
+			$criteria->offset = Autumn::app()->request->getPost('offset', 0);
+			$criteria->limit = Autumn::app()->request->getPost('limit', 99);
 			$cn_id = Autumn::app()->request->getPost('cn_id');
 			if(strlen($cn_id) == 13)
 			{
-				$criteria = new Criteria;
 				$criteria->add('cn_fid', $cn_id);
 				$criteria->order = 'cn_sort asc';
-				$result = $this->m_channel->getList($offset, $limit, $criteria);
+				$result = $this->m_channel->getList($criteria);
 				Autumn::app()->response->setResult($result);
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
+				Autumn::app()->response->setResult(Response::RES_PARAMF);
 			}
 		}
 	}
@@ -137,16 +137,16 @@ class ChannelController extends \core\Controller
 					);
 				if($this->m_channel->update($cn_id, $data))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -170,16 +170,16 @@ class ChannelController extends \core\Controller
 					);
 				if($this->m_channel->update($cn_id, $data))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_SUCCESS);
+					Autumn::app()->response->setResult(Response::RES_SUCCESS);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -203,11 +203,11 @@ class ChannelController extends \core\Controller
 				$type = Autumn::app()->request->getPost('type');
 
 				$this->m_channel->setSort($cn_id, $cn_fid, $by_id, $type);
-				Autumn::app()->response->setResult(\core\Response::RES_OK);
+				Autumn::app()->response->setResult(Response::RES_OK);
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -237,31 +237,31 @@ class ChannelController extends \core\Controller
 						{
 							if($this->m_channel->delete($cn_id))
 							{
-								Autumn::app()->response->setResult(\core\Response::RES_OK);
+								Autumn::app()->response->setResult(Response::RES_OK);
 							}
 							else
 							{
-								Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+								Autumn::app()->response->setResult(Response::RES_FAIL);
 							}
 						}
 						else
 						{
-							Autumn::app()->response->setResult(\core\Response::RES_FAIL, '', '栏目下有内容，请先删除内容');
+							Autumn::app()->response->setResult(Response::RES_FAIL, '', '栏目下有内容，请先删除内容');
 						}
 					}
 					else
 					{
-						Autumn::app()->response->setResult(\core\Response::RES_FAIL, '', '存在子栏目，请先删除子栏目');
+						Autumn::app()->response->setResult(Response::RES_FAIL, '', '存在子栏目，请先删除子栏目');
 					}
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_REFUSE, '', '不能删除根目录，不然就没得玩了');
+					Autumn::app()->response->setResult(Response::RES_REFUSE, '', '不能删除根目录，不然就没得玩了');
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE, '', '无权操作');
+				Autumn::app()->response->setResult(Response::RES_REFUSE, '', '无权操作');
 			}
 			Autumn::app()->response->json();
 		}

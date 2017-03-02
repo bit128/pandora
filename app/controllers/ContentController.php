@@ -7,14 +7,14 @@
 */
 namespace app\controllers;
 use core\Autumn;
-use core\Criteria;
-use library\Psdk;
+use core\db\Criteria;
+use core\http\Response;
 use app\models\M_content;
 use app\models\M_content_note;
 use app\models\M_user;
 use app\models\M_admin;
 
-class ContentController extends \core\Controller
+class ContentController extends \core\web\Controller
 {
 
 	private $m_content;
@@ -48,19 +48,20 @@ class ContentController extends \core\Controller
 					'ct_utime' => $time,
 					'ct_status' => M_content::STATUS_HIDE
 					);
-				$ct_id = $this->m_content->insert($data);
+				$this->m_content->load($data);
+				$ct_id = $this->m_content->save();
 				if(strlen($ct_id) == 13)
 				{
 					Autumn::app()->response->setResult($ct_id);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -87,16 +88,16 @@ class ContentController extends \core\Controller
 					);
 				if($this->m_content->update($ct_id, $data))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -120,7 +121,7 @@ class ContentController extends \core\Controller
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_NOHAS);
+				Autumn::app()->response->setResult(Response::RES_NOHAS);
 			}
 			Autumn::app()->response->json();
 		}
@@ -136,12 +137,13 @@ class ContentController extends \core\Controller
 	{
 		if(Psdk::checkSign())
 		{
-			$offset = Autumn::app()->request->getPost('offset', 0);
-			$limit = Autumn::app()->request->getPost('limit', 99);
+			$criteria = new Criteria;
+			$criteria->offset = Autumn::app()->request->getPost('offset', 0);
+			$criteria->limit = Autumn::app()->request->getPost('limit', 99);
+
 			$cn_id = Autumn::app()->request->getPost('cn_id');
 			$keyword = Autumn::app()->request->getPost('keyword');
 
-			$criteria = new Criteria;
 			$criteria->add('ct_status', '0', '>');
 			if(strlen($cn_id) == 13)
 			{
@@ -150,7 +152,7 @@ class ContentController extends \core\Controller
 				$criteria->addIn('cn_id', $cn_ids);
 			}
 			$criteria->order = 'ct_utime desc';
-			$result = $this->m_content->getList($offset, $limit, $criteria);
+			$result = $this->m_content->getList($criteria);
 			Autumn::app()->response->setResult($result);
 			Autumn::app()->response->json();
 		}
@@ -202,16 +204,16 @@ class ContentController extends \core\Controller
 					//删除评论
 					$this->m_content_note->deleteByContent($ct_id);
 
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -239,18 +241,19 @@ class ContentController extends \core\Controller
 					'ct_id' => Autumn::app()->request->getPost('ct_id'),
 					'user_id' => $user_id,
 				);
-				if($this->m_content_note->insert($data))
+				$this->m_content_note->load($data);
+				if($this->m_content_note->save())
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
+				Autumn::app()->response->setResult(Response::RES_TOKENF);
 			}
 			Autumn::app()->response->json();
 		}
@@ -298,7 +301,7 @@ class ContentController extends \core\Controller
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
+				Autumn::app()->response->setResult(Response::RES_TOKENF);
 			}
 			Autumn::app()->response->json();
 		}
@@ -322,16 +325,16 @@ class ContentController extends \core\Controller
 					$field => Autumn::app()->request->getPost($field)
 				)))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -374,16 +377,16 @@ class ContentController extends \core\Controller
 				$tn_id = Autumn::app()->request->getPost('tn_id');
 				if($this->m_content_note->delete($tn_id))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}

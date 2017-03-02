@@ -38,8 +38,7 @@ class HttpRequest
 		$this->url = $url;
 		$this->fields = $fields;
 		$this->headers = array(
-			'User-Agent: Mozilla/5.0 Autumn 1.21',
-			'Accept-Encoding: gzip, deflate',
+			'User-Agent: Mozilla/5.0 Autumn 1.21'
 			);
 		$this->headers += $headers;
 	}
@@ -147,6 +146,7 @@ class HttpRequest
 		//设置消息头
 		if($this->headers)
 		{
+			//print_r($this->headers);
 			curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
 		}
 		//设置请求方法
@@ -157,8 +157,8 @@ class HttpRequest
 		}
 		//curl_setopt($ch, CURLOPT_TIMEOUT, 2);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		//curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
-		//curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 		$result = curl_exec($ch);
 		$this->response = curl_getinfo($ch);
 		curl_close($ch);

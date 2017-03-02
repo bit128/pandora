@@ -7,12 +7,13 @@
 */
 namespace app\controllers;
 use core\Autumn;
-use core\Criteria;
+use core\db\Criteria;
+use core\http\Response;
 use app\models\M_dictionary;
 use app\models\M_index;
 use app\models\M_admin;
 
-class DictionaryController extends \core\Controller
+class DictionaryController extends \core\web\Controller
 {
 
 	private $m_dictionary;
@@ -40,17 +41,17 @@ class DictionaryController extends \core\Controller
 				{
 					if($this->m_dictionary->add($dc_keyword, $dc_type))
 					{
-						Autumn::app()->response->setResult(\core\Response::RES_OK);
+						Autumn::app()->response->setResult(Response::RES_OK);
 					}
 					else
 					{
-						Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+						Autumn::app()->response->setResult(Response::RES_FAIL);
 					}
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -67,12 +68,14 @@ class DictionaryController extends \core\Controller
 		$types = urldecode(Autumn::app()->request->getParam('t', -1));
 
 		$criteria = new Criteria;
+		$criteria->offset = $offset;
+		$criteria->limit = $limit;
 		if ($types != -1)
 		{
 			$criteria->add('dc_type', $types);
 		}
 		$criteria->order = 'dc_count desc';
-		$result = $this->m_dictionary->getList(0, 60, $criteria);
+		$result = $this->m_dictionary->getList($criteria);
 		Autumn::app()->response->setResult($result['result']);
 		Autumn::app()->response->json();
 	}
@@ -94,16 +97,16 @@ class DictionaryController extends \core\Controller
 				$value = Autumn::app()->request->getPost('value');
 				if($this->m_dictionary->update($dc_id, array($field => $value)))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -127,16 +130,16 @@ class DictionaryController extends \core\Controller
 					//删除索引
 					$m_index = new M_index;
 					$m_index->deleteIndex($dc_id, '');
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -157,15 +160,16 @@ class DictionaryController extends \core\Controller
 				$dc_id = Autumn::app()->request->getPost('dc_id');
 				$by_id = Autumn::app()->request->getPost('by_id');
 				$m_index = new M_index;
-				$m_index->insert(array(
+				$m_index->load(array(
 					'dc_id' => $dc_id,
 					'by_id' => $by_id
 					));
-				Autumn::app()->response->setResult(\core\Response::RES_OK);
+				$m_index->save();
+				Autumn::app()->response->setResult(Response::RES_OK);
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -206,11 +210,11 @@ class DictionaryController extends \core\Controller
 
 				$m_index = new M_index;
 				$m_index->deleteIndex($dc_id, $by_id);
-				Autumn::app()->response->setResult(\core\Response::RES_OK);
+				Autumn::app()->response->setResult(Response::RES_OK);
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}

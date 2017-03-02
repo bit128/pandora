@@ -9,16 +9,17 @@ namespace app\controllers;
 use core\Autumn;
 use library\Psdk;
 
-class TestController extends \core\Controller
+class TestController extends \core\web\Controller
 {
 	public function init()
 	{
 		header("Content-Type:text/html;charset=UTF-8");
 	}
 
-	public function actionTest()
+	public function actionIndex()
 	{
-		echo \library\MbString::substr('我是中国人hello', 2, 5);
+		Autumn::app()->response->setResult('wahaha');
+		echo Autumn::app()->response->json();
 	}
 	/*
 	public function actionGetNoteList()

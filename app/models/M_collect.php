@@ -6,11 +6,9 @@
 * @version 16.08.18
 */
 namespace app\models;
-use core\Model;
-use core\Criteria;
-use core\Orm;
+use core\db\Criteria;
 
-class M_collect extends Model
+class M_collect extends \core\web\Model
 {
 
 	const TYPE_CONTENT = 1; //收藏类型 - 内容
@@ -31,7 +29,7 @@ class M_collect extends Model
 		$criteria = new Criteria;
 		$criteria->add('by_id', $by_id);
 		$criteria->add('user_id', $user_id);
-		if ($this->count($criteria))
+		if ($this->orm->count($criteria))
 		{
 			return true;
 		}
@@ -57,7 +55,7 @@ class M_collect extends Model
 		$criteria->add('user_id', $user_id);
 		$criteria->add('cl_type', self::TYPE_CONTENT);
 		//统计数量
-		$count = $this->count($criteria);
+		$count = $this->orm->count($criteria);
 		//联合product
 		$criteria->select = $this->table_name . '.*,t_content.ct_title,t_content.ct_image,t_content.ct_detail';
 		$criteria->union('t_content', $this->table_name . '.by_id=t_content.ct_id', 'left');
@@ -66,7 +64,7 @@ class M_collect extends Model
 		$criteria->limit = $limit;
 		$criteria->order = 'cl_time asc';
 		//获取数据列表
-		$list = Orm::model($this->table_name)->findAll($criteria);
+		$list = $this->orm->findAll($criteria);
 
 		return array(
 			'count' => $count,
@@ -92,6 +90,6 @@ class M_collect extends Model
 		if ($user_id != '')
 			$criteria->add('user_id', $user_id);
 
-		return Orm::model($this->table_name)->deleteAll($criteria);
+		return $this->orm->deleteAll($criteria);
 	}
 }

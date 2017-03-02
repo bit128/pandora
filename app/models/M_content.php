@@ -6,11 +6,9 @@
 * @version 16.07.28
 */
 namespace app\models;
-use core\Model;
-use core\Criteria;
-use core\Orm;
+use core\db\Criteria;
 
-class M_content extends Model
+class M_content extends \core\web\Model
 {
 
 	const STATUS_HIDE	= 0; //状态 - 隐藏
@@ -30,7 +28,9 @@ class M_content extends Model
 	public function addViewCount($ct_id)
 	{
 		$sql = "update {$this->table_name} set ct_view=ct_view+1 where ct_id = '{$ct_id}'";
-		return \core\Autumn::app()->mysqli->query($sql);
+		return $this->orm
+			->getDb()
+			->query($sql);
 	}
 
 	/**
@@ -50,7 +50,7 @@ class M_content extends Model
 		{
 			$criteria->add('ct_status', $status);
 		}
-		return $this->count($criteria);
+		return $this->orm->count($criteria);
 	}
 
 	/**
@@ -72,7 +72,8 @@ class M_content extends Model
 			'ct_utime' => $time,
 			'ct_status' => self::STATUS_OPEN
 			);
-		if($this->insert($data))
+		$this->load($data);
+		if($this->save())
 		{
 			return $ct_id;
 		}
@@ -99,7 +100,7 @@ class M_content extends Model
 			$criteria->add('ct_status', $ct_status);
 		}
 		//统计数量
-		$count = $this->count($criteria);
+		$count = $this->orm->count($criteria);
 		//分页
 		$criteria->offset = $offset;
 		$criteria->limit = $limit;
@@ -112,7 +113,7 @@ class M_content extends Model
 			);
 		$criteria->order = $sorts[$sort];
 		//获取数据列表
-		$list = Orm::model($this->table_name)->findAll($criteria);
+		$list = $this->orm->findAll($criteria);
 		$result = array();
 		$m_index = new M_index;
 		foreach ($list as $k => $v)

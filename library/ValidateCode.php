@@ -74,7 +74,6 @@ class ValidateCode
 		{
 			$code .= $source[rand(0, $source_length)];
 		}
-		$_SESSION['validate_code'] = $code;
 		return $code;
 	}
 

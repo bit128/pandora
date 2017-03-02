@@ -7,7 +7,7 @@
 */
 namespace app\controllers;
 
-class NfsController extends \core\Controller
+class NfsController extends \core\web\Controller
 {
 
 	/**

@@ -6,11 +6,9 @@
 * @version 16.08.07
 */
 namespace app\models;
-use core\Model;
-use core\Criteria;
-use core\Orm;
+use core\db\Criteria;
 
-class M_dictionary extends Model
+class M_dictionary extends \core\web\Model
 {
 	const TYPE_NORMAL	= 0;
 	const TYPE_PRODUCT	= 1;
@@ -38,7 +36,8 @@ class M_dictionary extends Model
 			'dc_type' => $type,
 			'dc_time' => time()
 			);
-		return $this->insert($data);
+		$this->load($data);
+		return $this->save();
 	}
 
 	/**
@@ -54,7 +53,7 @@ class M_dictionary extends Model
 	{
 		$criteria = new Criteria;
 		$criteria->add('dc_keyword', $dc_keyword);
-		$dictionary = Orm::model($this->table_name)->find($criteria);
+		$dictionary = $this->orm->find($criteria);
 		if($dictionary)
 		{
 			$this->addCount($dictionary->dc_id);
@@ -89,7 +88,7 @@ class M_dictionary extends Model
 			$sql = "select distinct(a.by_id) from t_index as a,t_dictionary as b where b.dc_keyword='{$dc_keyword}' and a.dc_id=b.dc_id";
 		}
 		$ids = array();
-		$result = Orm::model($this->table_name)
+		$result = $this->orm
 			->getDb()
 			->queryAll($sql);
 		foreach ($result as $v)
@@ -110,7 +109,7 @@ class M_dictionary extends Model
 	public function addCount($dc_id)
 	{
 		$sql = "update t_dictionary set dc_count=dc_count+1 where dc_id='{$dc_id}'";
-		return Orm::model($this->table_name)
+		return $this->orm
 			->getDb()
 			->query($sql);
 	}

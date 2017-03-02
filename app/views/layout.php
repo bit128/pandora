@@ -67,13 +67,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/home"><?php echo \core\Autumn::app()->config('app_name'); ?></a>
+          <a class="navbar-brand" href="/home"><?php echo \core\Autumn::app()->config->get('app_name'); ?></a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li class="active"><a href="/home">控制台</a></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户（<?php echo \core\Request::inst()->getSession('am_name', '未登录'); ?>） <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户（<?php echo \core\Autumn::app()->request->getSession('am_name', '未登录'); ?>） <span class="caret"></span></a>
               <ul class="dropdown-menu">
                 <li><a href="/admin/logout">安全退出</a></li>
               </ul>
@@ -87,8 +87,8 @@
 
     <footer class="footer">
       <div class="container">
-        <p class="text-muted">&copy <?php echo \core\Autumn::app()->config('app_name'); ?> 2013-2016 版权所有 
-          <small>[ 当前版本：<?php echo \core\Autumn::app()->config('version'); ?> ]</small></p>
+        <p class="text-muted">&copy <?php echo \core\Autumn::app()->config->get('app_name'); ?> 2013-2016 版权所有 
+          <small>[ 当前版本：<?php echo \core\Autumn::app()->config->get('version'); ?> ]</small></p>
       </div>
     </footer>
   </body>

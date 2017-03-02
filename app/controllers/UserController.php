@@ -7,11 +7,11 @@
 */
 namespace app\controllers;
 use core\Autumn;
-use library\Psdk;
+use core\http\Response;
 use app\models\M_user;
 use app\models\M_admin;
 
-class UserController extends \core\Controller
+class UserController extends \core\web\Controller
 {
 	private $m_user;
 
@@ -85,7 +85,8 @@ class UserController extends \core\Controller
 				$info['user_ltime'] = $info['user_ctime'];
 				$info['user_status'] = M_user::STATUS_NORMAL;
 				//写入数据库
-				$user_id = $this->m_user->insert($info, false);
+				$this->m_user->load($info);
+				$user_id = $this->m_user->save();
 				if(strlen($user_id) === 13)
 				{
 					//构建令牌
@@ -95,12 +96,12 @@ class UserController extends \core\Controller
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_NAMEDF);
+				Autumn::app()->response->setResult(Response::RES_NAMEDF);
 			}
 			Autumn::app()->response->json();
 		}
@@ -136,12 +137,12 @@ class UserController extends \core\Controller
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_REFUSE, '', '账户被锁定');
+					Autumn::app()->response->setResult(Response::RES_REFUSE, '', '账户被锁定');
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_PWDF, '', '用户名或密码错误');
+				Autumn::app()->response->setResult(Response::RES_PWDF, '', '用户名或密码错误');
 			}
 			Autumn::app()->response->json();
 		}
@@ -167,11 +168,11 @@ class UserController extends \core\Controller
 					));
 				//清除用户令牌
 				RedisCache::model('token')->flush($user_id);
-				Autumn::app()->response->setResult(\core\Response::RES_OK);
+				Autumn::app()->response->setResult(Response::RES_OK);
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
+				Autumn::app()->response->setResult(Response::RES_TOKENF);
 			}
 			Autumn::app()->response->json();
 		}
@@ -201,12 +202,12 @@ class UserController extends \core\Controller
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_NOHAS, '', '用户不存在');
+				Autumn::app()->response->setResult(Response::RES_NOHAS, '', '用户不存在');
 			}
 		}
 		else
 		{
-			Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
+			Autumn::app()->response->setResult(Response::RES_PARAMF);
 		}
 		Autumn::app()->response->json();
 	}
@@ -228,7 +229,7 @@ class UserController extends \core\Controller
 				$value = Autumn::app()->request->getPost('value');
 				if(($field == 'user_phone' || $field == 'user_email') && $this->m_user->exist($value))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_NAMEDF);
+					Autumn::app()->response->setResult(Response::RES_NAMEDF);
 				}
 				else
 				{
@@ -237,17 +238,17 @@ class UserController extends \core\Controller
 						);
 					if($this->m_user->update($user_id, $data))
 					{
-						Autumn::app()->response->setResult(\core\Response::RES_OK);
+						Autumn::app()->response->setResult(Response::RES_OK);
 					}
 					else
 					{
-						Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
+						Autumn::app()->response->setResult(Response::RES_NOCHAN);
 					}
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE, '', '需要用户权限');
+				Autumn::app()->response->setResult(Response::RES_REFUSE, '', '需要用户权限');
 			}
 			Autumn::app()->response->json();
 		}
@@ -272,16 +273,16 @@ class UserController extends \core\Controller
 				);
 				if ($this->m_user->update($user_id, $data))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_TOKENF, '', '令牌错误');
+				Autumn::app()->response->setResult(Response::RES_TOKENF, '', '令牌错误');
 			}
 			Autumn::app()->response->json();
 		}
@@ -352,16 +353,16 @@ class UserController extends \core\Controller
 				{
 					$data = array('user_password' => $new_password);
 					$this->m_user->update($user_id, $data);
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_PWDF, '', '原密码不正确');
+					Autumn::app()->response->setResult(Response::RES_PWDF, '', '原密码不正确');
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_TOKENF, '', '令牌错误');
+				Autumn::app()->response->setResult(Response::RES_TOKENF, '', '令牌错误');
 			}
 			Autumn::app()->response->json();
 		}

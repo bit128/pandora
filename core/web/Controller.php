@@ -3,13 +3,13 @@
 * 控制器
 * ======
 * @author 洪波
-* @version 15.02.25
+* @version 16.02.25
 */
-namespace core;
+namespace core\web;
+use core\Autumn;
 
 class Controller
 {
-
 	/**
 	* 构造方法
 	* ======
@@ -30,7 +30,7 @@ class Controller
 		}
 		else
 		{
-			Autumn::app()->exception('404.2 您访问的页面不见了，呜呜～～');
+			Autumn::app()->exception->throws('404.2 您访问的页面不见了，呜呜～～');
 		}
 	}
 

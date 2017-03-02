@@ -6,11 +6,9 @@
 * @version 16.07.28
 */
 namespace app\models;
-use core\Model;
-use core\Orm;
-use core\Criteria;
+use core\db\Criteria;
 
-class M_channel extends Model
+class M_channel extends \core\web\Model
 {
 
 	const STATUS_HIDE	= 0;
@@ -30,7 +28,7 @@ class M_channel extends Model
 	{
 		$criteria = new Criteria;
 		$criteria->add('cn_id', $cn_id);
-		$count = Orm::model($this->table_name)->count("cn_fid = '{$cn_id}'");
+		$count = $this->orm->count("cn_fid = '{$cn_id}'");
 		if($count)
 		{
 			return true;
@@ -52,7 +50,7 @@ class M_channel extends Model
 	private function maxSort($cn_fid)
 	{
 		$sql = "select max(cn_sort) from " . $this->table_name . " where cn_fid='{$cn_fid}'";
-		$max = Orm::model($this->table_name)
+		$max = $this->orm
 			->getDb()
 			->queryScalar($sql);
 		if($max)
@@ -87,15 +85,8 @@ class M_channel extends Model
 			'cn_admin' => '',
 			'cn_status' => self::STATUS_OPEN
 			);
-
-		if($this->insert($data))
-		{
-			return $data['cn_id'];
-		}
-		else
-		{
-			return false;
-		}
+		$this->load($data);
+		return $this->save();
 	}
 
 	/**
@@ -111,7 +102,7 @@ class M_channel extends Model
 		$criteria = new Criteria;
 		$criteria->add('cn_fid', $cn_fid);
 		$criteria->order = 'cn_sort asc';
-		$list = Orm::model($this->table_name)->findAll($criteria);
+		$list = $this->orm->findAll($criteria);
 		//拼装结构
 		$tree = array();
 		foreach ($list as $v)
@@ -146,7 +137,7 @@ class M_channel extends Model
 		$condition = array($cn_id);
 		//迭代子目录
 		do {
-			$list = Orm::model($this->table_name)
+			$list = $this->orm
 				->getDb()
 				->queryAll("select cn_id from t_channel where cn_fid in ('".implode("','", $condition)."')");
 			$rs = array();
@@ -190,14 +181,14 @@ class M_channel extends Model
 			$data['cn_sort'] = '0';
 			//$this->update($cn_id, $data);
 			//取作用栏目序号
-			$pointer = Orm::model($this->table_name)
+			$pointer = $this->orm
 				->getDb()
 				->queryScalar("select cn_sort from t_channel where cn_id = '{$by_id}'");
 			//相对位置前
 			if($type == 'prev')
 			{
 				$sql = "update t_channel set cn_sort=cn_sort+1 where cn_sort >= '{$pointer}' and cn_fid = '{$cn_fid}'";
-				Orm::model($this->table_name)
+				$this->orm
 					->getDb()
 					->query($sql);
 				//更新当前栏目序号
@@ -207,7 +198,7 @@ class M_channel extends Model
 			else if ($type == 'next')
 			{
 				$sql = "update t_channel set cn_sort=cn_sort+1 where cn_sort > '{$pointer}' and cn_fid = '{$cn_fid}'";
-				Orm::model($this->table_name)
+				$this->orm
 					->getDb()
 					->query($sql);
 				//更新当前栏目序号

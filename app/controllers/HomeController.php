@@ -7,9 +7,9 @@
 */
 namespace app\controllers;
 use core\Autumn;
-use core\Criteria;
+use core\db\Criteria;
 
-class HomeController extends \core\Controller
+class HomeController extends \core\web\Controller
 {
 
 	public function init()
@@ -43,7 +43,10 @@ class HomeController extends \core\Controller
 		$page = Autumn::app()->request->getQuery('page', 1);
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
-		$result = $m_admin->getList($offset, $limit);
+		$criteria = new Criteria;
+		$criteria->offset = $offset;
+		$criteria->limit = $limit;
+		$result = $m_admin->getList($criteria);
 		//分页
 		$url = '/home/admin';
 		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
@@ -71,13 +74,15 @@ class HomeController extends \core\Controller
 		$offset = ($page - 1) * $limit;
 		$url = '/home/user/s/'.$status;
 		$criteria = new Criteria;
+		$criteria->offset = $offset;
+		$criteria->limit = $limit;
 		$criteria->add('user_status', $status);
 		if($keyword != '')
 		{
 			$criteria->addCondition("user_phone='{$keyword}' OR user_email='{$keyword}' OR user_name like '%{$keyword}%'");
 			$url .= '/k/' . $keyword;
 		}
-		$result = $m_user->getList($offset, $limit, $criteria);
+		$result = $m_user->getList($criteria);
 		//分页
 		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
 
@@ -158,11 +163,13 @@ class HomeController extends \core\Controller
 		$offset = ($page - 1) * $limit;
 
 		$criteria = new Criteria;
+		$criteria->offset = $offset;
+		$criteria->limit = $limit;
 		$criteria->add('ct_id', $ct_id);
 		if ($status != -1)
 			$criteria->add('tn_status', $status);
 		$m_note = new \app\models\M_content_note;
-		$result = $m_note->getList($offset, $limit, $criteria);
+		$result = $m_note->getList($criteria);
 		//分页
 		$url = '/home/contentNote';
 		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
@@ -206,7 +213,7 @@ class HomeController extends \core\Controller
 		$criteria->limit = $limit;
 		$sort_arr = array('dc_time desc', 'dc_count desc');
 		$criteria->order = $sort_arr[$sort];
-		$result = $m_dictionary->getList($offset, $limit, $criteria);
+		$result = $m_dictionary->getList($criteria);
 		//分页
 		$url = '/home/dictionary/t/' . $type . '/s/' . $sort;
 		if($keyword != '')
@@ -224,130 +231,6 @@ class HomeController extends \core\Controller
 			'pages' => $pages->build()
 			);
 		Autumn::app()->view->render('dictionary', $data);
-	}
-
-	/**
-	* 商品列表页面
-	* ======
-	* @author 洪波
-	* @version 16.08.04
-	*/
-	public function actionProduct()
-	{
-		$m_product = new \app\models\M_product;
-		$page = Autumn::app()->request->getQuery('page', 1);
-		$status = Autumn::app()->request->getQuery('s', -1);
-		$keyword = Autumn::app()->request->getQuery('k');
-		$limit = 10;
-		$offset = ($page - 1) * $limit;
-		$url = '/home/product/s/'.$status;
-		//获取数据列表
-		$result = $m_product->getProductList($offset, $limit, '', $keyword, true);
-		//分页
-		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
-
-		$data = array(
-			'status' => $status,
-			'keyword' => $keyword,
-			'count' => $result['count'],
-			'product_list' => $result['result'],
-			'pages' => $pages->build()
-			);
-		Autumn::app()->view->render('product', $data);
-	}
-
-	/**
-	* 订单管理页面
-	* ======
-	* @author 洪波
-	* @version 16.09.11
-	*/
-	public function actionOrder()
-	{
-		$m_order = new \app\models\M_order;
-		$page = Autumn::app()->request->getQuery('page', 1);
-		$status = Autumn::app()->request->getQuery('s', 2);
-		$keyword = Autumn::app()->request->getQuery('k');
-		$limit = 10;
-		$offset = ($page - 1) * $limit;
-		$url = '/home/order/s/'.$status;
-		$criteria = new Criteria;
-		$criteria->add('od_status', $status);
-		if($keyword != '')
-		{
-			$criteria->add('od_id', $keyword);
-		}
-		$result = $m_order->getList($offset, $limit, $criteria);
-		//分页
-		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
-
-		$data = array(
-			'status' => $status,
-			'keyword' > $keyword,
-			'count' => $result['count'],
-			'order_list' => $result['result'],
-			'pages' => $pages->build()
-			);
-		Autumn::app()->view->render('order', $data);
-	}
-
-	/**
-	* 订单详情页面
-	* ======
-	* @author 洪波
-	* @version 16.09.11
-	*/
-	public function actionOrderDetail()
-	{
-		$od_id = Autumn::app()->request->getParam('id');
-		if(strlen($od_id) == 16)
-		{
-			$m_order = new \app\models\M_order;
-			$m_cart = new \app\models\M_cart;
-			$m_user = new \app\models\M_user;
-
-			$order = $m_order->get($od_id);
-			$product_list = $m_cart->getProductList(0, 99, '', $od_id);
-			$user = $m_user->get($order->user_id);
-
-			$data = array(
-				'order' => $order,
-				'user' => $user,
-				'product_list' => $product_list['result']
-				);
-			Autumn::app()->view->render('order_detail', $data);
-		}
-	}
-
-	/**
-	* 库存管理页面
-	* ======
-	* @author 洪波
-	* @version 16.08.06
-	*/
-	public function actionStock()
-	{
-		$pd_id = Autumn::app()->request->getQuery('id');
-		if(strlen($pd_id) == 13)
-		{
-			$m_stock = new \app\models\M_stock;
-			$page = Autumn::app()->request->getQuery('page', 1);
-			$limit = 10;
-			$offset = ($page - 1) * $limit;
-			$criteria = new Criteria;
-			$criteria->add('pd_id', $pd_id);
-			$result = $m_stock->getList($offset, $limit, $criteria);
-			//分页
-			$url = '/home/stock/id/' . $pd_id;
-			$pages = new \library\Pagination($result['count'], $limit, $page, $url);
-			
-			$data = array(
-				'pd_id' => $pd_id,
-				'stock_list' => $result['result'],
-				'pages' => $pages->build()
-				);
-			Autumn::app()->view->render('stock', $data);
-		}
 	}
 
 	/**

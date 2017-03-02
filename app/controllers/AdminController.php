@@ -7,9 +7,10 @@
 */
 namespace app\controllers;
 use core\Autumn;
+use \core\http\Response;
 use app\models\M_admin;
 
-class AdminController extends \core\Controller
+class AdminController extends \core\web\Controller
 {
 
 	private $m_admin;
@@ -87,28 +88,29 @@ class AdminController extends \core\Controller
 							'am_time' => time(),
 							'am_ip' => Autumn::app()->request->getIp()
 							);
-						if($this->m_admin->insert())
+						$this->m_admin->load($data, true);
+						if($this->m_admin->save())
 						{
-							Autumn::app()->response->setResult(\core\Response::RES_OK);
+							Autumn::app()->response->setResult(Response::RES_OK);
 						}
 						else
 						{
-							Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+							Autumn::app()->response->setResult(Response::RES_FAIL);
 						}
 					}
 					else
 					{
-						Autumn::app()->response->setResult(\core\Response::RES_NAMEDF);
+						Autumn::app()->response->setResult(Response::RES_NAMEDF);
 					}
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_PARAMF, '', '需要填写管理员账号');
+					Autumn::app()->response->setResult(Response::RES_PARAMF, '', '需要填写管理员账号');
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE, '', '需要管理员权限');
+				Autumn::app()->response->setResult(Response::RES_REFUSE, '', '需要管理员权限');
 			}
 			Autumn::app()->response->json();
 		}
@@ -139,16 +141,16 @@ class AdminController extends \core\Controller
 				}
 				if($this->m_admin->update($account, $data))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(Response::RES_NOCHAN);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -164,14 +166,16 @@ class AdminController extends \core\Controller
 	{
 		if(M_admin::checkRole(M_admin::ROLE_ADMIN + M_admin::ROLE_CONTENT))
 		{
-			$criteria = new \core\Criteria;
+			$criteria = new \core\db\Criteria;
 			$criteria->select = 'am_account,am_name';
-			$admin_list = $this->m_admin->getList(0, 99, $criteria);
+			$criteria->offset = 0;
+			$criteria->limit = 99;
+			$admin_list = $this->m_admin->getList($criteria);
 			Autumn::app()->response->setResult($admin_list['result']);
 		}
 		else
 		{
-			Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+			Autumn::app()->response->setResult(Response::RES_REFUSE);
 		}
 		Autumn::app()->response->json();
 	}
@@ -193,16 +197,16 @@ class AdminController extends \core\Controller
 				$op = Autumn::app()->request->getPost('op');
 				if($this->m_admin->changeRole($account, $role, $op))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -223,16 +227,16 @@ class AdminController extends \core\Controller
 				$account = Autumn::app()->request->getPost('account');
 				if($this->m_admin->delete($account))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}

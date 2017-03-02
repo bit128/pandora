@@ -7,11 +7,9 @@
 */
 namespace app\models;
 use core\Autumn;
-use core\Model;
-use core\Orm;
-use core\Criteria;
+use core\db\Criteria;
 
-class M_user extends Model
+class M_user extends \core\web\Model
 {
 	
 	const DEVICE_DEFAULT 	= 0; 		//登录设备 - 未知
@@ -43,7 +41,7 @@ class M_user extends Model
 		$criteria = new Criteria;
 		$criteria->add('user_phone', $account);
 		$criteria->add('user_email', $account, '=', 'OR');
-		return $this->count($criteria);
+		return $this->orm->count($criteria);
 	}
 
 	/**
@@ -61,7 +59,7 @@ class M_user extends Model
 		$criteria->add('user_phone', $account, '=', 'OR');
 		$criteria->add('user_email', $account, '=', 'OR');
 
-		return Orm::model($this->table_name)->find($criteria);
+		return $this->orm->find($criteria);
 	}
 
 	/**
@@ -78,7 +76,7 @@ class M_user extends Model
 		$criteria = new Criteria;
 		$criteria->add('user_email', $account);
 		$criteria->add('user_password', $password);
-		return Orm::model($this->table_name)->find($criteria);
+		return $this->orm->find($criteria);
 	}
 
 	/**

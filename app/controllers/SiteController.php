@@ -8,14 +8,14 @@ use core\Autumn;
 * @author 洪波
 * @version 16.07.06
 */
-class SiteController extends \core\Controller
+class SiteController extends \core\web\Controller
 {
 	private $view;
 	private $m_content;
 	
 	public function init()
 	{
-		$this->view = \core\View::layout('layout_site');
+		$this->view = \core\web\View::layout('layout_site');
 		$this->m_content = new \app\models\M_content;
 	}
 

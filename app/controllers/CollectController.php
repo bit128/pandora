@@ -7,11 +7,12 @@
 */
 namespace app\controllers;
 use core\Autumn;
-use core\Criteria;
+use core\db\Criteria;
+use core\http\Response;
 use app\models\M_collect;
 use app\models\M_user;
 
-class CollectController extends \core\Controller
+class CollectController extends \core\web\Controller
 {
 
 	private $m_collect;
@@ -42,7 +43,7 @@ class CollectController extends \core\Controller
 				
 				if($this->m_collect->exist($by_id, $user_id))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_NOCHAN, '', '已经收藏过了');
+					Autumn::app()->response->setResult(Response::RES_NOCHAN, '', '已经收藏过了');
 				}
 				else
 				{
@@ -52,19 +53,20 @@ class CollectController extends \core\Controller
 						'user_id' => $user_id,
 						'cl_time' => time()
 						);
-					if($cl_id = $this->m_collect->insert($data))
+					$this->m_collect->load($data);
+					if($cl_id = $this->m_collect->save())
 					{
 						Autumn::app()->response->setResult($cl_id);
 					}
 					else
 					{
-						Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+						Autumn::app()->response->setResult(Response::RES_FAIL);
 					}
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
+				Autumn::app()->response->setResult(Response::RES_TOKENF);
 			}
 			Autumn::app()->response->json();
 		}
@@ -91,7 +93,7 @@ class CollectController extends \core\Controller
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
+				Autumn::app()->response->setResult(Response::RES_TOKENF);
 			}
 			Autumn::app()->response->json();
 		}
@@ -116,16 +118,16 @@ class CollectController extends \core\Controller
 				
 				if($this->m_collect->deleteByEntry($cl_type, $by_id, $user_id))
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_OK);
+					Autumn::app()->response->setResult(Response::RES_OK);
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_FAIL);
+					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
+				Autumn::app()->response->setResult(Response::RES_TOKENF);
 			}
 			Autumn::app()->response->json();
 		}
@@ -152,21 +154,21 @@ class CollectController extends \core\Controller
 					if($collect->user_id == $user_id)
 					{
 						$this->m_collect->delete($cl_id);
-						Autumn::app()->response->setResult(\core\Response::RES_OK);
+						Autumn::app()->response->setResult(Response::RES_OK);
 					}
 					else
 					{
-						Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+						Autumn::app()->response->setResult(Response::RES_REFUSE);
 					}
 				}
 				else
 				{
-					Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
+					Autumn::app()->response->setResult(Response::RES_PARAMF);
 				}
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_TOKENF);
+				Autumn::app()->response->setResult(Response::RES_TOKENF);
 			}
 			Autumn::app()->response->json();
 		}

@@ -6,11 +6,9 @@
 * @version 16.07.28
 */
 namespace app\models;
-use core\Model;
-use core\Orm;
-use core\Criteria;
+use core\db\Criteria;
 
-class M_content_note extends Model
+class M_content_note extends \core\web\Model
 {
     public $table_name = 't_content_note';
 
@@ -33,7 +31,7 @@ class M_content_note extends Model
         $criteria->add('ct_id', $ct_id);
         $criteria->add('tn_status', self::STATUS_OPEN);
         //统计数量
-        $count = $this->count($criteria);
+        $count = $this->orm->count($criteria);
         //联查user信息
         $criteria->select = $this->table_name . '.*,t_user.user_name,t_user.user_avatar';
         $criteria->union('t_user', 't_user.user_id=' . $this->table_name . '.user_id', 'left');
@@ -41,7 +39,7 @@ class M_content_note extends Model
         $criteria->offset = $offset;
         $criteria->limit = $limit;
         $criteria->order = 'tn_time asc';
-        $result = Orm::model($this->table_name)->findAll($criteria);
+        $result = $this->orm->findAll($criteria);
 
         return array(
             'count' => $count,
@@ -64,7 +62,7 @@ class M_content_note extends Model
         $criteria = new Criteria;
         $criteria->add('user_id', $user_id);
         //统计数量
-        $count = $this->count($criteria);
+        $count = $this->orm->count($criteria);
         //联查user信息
         $criteria->select = $this->table_name . '.*,t_content.ct_title';
         $criteria->union('t_content', 't_content.ct_id=' . $this->table_name . '.ct_id', 'left');
@@ -72,7 +70,7 @@ class M_content_note extends Model
         $criteria->offset = $offset;
         $criteria->limit = $limit;
         $criteria->order = 'tn_time asc';
-        $result = Orm::model($this->table_name)->findAll($criteria);
+        $result = $this->orm->findAll($criteria);
 
         return array(
             'count' => $count,
@@ -88,6 +86,6 @@ class M_content_note extends Model
     */
     public function deleteByContent($ct_id)
     {
-        return Orm::model($this->table_name)->deleteAll("ct_id = '{$ct_id}'");
+        return $this->orm->deleteAll("ct_id = '{$ct_id}'");
     }
 }

@@ -17,12 +17,12 @@
 }
 </style>
 <div class="container">
-	<p>欢迎您：<strong><?php echo \core\Request::inst()->getSession('am_name'); ?></strong></p>
+	<p>欢迎您：<strong><?php echo \core\Autumn::app()->request->getSession('am_name'); ?></strong></p>
 	<p>
 		<small>
-			<strong>拥有权限：</strong><?php echo \app\models\M_admin::printRole(\core\Request::inst()->getSession('am_role'), false); ?> |
-			<strong>最后登录时间：</strong><?php echo \core\Request::inst()->getSession('am_time'); ?> |
-			<strong>最后登录地址：</strong><?php echo \core\Request::inst()->getSession('am_ip'); ?><br>
+			<strong>拥有权限：</strong><?php echo \app\models\M_admin::printRole(\core\Autumn::app()->request->getSession('am_role'), false); ?> |
+			<strong>最后登录时间：</strong><?php echo \core\Autumn::app()->request->getSession('am_time'); ?> |
+			<strong>最后登录地址：</strong><?php echo \core\Autumn::app()->request->getSession('am_ip'); ?><br>
 			<strong>服务器时间：</strong>(北京) <?php echo date('Y-m-d H:i:s'); ?> |
 			<strong>时间戳：</strong><?php echo time(); ?>
 		</small>

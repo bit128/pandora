@@ -5,180 +5,85 @@
 * @author 洪波
 * @version 16.07.06
 */
-namespace core;
+namespace core\db;
+use core\Autumn;
 
 class Orm
 {
-	//静态化实例
-	private static $_instance;
-	//数据库驱动实例
-	private $_db;
-	//操作表名称
-	private $table_name = '';
-	//动态记录数组
-	private $ar = array();
-	//动态记录主键
-	public $pk = '';
-	//动态记录模式
-	private $active = false;
-	
+	//模型表名称
+	public $table_name;
+    //表主键
+    public $pk = '';
+	//模型字段值
+	public $ar = [];
+    //是否有动态记录
+    protected $has_record = false;
+
 	/**
-	* 静态获取实例对象
+	* 构造方法 - 获取表结构
 	* ======
-	* @param $table_name	操作表名称
-	* @param $new 			是否全新创建
-	* @param $db_config 	数据库配置
-	* ======
-	* @return object-self
+	* @param $table_name 表名称
 	* ======
 	* @author 洪波
-	* @version 16.02.25 - 16.12.07
+	* @version 17.03.02
 	*/
-	public static function model($table_name, $new = false, $db_config = 'database')
+    public function __construct($table_name)
 	{
-		if(! (self::$_instance instanceof self) || $new)
-		{
-			self::$_instance = new self($db_config);
-		}
-		self::$_instance->setTable($table_name);
-		return self::$_instance;
-	}
-	
-	/**
-	* 私有化构造方法
-	* ======
-	* @param $table_name	操作表名称
-	* @param $db_config 	数据库配置
-	* ======
-	* @author 洪波
-	* @version 16.02.25 - 16.12.07
-	*/
-	private function __construct($db_config)
-	{
-		//初始化化数据库驱动
-		if(! Autumn::app()->config($db_config))
-		{
-			Autumn::app()->exception('缺少数据库配置文件');
-		}
-		$driver = Autumn::app()->config($db_config)['driver'];
-		//载入数据库驱动（需要实现Db接口）
-		$this->setDb(Autumn::app()->$driver);
-	}
-	
-	/**
-	* 获取动态记录值
-	* ======
-	* @param $name 记录健
-	* ======
-	* @return mixed
-	* ======
-	* @author 洪波
-	* @version 16.02.25
-	*/
-	public function __get($name)
-	{
-		if(isset($this->ar[$name]))
-		{
-			return $this->ar[$name];
-		}
-		else
-		{
-			return '';
-		}
-	}
-	
-	/**
-	* 设置动态记录值
-	* ======
-	* @param $name 	记录健
-	* @param $value 记录值
-	* ======
-	* @author 洪波
-	* @version 16.02.25
-	*/
-	public function __set($name, $value)
-	{
-		$this->ar[$name] = htmlspecialchars(addslashes($value));
+		$this->table_name = $table_name;
+		$this->struct();
 	}
 
 	/**
-	* 获取数据库驱动
+	* 获取字段
+	* ======
+	* @param $key 	键
 	* ======
 	* @author 洪波
-	* @version 16.04.25
+	* @version 17.02.21
 	*/
-	public function getDb()
+	public function __get($key)
 	{
-		return $this->_db;
-	}
-
-	/**
-	* 设置数据库驱动
-	* ======
-	* @param $driver 	数据库驱动（需要实现Db接口）
-	* ======
-	* @author 洪波
-	* @version 16.04.25
-	*/
-	public function setDb(Db $driver)
-	{
-		return $this->_db = $driver;
-	}
-	
-	/**
-	* 获取动态记录数组
-	* ======
-	* @return array
-	* ======
-	* @author 洪波
-	* @version 16.02.25
-	*/
-	public function getAttributes()
-	{
-		return $this->ar;
-	}
-	
-	/**
-	* 设置操作表名称
-	* ======
-	* @param $table_name 	操作表名称
-	* ======
-	* @author 洪波
-	* @version 16.02.25
-	*/
-	public function setTable($table_name)
-	{
-		if($this->table_name != $table_name)
+		if (isset($this->ar[$key]))
 		{
-			$this->table_name = $table_name;
-			$this->struct();
+			return $this->ar[$key];
 		}
 	}
 
 	/**
-	* 刷新动态记录值
+	* 设置字段
+	* ======
+	* @param $key 	键
+	* @param $key 	值
 	* ======
 	* @author 洪波
-	* @version 16.02.25
+	* @version 17.02.21
 	*/
-	public function flush()
+	public function __set($key, $value)
 	{
-		$this->ar = array();
-		$this->pk = '';
-		$this->active = false;
+		$this->ar[$key] = htmlspecialchars(addslashes($value));
 	}
 
-	/**
-	* 获取表结构
-	* ======
-	* @author 洪波
-	* @version 16.03.30
-	*/
-	private function struct()
-	{
-		$this->flush();
-		//获取表结构
-		$st = $this->_db->queryAll('desc ' . $this->table_name);
+    /**
+    * 获取数据看连接对象
+    * ======
+    * @author 洪波
+    * @version 17.02.21
+    */
+    public function getDb()
+    {
+        return Autumn::app()->database;
+    }
+
+    /**
+    * 获取表结构
+    * ======
+    * @author 洪波
+    * @version 17.02.21
+    */
+    public function struct()
+    {
+        //获取表结构
+		$st = $this->getDb()->queryAll('desc ' . $this->table_name);
 		if($st)
 		{
 			$number = array('int', 'tinyint', 'smallint', 'mediumint', 'bigint', 'float', 'double', 'decimal');
@@ -206,9 +111,9 @@ class Orm
 			}
 			unset($st);
 		}
-	}
+    }
 
-	/**
+    /**
 	* 统计表记录行数
 	* ======
 	* @param $condition 	criteria对象 | string查询条件
@@ -233,25 +138,21 @@ class Orm
 				$sql .= ' where ' . $condition;
 			}
 		}
-		return $this->_db->queryScalar($sql);
+		return $this->getDb()->queryScalar($sql);
 	}
 
-	/**
+    /**
 	* 查找单行记录
 	* ======
 	* @param $condition 	criteria对象 | string查询条件
-	* @param $is_active 	是否动态映射
 	* ======
 	* @return stdClass object
 	* ======
 	* @author 洪波
 	* @version 16.02.26
 	*/
-	public function find($condition = null, $is_active = false)
+	public function find($condition = null)
 	{
-		//ActiveRecord模式
-		$this->active = $is_active;
-		
 		$sql = "select * from " . $this->table_name;
 		if($condition)
 		{
@@ -268,28 +169,21 @@ class Orm
 				$sql .= ' where ' . $condition;
 			}
 		}
+		$result = $this->getDb()->queryRow($sql);
 
-		$result = $this->_db->queryRow($sql);
-		
-		if($this->active)
-		{
-			if($result)
-			{
-				$this->ar = (array) $result;
-				return self::$_instance;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		else
-		{
-			return $result;
-		}
+		if($result)
+        {
+            $this->has_record = true;
+            $this->ar = (array) $result;
+            return $this;
+        }
+        else
+        {
+            return false;
+        }
 	}
 
-	/**
+    /**
 	* 查找多行记录
 	* ======
 	* @param $condition 	criteria对象 | string查询条件
@@ -301,8 +195,6 @@ class Orm
 	*/
 	public function findAll($condition = null)
 	{
-		$this->flush();
-		
 		$sql = "select * from " . $this->table_name;
 		if($condition)
 		{
@@ -325,10 +217,10 @@ class Orm
 				$sql .= ' where ' . $condition;
 			}
 		}
-		return $this->_db->queryAll($sql);
+		return $this->getDb()->queryAll($sql);
 	}
 
-	/**
+    /**
 	* 保存记录
 	* ======
 	* @return boolean
@@ -338,8 +230,15 @@ class Orm
 	*/
 	public function save()
 	{
-		//如果不是ActiveRecord模式，则新插入数据
-		if(! $this->active)
+		//如果有动态记录，则更新
+		if($this->has_record)
+		{
+            $pk_val = $this->ar[$this->pk];
+			unset($this->ar[$this->pk]);
+			return $this->updateAll($this->ar, "{$this->pk} = '{$pk_val}'");
+		}
+		//否则全新插入
+		else
 		{
 			$field = '';
 			$value = '';
@@ -350,14 +249,7 @@ class Orm
 			}
 			$sql = "insert into " . $this->table_name . " (" . substr($field, 1) . ") values (" . substr($value, 1) . ")";
 
-			return $this->_db->query($sql);
-		}
-		//包含主键则更新数据
-		else
-		{
-			$pk_val = $this->ar[$this->pk];
-			unset($this->ar[$this->pk]);
-			return $this->updateAll($this->ar, "{$this->pk} = '{$pk_val}'");
+			return $this->getDb()->query($sql);
 		}
 	}
 
@@ -393,7 +285,7 @@ class Orm
 				$sql .= ' where ' . $condition;
 			}
 		}
-		return $this->_db->query($sql);
+		return $this->getDb()->query($sql);
 	}
 
 	/**
@@ -406,7 +298,7 @@ class Orm
 	*/
 	public function delete()
 	{
-		if($this->active)
+		if($this->has_record)
 		{
 			$pk_val = $this->ar[$this->pk];
 			return $this->deleteAll("{$this->pk} = '{$pk_val}'");
@@ -442,7 +334,18 @@ class Orm
 				$sql .= ' where ' . $condition;
 			}
 		}
-		return $this->_db->query($sql);
+		return $this->getDb()->query($sql);
+	}
+
+	/**
+	* 以数组形式返回模型字段
+	* ======
+	* @author 洪波
+	* @version 17.02.21
+	*/
+	public function toArray()
+	{
+		return $this->ar;
 	}
 
 }

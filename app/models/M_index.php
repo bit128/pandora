@@ -6,11 +6,9 @@
 * @version 16.08.07
 */
 namespace app\models;
-use core\Model;
-use core\Criteria;
-use core\Orm;
+use core\db\Criteria;
 
-class M_index extends Model
+class M_index extends \core\web\Model
 {
 
 	public $table_name = 't_index';
@@ -29,7 +27,7 @@ class M_index extends Model
 		$criteria = new Criteria;
 		$criteria->add('dc_id', $dc_id);
 		$criteria->add('by_id', $by_id);
-		return $this->count($criteria);
+		return $this->orm->count($criteria);
 	}
 
 	/**
@@ -43,7 +41,7 @@ class M_index extends Model
 	public function getIndex($by_id)
 	{
 		$sql = "select a.dc_id,b.dc_keyword from t_index as a,t_dictionary as b where a.by_id='{$by_id}' and b.dc_id=a.dc_id";
-		return Orm::model($this->table_name)
+		return $this->orm
 			->getDb()
 			->queryAll($sql);
 	}
@@ -68,7 +66,7 @@ class M_index extends Model
 		{
 			$criteria->add('by_id', $by_id);
 		}
-		return Orm::model($this->table_name)->deleteAll($criteria);
+		return $this->orm->deleteAll($criteria);
 	}
 
 }

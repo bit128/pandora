@@ -7,10 +7,11 @@
 */
 namespace app\controllers;
 use core\Autumn;
+use core\http\Response;
 use app\models\M_struct;
 use app\models\M_admin;
 
-class ConfigController extends \core\Controller
+class ConfigController extends \core\web\Controller
 {
 
 	private $m_struct;
@@ -34,11 +35,11 @@ class ConfigController extends \core\Controller
 			{
 				$name = Autumn::app()->request->getPost('name', '新配置项');
 				$this->m_struct->addHead($name);
-				Autumn::app()->response->setResult(\core\Response::RES_OK);
+				Autumn::app()->response->setResult(Response::RES_OK);
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -59,11 +60,11 @@ class ConfigController extends \core\Controller
 				$id = Autumn::app()->request->getPost('id');
 				$name = Autumn::app()->request->getPost('name');
 				$this->m_struct->setName($id, $name);
-				Autumn::app()->response->setResult(\core\Response::RES_OK);
+				Autumn::app()->response->setResult(Response::RES_OK);
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -84,11 +85,11 @@ class ConfigController extends \core\Controller
 				$id = Autumn::app()->request->getPost('id');
 				$body = Autumn::app()->request->getPost('body');
 				$this->m_struct->setBody($id, $body);
-				Autumn::app()->response->setResult(\core\Response::RES_OK);
+				Autumn::app()->response->setResult(Response::RES_OK);
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
 		}
@@ -113,12 +114,12 @@ class ConfigController extends \core\Controller
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_NOHAS, '', '配置项不存在');
+				Autumn::app()->response->setResult(Response::RES_NOHAS, '', '配置项不存在');
 			}
 		}
 		else
 		{
-			Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
+			Autumn::app()->response->setResult(Response::RES_PARAMF);
 		}
 		Autumn::app()->response->json();
 	}
@@ -149,16 +150,16 @@ class ConfigController extends \core\Controller
 			if(strlen($id) == 13)
 			{
 				$body = $this->m_struct->deleteHead($id);
-				Autumn::app()->response->setResult(\core\Response::RES_OK);
+				Autumn::app()->response->setResult(Response::RES_OK);
 			}
 			else
 			{
-				Autumn::app()->response->setResult(\core\Response::RES_PARAMF);
+				Autumn::app()->response->setResult(Response::RES_PARAMF);
 			}
 		}
 		else
 		{
-			Autumn::app()->response->setResult(\core\Response::RES_REFUSE);
+			Autumn::app()->response->setResult(Response::RES_REFUSE);
 		}
 		Autumn::app()->response->json();
 	}
