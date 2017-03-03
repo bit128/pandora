@@ -150,12 +150,6 @@
 					<div class="col-md-6">
 						<p>
 							<label>备选关键词：</label>
-							<select class="form-control" id="change_keyword_type">
-								<option value="-1">全部关键词</option>
-								<?php foreach (\app\models\M_dictionary::$_types as $k => $v) {
-									echo '<option value="',$k,'">',$v,'</option>';
-								}?>
-							</select>
 							<div id="select_keywords"></div>
 						</p>
 					</div>

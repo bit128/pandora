@@ -1,24 +1,23 @@
 <div class="container">
 	<div class="row">
-		<div class="col-md-8">
-			<button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#dict_box">
+		<div class="col-md-5">
+			<button type="button" class="btn btn-sm btn-success" id="dict_new">
 				<span class="glyphicon glyphicon-plus"></span> 增加索引词
 			</button>
+			<?php if ($pid != '-1') { ?>
+			<a href="/home/dictionary/f/<?php echo $pid; ?>" class="btn btn-sm btn-default">
+				<span class="glyphicon glyphicon-chevron-left"></span> 返回上一级
+			</a>
+			<?php } ?>
 			<span class="btn-group">
-				<a href="/home/dictionary/s/0/t/<?php echo $type; ?>" class="btn btn-sm <?php echo $sort == 0 ? 'btn-info' : 'btn-default'; ?>">默认排序</a>
-				<a href="/home/dictionary/s/1/t/<?php echo $type; ?>" class="btn btn-sm <?php echo $sort == 1 ? 'btn-info' : 'btn-default'; ?>">用量排序</a>
-			</span>
-			<span class="btn-group">
-				<a href="/home/dictionary/t/-1/s/1" class="btn btn-sm <?php echo $type == -1 ? 'btn-info' : 'btn-default'; ?>">全部词汇</a>
-				<?php foreach (\app\models\M_dictionary::$_types as $k => $v) { ?>
-				<a href="/home/dictionary/t/<?php echo $k; ?>/s/1" class="btn btn-sm <?php echo $type == $k ? 'btn-info' : 'btn-default'; ?>"><?php echo $v; ?></a>
-				<?php } ?>
+				<a href="/home/dictionary/s/0/f/<?php echo $fid; ?>" class="btn btn-sm <?php echo $sort == 0 ? 'btn-info' : 'btn-default'; ?>">默认排序</a>
+				<a href="/home/dictionary/s/1/f/<?php echo $fid; ?>" class="btn btn-sm <?php echo $sort == 1 ? 'btn-info' : 'btn-default'; ?>">用量排序</a>
 			</span>
 		</div>
-		<div class="col-md-2">
+		<div class="col-md-3">
 			<div style="padding-top:4px;">词汇总数：<strong><?php echo $count; ?></strong> 个</div>
 		</div>
-		<div class="col-md-2">
+		<div class="col-md-4">
 			<form class="input-group" method="get" action="">
 				<input type="text" class="form-control input-sm" name="k" value="<?php echo $keyword; ?>">
 				<span class="input-group-btn">
@@ -33,23 +32,31 @@
 	<table class="table table-bordered">
 		<thead>
 			<tr>
-				<th>编号</th>
-				<th>词汇</th>
-				<th>分类</th>
-				<th>搜索量</th>
-				<th>创建时间</th>
-				<th>操作</th>
+				<th style="width:100px;">ID</th>
+				<th style="width:100px;">封面</th>
+				<th style="text-align:center;">词汇</th>
+				<th style="width:60px;">搜索量</th>
+				<th style="width:200px;">创建时间</th>
+				<th style="width:100px;">操作</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody id="dict_list">
 			<?php foreach ($dictionary_list as $v) { ?>
-			<tr>
-				<td><small><?php echo $v->dc_id; ?></small></td>
-				<td><?php echo $v->dc_keyword; ?></td>
-				<td><?php echo \app\models\M_dictionary::$_types[$v->dc_type]; ?></td>
+			<tr data-val="<?php echo $v->dc_id; ?>">
+				<td><?php echo $v->dc_id; ?></td>
+				<td class="set_avatar">
+					<input id="img_<?php echo $v->dc_id; ?>" type="file" style="position: absolute;filter: alpha(opacity=0);opacity:0;width:80px;height:60px;" name="file_name">
+					<?php if($v->dc_avatar == '') {
+						echo '<img src="/app/statics/files/default.jpg" class="img-responsive" style="max-width:80px;">';
+					}else{
+						echo '<img src="/nfs/image',$v->dc_avatar,'" class="img-responsive" style="max-width:80px;">';
+					} ?>
+				</td>
+				<td style="text-align:center;"><strong style="font-size:18px;" class="dict_update"><?php echo $v->dc_keyword; ?></strong></td>
 				<td><?php echo $v->dc_count; ?></td>
-				<td><?php echo date('m-d H:i', $v->dc_time); ?></td>
+				<td><?php echo date('Y-m-d H:i:s', $v->dc_time); ?></td>
 				<td>
+					<a href="/home/dictionary/f/<?php echo $v->dc_id; ?>" class="btn btn-xs btn-info">成员</a>
 					<button type="button" class="btn btn-xs btn-warning dict_delete">删除</button>
 				</td>
 			</tr>
@@ -58,55 +65,15 @@
 	</table>
 	<p><?php echo $pages; ?></p>
 </div>
-<!-- 新建词汇 -->
-<div id="dict_box" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				<h4 class="modal-title">创建新词汇</h4>
-			</div>
-			<div class="modal-body" style="padding-bottom:0px;">
-				<div class="row">
-					<div class="col-md-6">
-						<p>
-							<label>词汇分类</label>
-							<select class="form-control" id="dc_type">
-								<?php foreach (\app\models\M_dictionary::$_types as $k => $v) {
-									echo '<option value="',$k,'">',$v,'</option>';
-								} ?>
-							</select>
-						</p>
-					</div>
-					<div class="col-md-6">
-						<p>
-							<label>词汇名称</label>
-							<input type="text" class="form-control" id="dc_keyword">
-						</p>
-					</div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-				<button type="button" class="btn btn-info" id="dict_add">创建词汇</button>
-			</div>
-		</div>
-	</div>
-</div>
-<!-- 新建词汇 -->
+<script type="text/javascript" src="/app/statics/home/js/ajaxfileupload.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-	//分类查找
-	$('#change_type').on('change', function(){
-		location.href = $(this).val();
-	});
+	var fid = '<?php echo $fid; ?>';
 	//新建词汇
-	$('#dict_add').on('click', function(){
-		var dc_keyword = $('#dc_keyword').val();
-		if(dc_keyword == ''){alert('词汇不能为空.');$('#dc_keyword').focus();return;}
+	$('#dict_new').on('click', function(){
 		$.post(
 			'/dictionary/add',
-			{dc_type: $('#dc_type').val(), dc_keyword: dc_keyword},
+			{dc_fid: fid, dc_keyword: '新关键词'},
 			function(data){
 				if(data.code == 1)
 					location.reload();
@@ -116,10 +83,29 @@ $(document).ready(function(){
 			'json'
 			);
 	});
+	//修改词汇
+	$('#dict_list').on('click', '.dict_update', function(){
+		var dc_id = $(this).parents('tr').attr('data-val');
+		var td = $(this).parent();
+		var ov = $(this).text();
+		var input = td.html('<input type="text" value="'+ov+'">').find('input');
+		input.focus();
+		input.one('blur', function(){
+			var nv = input.val();
+			if (nv != '' && nv != ov) {
+				ov = nv;
+				$.post(
+					'/dictionary/update',
+					{dc_id: dc_id, field: 'dc_keyword', value: nv}
+				);
+			}
+			td.html('<strong style="font-size:18px;" class="dict_update">'+ov+'</strong>');
+		});
+	});
 	//删除词汇
 	$('.dict_delete').on('click', function(){
 		if(confirm('确定要删除词汇吗？包括索引')){
-			var dc_id = $(this).parents('tr').find('td:eq(0)').text();
+			var dc_id = $(this).parents('tr').attr('data-val');
 			$.post(
 				'/dictionary/delete',
 				{dc_id: dc_id},
@@ -132,6 +118,27 @@ $(document).ready(function(){
 				'json'
 				);
 		}
+	});
+	//设置词汇封面
+	$('#dict_list').on('change', '.set_avatar input', function(){
+		var dc_id = $(this).parents('tr').attr('data-val');
+		var image = $(this).parent().find('img');
+		$.ajaxFileUpload({
+			url:'/nfs/upload',
+			fileElementId:'img_'+dc_id,
+			dataType: 'json',
+			success: function (data, status){
+				if(data.code == 1) {
+					image.attr('src', '/nfs/image'+data.uri);
+					$.post(
+						'/dictionary/update',
+						{dc_id: dc_id, field: 'dc_avatar', value: data.uri}
+					);
+				} else {
+					alert('图片可能损坏，请换一张图片');
+				}
+			}
+		});
 	});
 });
 </script>

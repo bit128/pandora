@@ -194,17 +194,14 @@ class HomeController extends \core\web\Controller
 	{
 		$m_dictionary = new \app\models\M_dictionary;
 		$page = Autumn::app()->request->getQuery('page', 1);
-		$type = Autumn::app()->request->getQuery('t', -1);
+		$fid = Autumn::app()->request->getQuery('f', 0);
 		$sort = (int) Autumn::app()->request->getQuery('s', 0);
 		$keyword = Autumn::app()->request->getQuery('k');
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
 		//查询数据列表
 		$criteria = new Criteria;
-		if($type != -1)
-		{
-			$criteria->add('dc_type', $type);
-		}
+		$criteria->add('dc_fid', $fid);
 		if($keyword != '')
 		{
 			$criteria->add('dc_keyword', $keyword);
@@ -215,15 +212,31 @@ class HomeController extends \core\web\Controller
 		$criteria->order = $sort_arr[$sort];
 		$result = $m_dictionary->getList($criteria);
 		//分页
-		$url = '/home/dictionary/t/' . $type . '/s/' . $sort;
+		$url = '/home/dictionary/f/' . $fid . '/s/' . $sort;
 		if($keyword != '')
 		{
 			$url .= '/k/' . $keyword;
 		}
 		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
+		//上层id
+		$pid = '0';
+		if ($result['count'] > 0)
+		{
+			$parent = $m_dictionary->get($result['result'][0]->dc_fid);
+			if ($parent)
+			{
+				$pid = $parent->dc_fid;
+				unset($parent);
+			}
+			else
+			{
+				$pid = '-1';
+			}
+		}
 
 		$data = array(
-			'type' => $type,
+			'fid' => $fid,
+			'pid' => $pid,
 			'sort' => $sort,
 			'keyword' => $keyword,
 			'count' => $result['count'],

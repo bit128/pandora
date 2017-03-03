@@ -35,18 +35,15 @@ class DictionaryController extends \core\web\Controller
 		{
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
+				$dc_fid = Autumn::app()->request->getPost('dc_fid');
 				$dc_keyword = Autumn::app()->request->getPost('dc_keyword');
-				$dc_type = (int) Autumn::app()->request->getPost('dc_type', M_dictionary::TYPE_NORMAL);
-				if($dc_keyword != '' && ! $this->m_dictionary->getId($dc_keyword))
+				if($this->m_dictionary->add($dc_fid, $dc_keyword))
 				{
-					if($this->m_dictionary->add($dc_keyword, $dc_type))
-					{
-						Autumn::app()->response->setResult(Response::RES_OK);
-					}
-					else
-					{
-						Autumn::app()->response->setResult(Response::RES_FAIL);
-					}
+					Autumn::app()->response->setResult(Response::RES_OK);
+				}
+				else
+				{
+					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
 			}
 			else
@@ -65,15 +62,9 @@ class DictionaryController extends \core\web\Controller
 	*/
 	public function actionGetKeywordList()
 	{
-		$types = urldecode(Autumn::app()->request->getParam('t', -1));
-
 		$criteria = new Criteria;
 		$criteria->offset = 0;
 		$criteria->limit = 99;
-		if ($types != -1)
-		{
-			$criteria->add('dc_type', $types);
-		}
 		$criteria->order = 'dc_count desc';
 		$result = $this->m_dictionary->getList($criteria);
 		Autumn::app()->response->setResult($result['result']);

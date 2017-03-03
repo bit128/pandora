@@ -10,63 +10,27 @@ use core\db\Criteria;
 
 class M_dictionary extends \core\web\Model
 {
-	const TYPE_NORMAL	= 0;
-	const TYPE_PRODUCT	= 1;
 
 	public $table_name = 't_dictionary';
-
-	public static $_types = array(
-		self::TYPE_NORMAL => '默认',
-		self::TYPE_PRODUCT => '课程分类'
-		);
 
 	/**
 	* 新增词汇
 	* ======
-	* @param $keyword 	关键字
-	* @param $type 		类型
+	* @param $dc_fid 		类型
+	* @param $dc_keyword 	关键字
 	* ======
 	* @author 洪波
 	* @version 16.08.10
 	*/
-	public function add($keyword, $type = self::TYPE_NORMAL)
+	public function add($dc_fid, $dc_keyword)
 	{
 		$data = array(
-			'dc_keyword' => $keyword,
-			'dc_type' => $type,
+			'dc_fid' => $dc_fid,
+			'dc_keyword' => $dc_keyword,
 			'dc_time' => time()
 			);
 		$this->load($data);
 		return $this->save();
-	}
-
-	/**
-	* 通过索引词获取id
-	* ======
-	* @param $dc_keyword 	关键词
-	* @param $write 		不存在是否写入
-	* ======
-	* @author 洪波
-	* @version 16.08.07
-	*/
-	public function getId($dc_keyword, $write = false)
-	{
-		$criteria = new Criteria;
-		$criteria->add('dc_keyword', $dc_keyword);
-		$dictionary = $this->orm->find($criteria);
-		if($dictionary)
-		{
-			$this->addCount($dictionary->dc_id);
-			return $dictionary->dc_id;
-		}
-		else
-		{
-			if($write)
-			{
-				return $this->add($dc_keyword);
-			}
-			return false;
-		}
 	}
 
 	/**
@@ -77,23 +41,26 @@ class M_dictionary extends \core\web\Model
 	* @author 洪波
 	* @version 16.08.11
 	*/
-	public function getEntryIds($dc_keyword)
+	public function getEntryIds(array $keyword, $by_field = 'dc_keyword')
 	{
-		if(is_array($dc_keyword))
-		{
-			$sql = "select distinct(a.by_id) from t_index as a,t_dictionary as b where b.dc_keyword in ('".implode("','", $dc_keyword)."') and a.dc_id=b.dc_id";
-		}
-		else
-		{
-			$sql = "select distinct(a.by_id) from t_index as a,t_dictionary as b where b.dc_keyword='{$dc_keyword}' and a.dc_id=b.dc_id";
-		}
-		$ids = array();
-		$result = $this->orm
+		$keyword = array_filter($keyword);
+		sort($keyword);
+		$field = 'b.' . $by_field;
+		$sql = "select distinct(a.by_id),{$field} from t_index as a,t_dictionary as b where {$field} in ('".implode("','", $keyword)."') and a.dc_id=b.dc_id";
+		$result = array();
+		$list = $this->orm
 			->getDb()
 			->queryAll($sql);
-		foreach ($result as $v)
+		foreach ($list as $v)
 		{
-			$ids[] = $v->by_id;
+			$result[$v->by_id][] = $v->$by_field;
+		}
+		$ids = array();
+		foreach ($result as $k => $v)
+		{
+			sort($v);
+			if(array_unique($v) == $keyword)
+				$ids[] = $k;
 		}
 		return $ids;
 	}

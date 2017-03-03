@@ -11,9 +11,6 @@ Keyword.prototype = {
 	constructor: Keyword,
 	bindEvent: function(){
 		var f = this;
-		f.handle.on('change', '#change_keyword_type', function(){
-			f.searchKeywords(f, $(this).val());
-		});
 		f.handle.on('click', '#select_keywords a', function(){
 			var dc_id = $(this).attr('data-val');
 			var a = $(this);
@@ -51,7 +48,6 @@ Keyword.prototype = {
 						a.remove();
 						$('#select_keywords').append('<a href="javascript:;" class="label label-success" data-val="'
 							+dc_id+'">'+a_t.split(' ')[0]+' +</a> ');
-						//loadKeywordList();
 					}else{
 						alert(data.error);
 					}
