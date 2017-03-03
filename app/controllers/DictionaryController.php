@@ -68,8 +68,8 @@ class DictionaryController extends \core\web\Controller
 		$types = urldecode(Autumn::app()->request->getParam('t', -1));
 
 		$criteria = new Criteria;
-		$criteria->offset = $offset;
-		$criteria->limit = $limit;
+		$criteria->offset = 0;
+		$criteria->limit = 99;
 		if ($types != -1)
 		{
 			$criteria->add('dc_type', $types);

@@ -239,25 +239,29 @@ class HomeController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.08.04
 	*/
-	public function actionAlbum()
+	public function actionFile()
 	{
-		$by_id = Autumn::app()->request->getQuery('id');
-		if(strlen($by_id) == 13)
+		$file_bid = Autumn::app()->request->getQuery('bid');
+		if(strlen($file_bid) == 13)
 		{
-			$m_album = new \app\models\M_album;
+			$page = Autumn::app()->request->getQuery('page', 1);
+			$sort = (int)Autumn::app()->request->getQuery('s', 0);
+
+			$m_file= new \app\models\M_file;
 			$criteria = new Criteria;
-			$criteria->add('by_id', $by_id);
-			$criteria->order = 'al_sort asc';
-			$offset = 0;
-			$limit = 60;
-			$result = $m_album->getList($offset, $limit, $criteria);
+			$criteria->add('file_bid', $file_bid);
+			$criteria->order = ['file_ctime asc','file_ctime desc','file_utime asc','file_utime desc'][$sort];
+			$criteria->limit = 10;
+			$criteria->offset = ($page - 1) * $criteria->limit;
+			$result = $m_file->getList($criteria);
+			$pages = new \library\Pagination($result['count'], $criteria->limit, $page, '/home/file/bid/'.$file_bid.'/s/'.$sort);
 			$data = array(
-				'by_id' => $by_id,
-				'al_type' => Autumn::app()->request->getQuery('t'),
-				'count' => $result['count'],
-				'album_list' => $result['result']
+				'file_bid' => $file_bid,
+				'sort' => $sort,
+				'result' => $result,
+				'pages' => $pages->build()
 				);
-			Autumn::app()->view->render('album', $data);
+			Autumn::app()->view->render('file', $data);
 		}
 	}
 

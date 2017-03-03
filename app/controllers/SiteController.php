@@ -61,12 +61,12 @@ class SiteController extends \core\web\Controller
 					}
 					else
 					{
-						Autumn::app()->exception('抱歉！注册失败，请联系管理员.');
+						Autumn::app()->exception->throws('抱歉！注册失败，请联系管理员.');
 					}
 				}
 				else
 				{
-					Autumn::app()->exception('该账号已经注册过了.');
+					Autumn::app()->exception->throws('该账号已经注册过了.');
 				}
 			}
 			else if ($type == 'login')
@@ -93,12 +93,12 @@ class SiteController extends \core\web\Controller
 					}
 					else
 					{
-						Autumn::app()->exception('账户被锁定');
+						Autumn::app()->exception->throws('账户被锁定');
 					}
 				}
 				else
 				{
-					Autumn::app()->exception('用户名或密码错误');
+					Autumn::app()->exception->throws('用户名或密码错误');
 				}
 			}
 		}
