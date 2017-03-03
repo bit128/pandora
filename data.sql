@@ -175,8 +175,9 @@ DROP TABLE IF EXISTS `t_dictionary`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `t_dictionary` (
   `dc_id` char(13) NOT NULL,
+  `dc_fid` char(13) NOT NULL,
+  `dc_avatar` varchar(64) NOT NULL,
   `dc_keyword` varchar(32) NOT NULL,
-  `dc_type` int(11) NOT NULL,
   `dc_count` int(11) NOT NULL,
   `dc_time` int(11) NOT NULL,
   PRIMARY KEY (`dc_id`)
@@ -189,7 +190,7 @@ CREATE TABLE `t_dictionary` (
 
 LOCK TABLES `t_dictionary` WRITE;
 /*!40000 ALTER TABLE `t_dictionary` DISABLE KEYS */;
-INSERT INTO `t_dictionary` VALUES ('589c310d116d7','php',1,0,1486631181),('589c3100a0916','python',1,0,1486631168),('589c30f5c0915','linux',1,0,1486631157),('589c30ec9eb5e','ubuntu',1,0,1486631148),('58b7c8cb2fab6','stm32',1,0,1488439499),('589c30e55f1f6','android',1,0,1486631141),('589c30db5c825','java',1,0,1486631131),('589c31142cee4','mysql',1,0,1486631188);
+INSERT INTO `t_dictionary` VALUES ('58b91e202a1dd','0','','物联网',0,1488526880),('58b91e2881c80','0','','人工智能',0,1488526888),('58b91e33b78f2','0','','P2P金融',0,1488526899),('58b91e3e949aa','0','','云计算',0,1488526910),('58b91e4506ce7','0','','大数据',0,1488526917),('58b91e4d651da','0','','自媒体',0,1488526925),('58b91e564f766','0','','微商',0,1488526934);
 /*!40000 ALTER TABLE `t_dictionary` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -248,7 +249,7 @@ CREATE TABLE `t_index` (
 
 LOCK TABLES `t_index` WRITE;
 /*!40000 ALTER TABLE `t_index` DISABLE KEYS */;
-INSERT INTO `t_index` VALUES ('589d2ca359313','589c30ec9eb5e','589be070a2b5f'),('589d2c8f440c8','589c31142cee4','589be070a2b5f'),('589d2a809226a','589c3100a0916','589be070a2b5f'),('589d2c906cc5d','589c310d116d7','589be070a2b5f'),('58aa4a9b56726','589c30db5c825','58aa49e288d20'),('58aa4a9d1a643','589c30ec9eb5e','58aa49e288d20');
+INSERT INTO `t_index` VALUES ('58b91f5742f54','58b91e2881c80','58aa49e288d20'),('58b91f5869015','58b91e4d651da','58aa49e288d20'),('58b91f61f0c6d','58b91e564f766','589be070a2b5f'),('58b91f6284e09','58b91e202a1dd','589be070a2b5f'),('58b91f6355847','58b91e33b78f2','589be070a2b5f');
 /*!40000 ALTER TABLE `t_index` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -300,4 +301,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-03-03 15:20:23
+-- Dump completed on 2017-03-03 15:53:33
