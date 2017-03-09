@@ -91,11 +91,14 @@ class M_content extends \core\web\Model
 	* @author 洪波
 	* @version 16.07.31
 	*/
-	public function getContentList($offset, $limit, $cn_id, $sort = 0, $ct_status = -1)
+	public function getContentList($offset, $limit, $cn_id = '', $sort = 0, $ct_status = -1)
 	{
 		$criteria = new Criteria;
-		$criteria->add('cn_id', $cn_id);
-		if($ct_status != -1)
+		if ($cn_id != '')
+		{
+			$criteria->add('cn_id', $cn_id);
+		}
+		if ($ct_status != -1)
 		{
 			$criteria->add('ct_status', $ct_status);
 		}

@@ -175,7 +175,7 @@ class SiteController extends \core\web\Controller
 		$keyword = Autumn::app()->request->getQuery('k', '');
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
-		$result = $this->m_content->getContentList($offset, $limit, '585615b8ed0db', 0, 1);
+		$result = $this->m_content->getContentList($offset, $limit, '', 0, 2);
 		$pages = new \library\Pagination($result['count'], $limit, $page, '/site/index');
 
 		$data  = array(
