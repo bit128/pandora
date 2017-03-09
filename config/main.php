@@ -6,8 +6,8 @@
 * @version 17.02.24
 */
 return [
-	'app_name' => 'Autumn',
-	'version' => '1',
+	'app_name' => 'Pandora内容管理系统',
+	'version' => '1.1',
 	//开启session
 	'session_start' => true,
 	'module' => [
