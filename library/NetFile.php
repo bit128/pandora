@@ -117,7 +117,7 @@ class NetFile
 		//判断文件夹是否存在并创建
 		if(! file_exists($save_path))
 		{
-			mkdir($save_path, 0777, true);
+			mkdir($save_path);
 		}
 		return $save_path . $file_name;
 	}
