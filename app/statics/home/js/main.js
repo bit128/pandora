@@ -120,9 +120,14 @@ Content.prototype = {
 				alert('请先选择栏目.');
 			}
 		});
+		f.btns.on('click', '#refresh_list', function(){
+			if(f.cn_id){
+				f.getList();
+			}
+		});
 		f.btns.on('click', '.set_sort', function(){
-			$('.set_sort').removeClass('btn-success').addClass('btn-default');
-			$(this).removeClass('btn-default').addClass('btn-success');
+			$('.set_sort').removeClass('btn-info').addClass('btn-default');
+			$(this).removeClass('btn-default').addClass('btn-info');
 			var sort = parseInt($(this).attr('data-val'));
 			switch(sort){
 				case 0: $(this).attr('data-val', 1).html('<span class="glyphicon glyphicon-sort-by-attributes"></span> 最初创建'); break;
@@ -173,23 +178,6 @@ Content.prototype = {
 				box.text(ov);
 			});
 			
-		});
-		f.handle.on('change', '.set_image input', function(){
-			var ct_id = $(this).parents('tr').attr('data-id');
-			var image = $(this).parent().find('img');
-			$.ajaxFileUpload({
-				url:'/nfs/upload',
-				fileElementId:'img_'+ct_id,
-				dataType: 'json',
-				success: function (data, status){
-					if(data.code == 1) {
-						image.attr('src', '/nfs/image'+data.uri);
-						f.update(ct_id, 'ct_image', data.uri);
-					} else {
-						alert('图片可能损坏，请换一张图片');
-					}
-				}
-			});
 		});
 		f.handle.on('click', '.set_keyword', function(){
 			var ct_id = $(this).parents('tr').attr('data-id');
@@ -252,11 +240,11 @@ Content.prototype = {
 						html += '<p>'+d.ct_id+'</p>';
 						html += '<a href="/home/contentDetail/id/'+d.ct_id+'" target="_blank" class="btn btn-info btn-xs edit_content"><span class="glyphicon glyphicon-pencil"></span> 编辑</a>'
 						html += ' <a href="/home/contentNote/id/'+d.ct_id+'" target="_blank" class="btn btn-default btn-xs edit_content"><span class="glyphicon glyphicon-comment"></span> 评论</button></td>';
-						html += '<td class="set_image"><input id="img_'+d.ct_id+'" type="file" style="position: absolute;filter: alpha(opacity=0);opacity:0;width:80px;height:60px;" name="file_name">';
+						html += '<td class="set_image"><a href="/home/file/bid/'+d.ct_id+'/avatar/content" target="_blank">';
 						if(d.ct_image == ''){
-							html += '<img src="/app/statics/files/default.jpg" class="img-responsive" style="max-width:80px;"></td>';
+							html += '<img src="/app/statics/files/default.jpg" class="img-responsive" style="max-width:80px;"></a></td>';
 						}else{
-							html += '<img src="/nfs/image'+d.ct_image+'" class="img-responsive" style="max-width:80px;"></td>';
+							html += '<img src="/nfs/image'+d.ct_image+'" class="img-responsive" style="max-width:80px;"></a></td>';
 						}
 						html += '<td><strong class="set_text" data-field="ct_title">'+(d.ct_title != '' ? d.ct_title : f.default_title)+'</strong><br>';
 						html += '<small style="color:#999;" class="set_text" data-field="ct_subtit">'+(d.ct_subtit != '' ? d.ct_subtit : f.default_subtit)+'</small>';

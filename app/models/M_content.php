@@ -18,6 +18,23 @@ class M_content extends \core\web\Model
 	public $table_name = 't_content';
 
 	/**
+	* 设置内容封面
+	* ======
+	* @param $ct_id 	内容id
+	* @param $ct_image 	内容图片
+	* ======
+	* @author 洪波
+	* @version 17.03.09
+	*/
+	public function setAvatar($ct_id, $ct_image)
+	{
+		return $this->update($ct_id, [
+			'ct_image' => $ct_image,
+			'ct_utime' => time()
+		]);
+	}
+
+	/**
 	* 增加内容访问量
 	* ======
 	* @param $ct_id 内容id
