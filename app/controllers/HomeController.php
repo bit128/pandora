@@ -141,8 +141,16 @@ class HomeController extends \core\web\Controller
 		$ct_id = Autumn::app()->request->getParam('id');
 		if(strlen($ct_id) == 13)
 		{
+			//获取附件列表
+			$m_file = new \app\models\M_file;
+			$criteria = new Criteria;
+			$criteria->add('file_bid', $ct_id);
+			$criteria->offset = 0;
+			$criteria->limit = 99;
+			$file_list = $m_file->getList($criteria);
 			$data = array(
-				'ct_id' => $ct_id
+				'ct_id' => $ct_id,
+				'file_list' => $file_list
 				);
 			Autumn::app()->view->render('content_detail', $data);
 		}
