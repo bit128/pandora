@@ -361,29 +361,29 @@ Note.prototype = {
 				case 1:
 					f.codeView(f, $(this));
 					break;
-				case 5: //加粗
+				case 10: //加粗
 					document.execCommand('bold');
 					f.setTimer(f);
 					break;
-				case 6: //斜体
+				case 11: //斜体
 					document.execCommand('italic');
 					f.setTimer(f);
 					break;
-				case 7: //大标题
+				case 5: //大标题
 					f.insertTitle(f, 1);
 					break;
-				case 8: //小标题
+				case 6: //小标题
 					f.insertTitle(f, 2);
 					break;
-				case 9: //左对齐
+				case 7: //左对齐
 					document.execCommand('justifyLeft');
 					f.setTimer(f);
 					break;
-				case 10: //居中
+				case 8: //居中
 					document.execCommand('justifyCenter');
 					f.setTimer(f);
 					break;
-				case 11: //右对齐
+				case 9: //右对齐
 					document.execCommand('justifyRight');
 					f.setTimer(f);
 					break;
@@ -427,7 +427,7 @@ Note.prototype = {
 		this.ct_id = 0;
 		this.editarea.html('');
 		this.editarea.hide();
-	},
+	},/*
 	getPosition: function(){
 		var position = -1;
 		var obj = document.getElementById('note_editor');
@@ -440,7 +440,7 @@ Note.prototype = {
 			position = range.text.length;
 		}
 		return position;
-	},
+	},*/
 	insertTitle: function(f, types){
 		var style,title;
 		if(types == 1){
@@ -509,10 +509,10 @@ ScrollMenu.prototype = {
 		var f = this;
 		$(window).on('scroll', function(){
 			if(f.getScrollTop() > f.limit) {
-				f.menu.attr('style', "position:fixed;left:0;top:60px;width:"+$(document).width()+"px;z-index:2000;text-align:center;");
+				f.menu.attr('style', "position:fixed;top:80px;z-index:2000;");
 				f.floats = true;
 			} else if (f.floats) {
-				f.menu.attr('style', "text-align:center;");
+				f.menu.attr('style', "padding: 20px 0 20px;margin-top:10px;");
 				f.floats = false;
 			}
 		});

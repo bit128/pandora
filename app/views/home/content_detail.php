@@ -31,116 +31,143 @@
 }
 </style>
 <link rel="stylesheet" type="text/css" href="/app/statics/home/css/prism.css">
-<div class="container" style="position:relative;">
-	<div class="row" id="note_btns" style="text-align:center;">
-		<div class="col-md-3" style="padding-bottom:10px;">
-			<button type="button" class="btn btn-sm btn-grew">
-				<span class="glyphicon glyphicon-floppy-disk"></span> 自动保存
-			</button>
-			<button type="button" class="btn btn-sm btn-grew" data-val="0">
-				<span class="glyphicon glyphicon-list-alt"></span> 代码
-			</button>
+<div class="container">
+	<div class="row">
+		<div class="col-md-3">
+			<div style="padding: 20px 0 20px;margin-top:10px;" id="note_btns">
+				<div style="text-align:center;">
+					<button type="button" class="btn btn-sm btn-grew">
+						<span class="glyphicon glyphicon-floppy-disk"></span> 自动保存
+					</button>
+					<button type="button" class="btn btn-sm btn-grew" data-val="0">
+						<span class="glyphicon glyphicon-list-alt"></span> 代码模式
+					</button>
+				</div>
+				<div style="text-align:center;margin-top:20px;">
+					<span class="btn-group">
+						<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
+							字号 <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a href="javascript:;" class="size">一号</a></li>
+							<li><a href="javascript:;" class="size">二号</a></li>
+							<li><a href="javascript:;" class="size">三号</a></li>
+							<li><a href="javascript:;" class="size">四号</a></li>
+							<li><a href="javascript:;" class="size">五号</a></li>
+							<li><a href="javascript:;" class="size">六号</a></li>
+							<li><a href="javascript:;" class="size">七号</a></li>
+						</ul>
+					</span>
+					<span class="btn-group">
+						<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
+							颜色 <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#000">#000000</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#333">#333333</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#666">#666666</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#999">#999999</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#ccc">#cccccc</a></li>
+							<li><a href="javascript:;" class="color" style="color:#999;background:#fff">#ffffff</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#ff0000">#ff0000</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#ff4e00">#ff4e00</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#ff8a00">#ff8a00</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#baff00">#baff00</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#00fff6">#00fff6</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#00c0ff">#00c0ff</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#0084ff">#0084ff</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#6c00ff">#6c00ff</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#de00ff">#de00ff</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#ff008a">#ff008a</a></li>
+						</ul>
+					</span>
+					<span class="btn-group">
+						<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
+							背景 <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#000">#000000</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#333">#333333</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#666">#666666</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#999">#999999</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ccc">#cccccc</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#999;background:#fff">#ffffff</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff0000">#ff0000</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff4e00">#ff4e00</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff8a00">#ff8a00</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#baff00">#baff00</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#00fff6">#00fff6</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#00c0ff">#00c0ff</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#0084ff">#0084ff</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#6c00ff">#6c00ff</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#de00ff">#de00ff</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff008a">#ff008a</a></li>
+						</ul>
+					</span>
+				</div>
+				<div style="text-align:center;margin-top:20px;">
+					<button type="button" class="btn btn-sm btn-grew" title="大标题">
+						<span class="glyphicon glyphicon-th-list"></span> 大标题
+					</button>
+					<button type="button" class="btn btn-sm btn-grew" title="小标题">
+						<span class="glyphicon glyphicon-list"></span> 小标题
+					</button>
+				</div>
+				<div style="text-align:center;margin-top:20px;">
+					<button type="button" class="btn btn-sm btn-grew" title="左对齐">
+						<span class="glyphicon glyphicon-align-left"></span> 左对齐
+					</button>
+					<button type="button" class="btn btn-sm btn-grew" title="居中">
+						<span class="glyphicon glyphicon-align-center"></span> 居中
+					</button>
+					<button type="button" class="btn btn-sm btn-grew" title="右对齐">
+						<span class="glyphicon glyphicon-align-right"></span> 右对齐
+					</button>
+				</div>
+				<div style="text-align:center;margin-top:20px;">
+					<button type="button" class="btn btn-sm btn-grew" title="粗体">
+						<span class="glyphicon glyphicon-bold"></span> 粗体
+					</button>
+					<button type="button" class="btn btn-sm btn-grew" title="斜体">
+						<span class="glyphicon glyphicon-italic"></span> 斜体
+					</button>
+				</div>
+				<div style="text-align:center;margin-top:20px;">
+					<button type="button" class="btn btn-sm btn-grew" data-toggle="modal" data-target="#code_box">
+						<span class="glyphicon glyphicon-font"></span> 插入代码
+					</button>
+					<button type="button" class="btn btn-sm btn-grew" data-toggle="modal" data-target="#table_box">
+						<span class="glyphicon glyphicon-th"></span> 插入表格
+					</button>
+				</div>
+				<div style="text-align:center;margin:20px 0 5px;">
+					<a href="/home/file/bid/<?php echo $ct_id; ?>" class="btn btn-sm btn-info">
+						<span class="glyphicon glyphicon-file"></span> 管理附件文件
+					</a>
+				</div>
+				<?php if ($file_list['count']) { ?>
+				<table class="table table-bordered" id="file_list">
+					<tbody>
+						<?php foreach ($file_list['result'] as $item) { ?>
+						<tr>
+							<td><a href="<?php echo $item->file_path; ?>" target="_blank"><?php echo $item->file_name != '' ? $item->file_name
+								: substr($item->file_path, strlen($item->file_path) - 17); ?></a></td>
+							<td>
+								<button class="btn btn-xs btn-default" data-val="<?php echo $item->file_type; ?>" data-path="<?php echo $item->file_path; ?>">
+									<span class="glyphicon glyphicon-chevron-right"></span> 插入页面
+								</button>
+							</td>
+						</tr>
+						<?php } ?>
+					</tbody>
+				</table>
+				<?php } ?>
+			</div>
 		</div>
-		<div class="col-md-5" style="padding-bottom:10px;">
-			<span class="btn-group">
-				<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
-					字号 <span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu">
-					<li><a href="javascript:;" class="size">一号</a></li>
-					<li><a href="javascript:;" class="size">二号</a></li>
-					<li><a href="javascript:;" class="size">三号</a></li>
-					<li><a href="javascript:;" class="size">四号</a></li>
-					<li><a href="javascript:;" class="size">五号</a></li>
-					<li><a href="javascript:;" class="size">六号</a></li>
-					<li><a href="javascript:;" class="size">七号</a></li>
-				</ul>
-			</span>
-			<span class="btn-group">
-				<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
-					颜色 <span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu">
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#000">#000000</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#333">#333333</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#666">#666666</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#999">#999999</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#ccc">#cccccc</a></li>
-					<li><a href="javascript:;" class="color" style="color:#999;background:#fff">#ffffff</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#ff0000">#ff0000</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#ff4e00">#ff4e00</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#ff8a00">#ff8a00</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#baff00">#baff00</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#00fff6">#00fff6</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#00c0ff">#00c0ff</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#0084ff">#0084ff</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#6c00ff">#6c00ff</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#de00ff">#de00ff</a></li>
-					<li><a href="javascript:;" class="color" style="color:#fff;background:#ff008a">#ff008a</a></li>
-				</ul>
-			</span>
-			<span class="btn-group">
-				<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
-					背景 <span class="caret"></span>
-				</button>
-				<ul class="dropdown-menu">
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#000">#000000</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#333">#333333</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#666">#666666</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#999">#999999</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#ccc">#cccccc</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#999;background:#fff">#ffffff</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff0000">#ff0000</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff4e00">#ff4e00</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff8a00">#ff8a00</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#baff00">#baff00</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#00fff6">#00fff6</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#00c0ff">#00c0ff</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#0084ff">#0084ff</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#6c00ff">#6c00ff</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#de00ff">#de00ff</a></li>
-					<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff008a">#ff008a</a></li>
-				</ul>
-			</span>
-		
-			<button type="button" class="btn btn-sm btn-grew" title="粗体">
-				<span class="glyphicon glyphicon-bold"></span>
-			</button>
-			<button type="button" class="btn btn-sm btn-grew" title="斜体">
-				<span class="glyphicon glyphicon-italic"></span>
-			</button>
-			<button type="button" class="btn btn-sm btn-grew" title="大标题">
-				<span class="glyphicon glyphicon-th-list"></span>
-			</button>
-			<button type="button" class="btn btn-sm btn-grew" title="小标题">
-				<span class="glyphicon glyphicon-list"></span>
-			</button>
-			<button type="button" class="btn btn-sm btn-grew" title="左对齐">
-				<span class="glyphicon glyphicon-align-left"></span>
-			</button>
-			<button type="button" class="btn btn-sm btn-grew" title="居中">
-				<span class="glyphicon glyphicon-align-center"></span>
-			</button>
-			<button type="button" class="btn btn-sm btn-grew" title="右对齐">
-				<span class="glyphicon glyphicon-align-right"></span>
-			</button>
-		</div>
-		<div class="col-md-4" style="padding-bottom:10px;">
-			<span id="upload_image" style="position:relative;">
-				<input id="fileImage" type="file" style="position:absolute;left:0;filter:alpha(opacity=0);opacity:0;width:83px;height:30px;" name="file_name">
-				<button type="button" class="btn btn-sm btn-grew">
-					<span class="glyphicon glyphicon-picture"></span> 上传图片
-				</button>
-			</span>
-			<button type="button" class="btn btn-sm btn-grew" data-toggle="modal" data-target="#code_box">
-				<span class="glyphicon glyphicon-font"></span> 插入代码
-			</button>
-			<button type="button" class="btn btn-sm btn-grew" data-toggle="modal" data-target="#table_box">
-				<span class="glyphicon glyphicon-th"></span> 插入表格
-			</button>
+		<div class="col-md-9">
+			<div id="note_editor"></div>
 		</div>
 	</div>
-	<div id="note_editor"></div>
 	<p>&nbsp;</p>
 </div>
 <!-- 插入代码 开始 -->
@@ -206,7 +233,6 @@
 <!-- 插入表格 结束 -->
 <script type="text/javascript" src="/app/statics/home/js/prism.js"></script>
 <script type="text/javascript" src="/app/statics/home/js/main.js"></script>
-<script type="text/javascript" src="/app/statics/home/js/ajaxfileupload.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
 	var ct_id = '<?php echo $ct_id; ?>';
@@ -215,22 +241,13 @@ $(document).ready(function(){
 	//笔记编辑器
 	var note = new Note($('#note_editor'), $('#note_btns'));
 	note.open(ct_id);
-	//插入图片
-	$('#upload_image').on('change', '#fileImage', function(){
-		if(note.ct_id != 0) {
-			$.ajaxFileUpload({
-				url:'/nfs/upload',
-				fileElementId:'fileImage',
-				dataType: 'json',
-				success: function (data, status){
-					if(data.code == 1){
-						$('#note_editor').append('<p><img src="/nfs/image'+data.uri+'" style="max-width:100%;"></p><br>');
-						note.setTimer(note);
-					}else{
-						if(data.error != '')alert(data.error);
-					}
-				}
-			});
+	//插入附件
+	$('#file_list').on('click', 'button', function(){
+		var types = $(this).attr('data-val');
+		if (types == 'jpg' || types == 'jpeg' || types == 'png' || types == 'gif') {
+			document.execCommand('insertHTML', false, '<p><img src="'+$(this).attr('data-path')+'" style="max-width:100%"/></p><br>');
+		}else{
+			document.execCommand('insertHTML', false, '<a href="'+$(this).attr('data-path')+'" >'+$(this).parents('tr').find('td:eq(0)').text()+'</a>');
 		}
 	});
 	//插入代码
