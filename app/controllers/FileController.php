@@ -21,6 +21,48 @@ class FileController extends \core\web\Controller
 	{
 		$this->m_file = new M_file;
 	}
+
+	/**
+	* 设置[模块实体]封面照片
+	* ======
+	* @author 洪波
+	* @version 17.03.09
+	*/
+	public function actionSetAvatar()
+	{
+		if (Autumn::app()->request->isPostRequest())
+		{
+			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
+			{
+				$file_bid = Autumn::app()->request->getPost('file_bid');
+				$image = Autumn::app()->request->getPost('image');
+				$mod = Autumn::app()->request->getPost('mod');
+
+				$mod_class = '\app\models\M_' . $mod;
+				if (class_exists($mod_class))
+				{
+					$class = new $mod_class;
+					if ($class->setAvatar($file_bid, $image))
+					{
+						Autumn::app()->response->setResult(Response::RES_OK);
+					}
+					else
+					{
+						Autumn::app()->response->setResult(Response::RES_FAIL);
+					}
+				}
+				else
+				{
+					Autumn::app()->response->setResult(Response::RES_PARAMF, '', '实体对象不存在，无法设置');
+				}
+			}
+			else
+			{
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
+			}
+			Autumn::app()->response->json();
+		}
+	}
 	
 	/**
 	* 添加文件

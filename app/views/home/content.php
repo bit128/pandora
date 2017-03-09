@@ -19,8 +19,11 @@
 						<a href="javascript:;" class="btn btn-info btn-sm" id="content_add">
 							<span class="glyphicon glyphicon-plus"></span> <strong>新增内容</strong>
 						</a>
+						<a href="javascript:;" class="btn btn-warning btn-sm" id="refresh_list">
+							<span class="glyphicon glyphicon-refresh"></span> <strong>刷新列表</strong>
+						</a>
 						<span class="btn-group">
-							<a href="javascript:;" class="btn btn-success btn-sm set_sort" data-val="0">
+							<a href="javascript:;" class="btn btn-info btn-sm set_sort" data-val="0">
 								<span class="glyphicon glyphicon-sort-by-attributes-alt"></span> 最近创建
 							</a>
 							<a href="javascript:;" class="btn btn-default btn-sm set_sort" data-val="2">
@@ -172,7 +175,6 @@
 <script type="text/javascript" src="/app/statics/home/js/jquery.ztree.core-3.5.min.js"></script>
 <script type="text/javascript" src="/app/statics/home/js/jquery.ztree.excheck-3.5.min.js"></script>
 <script type="text/javascript" src="/app/statics/home/js/jquery.ztree.exedit-3.5.min.js"></script>
-<script type="text/javascript" src="/app/statics/home/js/ajaxfileupload.js"></script>
 <script type="text/javascript" src="/app/statics/home/js/main.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){

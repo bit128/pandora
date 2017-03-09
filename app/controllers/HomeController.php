@@ -254,28 +254,30 @@ class HomeController extends \core\web\Controller
 	*/
 	public function actionFile()
 	{
-		$file_bid = Autumn::app()->request->getQuery('bid');
-		if(strlen($file_bid) == 13)
-		{
-			$page = Autumn::app()->request->getQuery('page', 1);
-			$sort = (int)Autumn::app()->request->getQuery('s', 0);
+		$file_bid = Autumn::app()->request->getQuery('bid', '');
+		$page = Autumn::app()->request->getQuery('page', 1);
+		$sort = (int)Autumn::app()->request->getQuery('s', 0);
+		$avatar = Autumn::app()->request->getQuery('avatar', '');
 
-			$m_file= new \app\models\M_file;
-			$criteria = new Criteria;
+		$m_file= new \app\models\M_file;
+		$criteria = new Criteria;
+		if ($file_bid != '')
+		{
 			$criteria->add('file_bid', $file_bid);
-			$criteria->order = ['file_ctime asc','file_ctime desc','file_utime asc','file_utime desc'][$sort];
-			$criteria->limit = 10;
-			$criteria->offset = ($page - 1) * $criteria->limit;
-			$result = $m_file->getList($criteria);
-			$pages = new \library\Pagination($result['count'], $criteria->limit, $page, '/home/file/bid/'.$file_bid.'/s/'.$sort);
-			$data = array(
-				'file_bid' => $file_bid,
-				'sort' => $sort,
-				'result' => $result,
-				'pages' => $pages->build()
-				);
-			Autumn::app()->view->render('file', $data);
 		}
+		$criteria->order = ['file_ctime asc','file_ctime desc','file_utime asc','file_utime desc'][$sort];
+		$criteria->limit = 10;
+		$criteria->offset = ($page - 1) * $criteria->limit;
+		$result = $m_file->getList($criteria);
+		$pages = new \library\Pagination($result['count'], $criteria->limit, $page, '/home/file/bid/'.$file_bid.'/s/'.$sort);
+		$data = array(
+			'file_bid' => $file_bid,
+			'avatar' => $avatar,
+			'sort' => $sort,
+			'result' => $result,
+			'pages' => $pages->build()
+			);
+		Autumn::app()->view->render('file', $data);
 	}
 
 	/**

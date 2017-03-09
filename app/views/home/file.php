@@ -42,7 +42,12 @@
                 <td><?php echo date('Y-m-d H:i:s', $item->file_ctime); ?></td>
                 <td><?php if ($item->file_utime > 0) echo date('Y-m-d H:i:s', $item->file_utime); ?></td>
                 <td class="file_update" data-field="file_sort"><?php echo $item->file_sort; ?></td>
-                <td><button type="button" class="btn btn-xs btn-warning file_delete">删除</button></td>
+                <td>
+                    <?php if (in_array($item->file_type, ['jpg', 'png', 'gif']) && $avatar != '') { ?>
+                        <button type="button" class="btn btn-xs btn-success set_avatar">设为封面</button>
+                    <?php } ?>
+                    <button type="button" class="btn btn-xs btn-warning file_delete">删除</button>
+                </td>
             <tr>
             <?php } ?>
         </tbody>
@@ -53,6 +58,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
     var file_bid = '<?php echo $file_bid; ?>';
+    var avatar = '<?php echo $avatar; ?>';
 	//插入图片
 	$('#upload_file').on('change', '#fileInput', function(){
 		$.ajaxFileUpload({
@@ -116,6 +122,24 @@ $(document).ready(function(){
                 },
                 'json'
             );
+        }
+    });
+    //设置封面
+    $('#file_list').on('click', '.set_avatar', function(){
+        if (avatar != '') {
+            var path = $(this).parents('tr').find('td:eq(2)').text();
+            $.post(
+                '/file/setAvatar',
+                {file_bid: file_bid, image: path, mod: avatar},
+                function(data){
+                    if (data.code == 1)
+                        alert('设置成功');
+                    else
+                        alert(data.error);
+                }
+            );
+        }else{
+            alert('参数错误，无法设置');
         }
     });
 });
