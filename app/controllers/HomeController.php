@@ -164,18 +164,26 @@ class HomeController extends \core\web\Controller
 	*/
 	public function actionContentNote()
 	{
-		$ct_id = Autumn::app()->request->getQuery('id');
+		$ct_id = Autumn::app()->request->getQuery('id', '');
 		$status = Autumn::app()->request->getQuery('s', 0);
 		$page = Autumn::app()->request->getQuery('page', 1);
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
 
 		$criteria = new Criteria;
+		$criteria->select = 't_content_note.*,t_content.ct_id,t_content.ct_title';
 		$criteria->offset = $offset;
 		$criteria->limit = $limit;
-		$criteria->add('ct_id', $ct_id);
+		if ($ct_id != '')
+		{
+			$criteria->add('t_content_note.ct_id', $ct_id);
+		}
 		if ($status != -1)
+		{
 			$criteria->add('tn_status', $status);
+		}
+		$criteria->union('t_content', 't_content_note.ct_id=t_content.ct_id', 'left');
+		
 		$m_note = new \app\models\M_content_note;
 		$result = $m_note->getList($criteria);
 		//分页
