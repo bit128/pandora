@@ -12,6 +12,26 @@ class Response
 	const RES_UNKNOW	= 0;	//响应码 - 未知
 	const RES_OK		= 1;	//响应码 - 成功
 	const RES_FAIL		= 2;	//响应码 - 失败
+	const RES_PARAMF    = 3;    //响应码 - 参数错误
+    const RES_TOKENF    = 4;    //响应码 - 令牌错误
+    const RES_NOHAS     = 5;    //响应码 - 不存在
+    const RES_REFUSE    = 6;    //响应码 - 拒绝服务
+    const RES_NAMEDF    = 7;    //响应码 - 重名
+    const RES_PWDF      = 8;    //响应码 - 密码错误
+    const RES_NOCHAN    = 9;    //响应码 - 未变更
+
+	public $code_discription = [
+		self::RES_UNKNOW 	=> '未知状态',
+		self::RES_OK 		=> '操作成功',
+		self::RES_FAIL 		=> '操作失败',
+		self::RES_PARAMF    => '参数错误',
+        self::RES_TOKENF    => '令牌错误',
+        self::RES_NOHAS     => '不存在',
+        self::RES_REFUSE    => '拒绝服务',
+        self::RES_NAMEDF    => '重名',
+        self::RES_PWDF      => '密码错误',
+        self::RES_NOCHAN    => '未变更'
+		];
 
 	//响应吗
 	protected $code;
@@ -19,12 +39,6 @@ class Response
 	protected $result;
 	//错误信息
 	protected $error;
-
-	public $code_discription = array(
-		self::RES_UNKNOW 	=> '未知状态',
-		self::RES_OK 		=> '操作成功',
-		self::RES_FAIL 		=> '操作失败'
-		);
 
 	/**
 	* 构造方法，刷新响应结果集
@@ -113,7 +127,7 @@ class Response
 	* @author 洪波
 	* @version 16.07.13
 	*/
-	public function json($output = false)
+	public function json($output = true)
 	{
 		$rs = array(
 			'code' => $this->code,
@@ -140,7 +154,7 @@ class Response
 	* @author 洪波
 	* @version 16.07.13
 	*/
-	public function xml($output = false)
+	public function xml($output = true)
 	{
 		$rs = simplexml_load_string('<?xml version="1.0" encoding="utf-8" ?><ResponseRoot />');
 		$rs->addChild('code', $this->code);

@@ -54,9 +54,9 @@ class CollectController extends \core\web\Controller
 						'cl_time' => time()
 						);
 					$this->m_collect->load($data);
-					if($cl_id = $this->m_collect->save())
+					if($this->m_collect->save())
 					{
-						Autumn::app()->response->setResult($cl_id);
+						Autumn::app()->response->setResult($this->m_collect->getOrm()->cl_id);
 					}
 					else
 					{

@@ -86,9 +86,9 @@ class UserController extends \core\web\Controller
 				$info['user_status'] = M_user::STATUS_NORMAL;
 				//写入数据库
 				$this->m_user->load($info);
-				$user_id = $this->m_user->save();
-				if(strlen($user_id) === 13)
+				if($this->m_user->save())
 				{
+					$user_id = $this->m_user->getOrm()->user_id;
 					//构建令牌
 					$token = RedisCache::model('token')->build($user_id, $token_info);
 					$token['user_name'] = $info['user_name'];

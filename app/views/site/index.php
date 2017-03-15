@@ -26,8 +26,7 @@
                     <p><?php echo \library\MbString::substr(strip_tags($item->ct_detail), 0, 150); ?>...</p>
                     <p>
                         <?php
-                            $label_style = array('success','info','warning');
-                            foreach ($item->indexs as $v) { echo '<span class="label label-',$label_style[rand(0,2)],'">',$v->dc_keyword,'</span> '; } 
+                            foreach ($item->indexs as $v) { echo '<span class="label label-info">',$v->dc_keyword,'</span> '; } 
                         ?>
                     </p>
                     <hr>

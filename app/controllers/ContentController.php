@@ -49,10 +49,9 @@ class ContentController extends \core\web\Controller
 					'ct_status' => M_content::STATUS_HIDE
 					);
 				$this->m_content->load($data);
-				$ct_id = $this->m_content->save();
-				if(strlen($ct_id) == 13)
+				if($this->m_content->save())
 				{
-					Autumn::app()->response->setResult($ct_id);
+					Autumn::app()->response->setResult($this->m_content->getOrm()->ct_id);
 				}
 				else
 				{

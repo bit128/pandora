@@ -48,9 +48,9 @@ class ChannelController extends \core\web\Controller
 			{
 				$cn_fid = Autumn::app()->request->getPost('cn_fid');
 				$cn_name = Autumn::app()->request->getPost('cn_name');
-				if(strlen($cn_id = $this->m_channel->add($cn_fid, $cn_name)) === 13)
+				if($this->m_channel->add($cn_fid, $cn_name))
 				{
-					Autumn::app()->response->setResult($cn_id);
+					Autumn::app()->response->setResult($this->m_channel->getOrm()->cn_id);
 				}
 				else
 				{
