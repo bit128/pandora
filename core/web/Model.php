@@ -49,10 +49,7 @@ abstract class Model
 	*/
 	public function save()
 	{
-		if ($this->orm->save())
-		{
-			return $this->orm->ar[$this->orm->pk];
-		}
+		return $this->orm->save();
 	}
 
 	/**
@@ -63,11 +60,7 @@ abstract class Model
 	*/
 	public function get($id)
 	{
-		$o = $this->orm->find($this->orm->pk . "='{$id}'");
-		if ($o)
-		{
-			return (object) $o->toArray();
-		}
+		return $this->orm->find($this->orm->pk . "='{$id}'");
 	}
 
 	/**
