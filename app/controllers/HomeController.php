@@ -49,7 +49,7 @@ class HomeController extends \core\web\Controller
 		$result = $m_admin->getList($criteria);
 		//分页
 		$url = '/home/admin';
-		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
+		$pages = new \core\tools\Pagination($result['count'], $limit, $page, $url);
 
 		$data = array(
 			'admin_list' => $result['result'],
@@ -84,7 +84,7 @@ class HomeController extends \core\web\Controller
 		}
 		$result = $m_user->getList($criteria);
 		//分页
-		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
+		$pages = new \core\tools\Pagination($result['count'], $limit, $page, $url);
 
 		$data = array(
 			'status' => $status,
@@ -188,7 +188,7 @@ class HomeController extends \core\web\Controller
 		$result = $m_note->getList($criteria);
 		//分页
 		$url = '/home/contentNote';
-		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
+		$pages = new \core\tools\Pagination($result['count'], $limit, $page, $url);
 
 		$data = array(
 			'ct_id' => $ct_id,
@@ -198,6 +198,11 @@ class HomeController extends \core\web\Controller
 			'pages' => $pages->build()
 		);
 		Autumn::app()->view->render('content_note', $data);
+	}
+
+	public function actionPage()
+	{
+		Autumn::app()->view->render('page');
 	}
 
 	/**
@@ -233,7 +238,7 @@ class HomeController extends \core\web\Controller
 		{
 			$url .= '/k/' . $keyword;
 		}
-		$pages = new \library\Pagination($result['count'], $limit, $page, $url);
+		$pages = new \core\tools\Pagination($result['count'], $limit, $page, $url);
 		//上层id
 		$pid = '0';
 		if ($result['count'] > 0)
@@ -285,7 +290,7 @@ class HomeController extends \core\web\Controller
 		$criteria->limit = 10;
 		$criteria->offset = ($page - 1) * $criteria->limit;
 		$result = $m_file->getList($criteria);
-		$pages = new \library\Pagination($result['count'], $criteria->limit, $page, '/home/file/bid/'.$file_bid.'/s/'.$sort);
+		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page, '/home/file/bid/'.$file_bid.'/s/'.$sort);
 		$data = array(
 			'file_bid' => $file_bid,
 			'avatar' => $avatar,

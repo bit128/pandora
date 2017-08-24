@@ -10,9 +10,9 @@ namespace core\web;
 abstract class Model
 {
 	//数据对象实例
-	protected $orm;
+	protected $orm = null;
 	//[重写]模型表名称
-	public $table_name;
+	public $table_name = '';
 	//验证字段错误信息
 	private $errors = [];
 
@@ -83,7 +83,7 @@ abstract class Model
 	* @author 洪波
 	* @version 17.03.02
 	*/
-	public function update($id, Array $data)
+	public function update($id, $data)
 	{
 		return $this->orm->updateAll($data, $this->orm->pk . "='{$id}'");
 	}

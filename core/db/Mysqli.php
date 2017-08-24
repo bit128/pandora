@@ -1,6 +1,6 @@
 <?php
 /**
-* Mysqli数据库操作基础类
+* Mysql数据库驱动实现类
 * ======
 * @author 洪波
 * @version 16.07.15
@@ -21,7 +21,6 @@ class Mysqli implements Db
 	*/
 	public function __construct($config)
 	{
-		//$config = Autumn::app()->config->get($db_config);
 		if($this->connect = mysqli_connect($config['host'], $config['user'], $config['password'], $config['dbname']))
 		{
 			mysqli_set_charset($this->connect, 'utf8');
@@ -97,7 +96,7 @@ class Mysqli implements Db
 		$result = mysqli_query($this->connect, $sql);
 		if($result)
 		{
-			$row = mysqli_fetch_object($result);
+			$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 			mysqli_free_result($result);
 			return $row;
 		}
@@ -118,7 +117,7 @@ class Mysqli implements Db
 		$result = mysqli_query($this->connect, $sql);
 		if($result)
 		{
-			$set = array();
+			$set = [];
 			while ($item = mysqli_fetch_object($result))
 			{
 				$set[] = $item;
@@ -160,7 +159,7 @@ class Mysqli implements Db
 	* @author 洪波
 	* @version 16.07.15
 	*/
-	public function rollback()
+	public function rollBack()
 	{
 		mysqli_rollback($this->connect);
 	}

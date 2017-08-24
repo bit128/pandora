@@ -1,6 +1,6 @@
 <div class="container">
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-3">
 			<legend>用户照片</legend>
 			<label>用户头像：</label>
 			<?php if ($user->user_avatar == '') { ?>
@@ -15,7 +15,7 @@
 				</button>
 			</div>
 		</div>
-		<div class="col-md-4">
+		<div class="col-md-5">
 			<legend>身份信息</legend>
 			<p>
 				<label>电话：</label>

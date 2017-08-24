@@ -18,8 +18,8 @@ class NfsController extends \core\web\Controller
 	*/
 	public function actionUpload()
 	{
-		$nfs = new \library\NetFile;
-		$result = $nfs->upload('./app/statics/files/', 'file_name', \library\NetFile::HASH_DATE);
+		$nfs = new \core\http\NetFile;
+		$result = $nfs->upload('./app/statics/files/', 'file_name', \core\http\NetFile::HASH_DATE);
 		echo json_encode($result);
 	}
 
@@ -32,7 +32,7 @@ class NfsController extends \core\web\Controller
 	public function actionImage()
 	{
 		$src = substr($_SERVER['REQUEST_URI'], 10);
-		$out = new \library\ImageOutput;
+		$out = new \core\tools\ImageOutput;
 		$out->render($src);
 	}
 

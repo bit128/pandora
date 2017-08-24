@@ -6,8 +6,8 @@
 * @version 17.02.24
 */
 return [
-	'app_name' => 'Pandora内容管理系统',
-	'version' => '1.1',
+	'app_name' => 'Pandora企业网媒管理系统',
+	'version' => '2.0 alpha',
 	//开启session
 	'session_start' => true,
 	'module' => [
@@ -35,7 +35,7 @@ return [
 			'cache_limit' => 86400
 		],
 		//数据库配置
-		'database' => [
+		'db' => [
 			'class' => 'core\db\Mysqli',
 			'host' => '127.0.0.1',
 			'user' => 'root',
@@ -43,7 +43,7 @@ return [
 			'dbname' => 'pandora'
 		],
 		//缓存配置
-		'redis' => [
+		'cache' => [
 			'class' => 'library\Redis',
 			'host' => '127.0.0.1',
 			'port' => 6379,

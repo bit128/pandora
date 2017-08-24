@@ -34,9 +34,9 @@ class Request
 	* 判断是否是post请求
 	* ======
 	* @author 洪波
-	* @version 16.07.06
+	* @version 17.04.18
 	*/
-	public function isPostRequest()
+	public function isPost()
 	{
 		if(isset($_SERVER['REQUEST_METHOD']))
 		{
@@ -46,7 +46,21 @@ class Request
 	}
 
 	/**
+	* [兼容Yii]判断是否是post请求
+	* ======
+	* @author 洪波
+	* @version 16.07.06
+	*/
+	public function isPostRequest()
+	{
+		return $this->isPost();
+	}
+
+	/**
 	* 获取get请求参数
+	* ======
+	* @param $key 		参数名称
+	* @param $default 	默认值
 	* ======
 	* @author 洪波
 	* @version 16.02.25
@@ -60,16 +74,19 @@ class Request
 		}
 		else if (isset($_GET) && isset($_GET[$key]))
 		{
-			$value = $_GET[$key];
+			$value = htmlspecialchars($_GET[$key]);
 		}
-		return $value;
+		return urldecode($value);
 	}
 
 	/**
 	* 获取post请求参数
 	* ======
+	* @param $key 		参数名称
+	* @param $default 	默认值
+	* ======
 	* @author 洪波
-	* @version 16.02.25
+	* @version 16.05.11
 	*/
 	public function getPost($key, $default = '')
 	{
@@ -77,7 +94,7 @@ class Request
 		{
 			if (! is_array($key))
 			{
-				if (isset($_POST[$key]))
+				if (isset($_POST[$key]) && $_POST[$key] != '')
 				{
 					return $_POST[$key];
 				}
@@ -129,7 +146,7 @@ class Request
 	*/
 	public function setParam($key, $value)
 	{
-		Autumn::app()->query_params[$key] = $value;
+		Autumn::app()->route->query_params[$key] = $value;
 	}
 
 	/**
@@ -151,7 +168,7 @@ class Request
 	*/
 	public function getIp()
 	{
-		return $_SERVER['REMOTE_ADDR'];
+		return isset($_SERVER['HTTP_X_REAL_IP']) ? $_SERVER["HTTP_X_REAL_IP"] : $_SERVER['REMOTE_ADDR'];
 	}
 
 	/**

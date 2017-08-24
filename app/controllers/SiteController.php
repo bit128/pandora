@@ -176,7 +176,7 @@ class SiteController extends \core\web\Controller
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
 		$result = $this->m_content->getContentList($offset, $limit, '', 0, 2);
-		$pages = new \library\Pagination($result['count'], $limit, $page, '/site/index');
+		$pages = new \core\tools\Pagination($result['count'], $limit, $page, '/site/index');
 
 		$data  = array(
 			'main_list' => $result['result'],
@@ -235,7 +235,7 @@ class SiteController extends \core\web\Controller
 			$offset = ($page - 1) * $limit;
 			$m_collect = new \app\models\M_collect;
 			$result = $m_collect->getContentList($offset, $limit, $user_id);
-			$pages = new \library\Pagination($result['count'], $limit, $page, '/site/collect');
+			$pages = new \core\tools\Pagination($result['count'], $limit, $page, '/site/collect');
 			$data = array(
 				'collect_list' => $result['result'],
 				'pages' => $pages->build()
@@ -266,7 +266,7 @@ class SiteController extends \core\web\Controller
 			$offset = ($page - 1) * $limit;
 			$m_content_note = new \app\models\M_content_note;
 			$result = $m_content_note->myNoteList($offset, $limit, $user_id);
-			$pages = new \library\Pagination($result['count'], $limit, $page, '/site/question');
+			$pages = new \core\tools\Pagination($result['count'], $limit, $page, '/site/question');
 			$data = array(
 				'note_list' => $result['result'],
 				'pages' => $pages->build()

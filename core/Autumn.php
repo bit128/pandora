@@ -9,15 +9,15 @@ namespace core;
 
 class Autumn
 {
-	const FRAMEWORK_VERSION = '1.6.6';
+	const FRAMEWORK_VERSION = '1.8.1';
 
 	//Autumn实例
 	private static $_instance = null;
 	
 	//核心对象实例栈
-	private $core_instance = array();
+	private $core_instance = [];
 
-	//核心对象驱动
+	//核心对象实例包
 	private $core_class = [
 		'config' => 'core\Config',
 		'exception' => 'core\Exception',
@@ -76,12 +76,9 @@ class Autumn
 		});
 		//内部异常机制
 		set_error_handler(function($level, $message, $file, $line, $context){
-			if(AUTUMN_DEBUG)
-			{
-				$content = '<p>异常等级：' . $level . '</p><p style="font-size:18px">'
-					. $message . '</p><p>' . $file . ' (第 ' . $line . ' 行)</p>';
-				Autumn::app()->exception->throws($content);
-			}
+			$content = '<p>异常等级：' . $level . '</p><p style="font-size:18px">'
+				. $message . '</p><p>' . $file . ' (第 ' . $line . ' 行)</p>';
+			Autumn::app()->exception->throws($content);
 		});
 	}
 

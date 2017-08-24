@@ -30,27 +30,21 @@
 	<div class="dashed-line"></div>
 	<div class="row">
 		<div class="col-md-2">
-			<a class="desk-item" href="/home/admin">
-				<p><img src="/app/statics/home/images/png-0840.png"></p>
-				<p><strong style="font-size:16px;">管理员</strong> <br><small>[权限：管理员]</small></p>
-			</a>
-		</div>
-		<div class="col-md-2">
-			<a class="desk-item" href="/home/user">
-				<p><img src="/app/statics/home/images/png-0846.png"></p>
-				<p><strong style="font-size:16px;">用户</strong> <br><small>[权限：用户]</small></p>
-			</a>
-		</div>
-		<div class="col-md-2">
 			<a class="desk-item" href="/home/content">
 				<p><img src="/app/statics/home/images/png-0814.png"></p>
 				<p><strong style="font-size:16px;">内容</strong> <br><small>[权限：内容]</small></p>
 			</a>
 		</div>
 		<div class="col-md-2">
-			<a class="desk-item" href="/home/contentNote">
-				<p><img src="/app/statics/home/images/png-0517.png"></p>
-				<p><strong style="font-size:16px;">评论</strong> <br><small>[权限：客服]</small></p>
+			<a class="desk-item" href="/home/page">
+				<p><img src="/app/statics/home/images/png-0071.png"></p>
+				<p><strong style="font-size:16px;">移动设备</strong> <br><small>[权限：内容]</small></p>
+			</a>
+		</div>
+		<div class="col-md-2">
+			<a class="desk-item" href="/home/struct">
+				<p><img src="/app/statics/home/images/png-0011.png"></p>
+				<p><strong style="font-size:16px;">配置项</strong> <br><small>[权限：内容]</small></p>
 			</a>
 		</div>
 		<div class="col-md-2">
@@ -65,6 +59,12 @@
 				<p><strong style="font-size:16px;">搜索词库</strong> <br><small>[权限：内容]</small></p>
 			</a>
 		</div>
+		<div class="col-md-2">
+			<a class="desk-item" href="/home/contentNote">
+				<p><img src="/app/statics/home/images/png-0517.png"></p>
+				<p><strong style="font-size:16px;">评论</strong> <br><small>[权限：客服]</small></p>
+			</a>
+		</div>
 		<!--
 		<div class="col-md-2">
 			<a class="desk-item" href="/home/product">
@@ -73,9 +73,15 @@
 			</a>
 		</div>-->
 		<div class="col-md-2">
-			<a class="desk-item" href="/home/struct">
-				<p><img src="/app/statics/home/images/png-0011.png"></p>
-				<p><strong style="font-size:16px;">配置项</strong> <br><small>[权限：内容]</small></p>
+			<a class="desk-item" href="/home/admin">
+				<p><img src="/app/statics/home/images/png-0840.png"></p>
+				<p><strong style="font-size:16px;">管理员</strong> <br><small>[权限：管理员]</small></p>
+			</a>
+		</div>
+		<div class="col-md-2">
+			<a class="desk-item" href="/home/user">
+				<p><img src="/app/statics/home/images/png-0846.png"></p>
+				<p><strong style="font-size:16px;">用户</strong> <br><small>[权限：用户]</small></p>
 			</a>
 		</div>
 		<!--
