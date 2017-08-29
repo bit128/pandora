@@ -10,6 +10,8 @@ return [
 	'version' => '1',
 	//开启session
 	'session_start' => true,
+	//业务模型载入路径
+	'service_path' => 'app/models/',
 	'module' => [
 		//路由器设置
 		'route' => [

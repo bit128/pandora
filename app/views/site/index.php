@@ -23,7 +23,7 @@
                     <p class="blog-post-meta">
                         <?php echo date('Y年m月d日 H:i, D', $item->ct_ctime); ?>
                     </p>
-                    <p><?php echo \library\MbString::substr(strip_tags($item->ct_detail), 0, 150); ?>...</p>
+                    <p><?php echo \core\tools\MbString::substr(strip_tags($item->ct_detail), 0, 150); ?>...</p>
                     <p>
                         <?php
                             foreach ($item->indexs as $v) { echo '<span class="label label-info">',$v->dc_keyword,'</span> '; } 

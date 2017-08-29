@@ -251,7 +251,6 @@ class Orm
 				$value .= ",'" . $v . "'";
 			}
 			$sql = "insert into " . $this->table_name . " (" . substr($field, 1) . ") values (" . substr($value, 1) . ")";
-
 			return $this->getDb()->query($sql);
 		}
 	}

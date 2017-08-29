@@ -16,10 +16,10 @@
 				</div>
 				<div class="col-md-6">
 					<div class="pull-right" style="margin-top:-5px;" id="content_btns">
-						<a href="javascript:;" class="btn btn-info btn-sm" id="content_add">
+						<a href="javascript:;" class="btn btn-success btn-sm" id="content_add">
 							<span class="glyphicon glyphicon-plus"></span> <strong>新增内容</strong>
 						</a>
-						<a href="javascript:;" class="btn btn-warning btn-sm" id="refresh_list">
+						<a href="javascript:;" class="btn btn-default btn-sm" id="refresh_list">
 							<span class="glyphicon glyphicon-refresh"></span> <strong>刷新列表</strong>
 						</a>
 						<span class="btn-group">

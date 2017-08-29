@@ -202,7 +202,23 @@ class HomeController extends \core\web\Controller
 
 	public function actionPage()
 	{
-		Autumn::app()->view->render('page');
+		$page = Autumn::app()->request->getQuery('page', 1);
+		$limit = 10;
+		$offset = ($page - 1) * $limit;
+
+		$criteria = new Criteria;
+		$criteria->offset = $offset;
+		$criteria->limit = $limit;
+		$result = $this->m_page->getList($criteria);
+		//分页
+		$url = '/home/page';
+		$pages = new \core\tools\Pagination($result['count'], $limit, $page, $url);
+
+		$data = [
+			'result' => $result['result'],
+			'pages' => $pages->build()
+		];
+		Autumn::app()->view->render('page', $data);
 	}
 
 	/**
