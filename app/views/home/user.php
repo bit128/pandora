@@ -31,7 +31,7 @@
 				<th>姓名</th>
 				<th>注册时间</th>
 				<th>登录时间</th>
-				<th>操作</th>
+				<th style="width:80px;">操作</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -44,7 +44,9 @@
 				<td><?php echo date('Y-m-d', $v->user_ctime); ?></td>
 				<td><?php echo date('Y-m-d', $v->user_ltime); ?></td>
 				<td>
-					<a href="/home/userDetail/id/<?php echo $v->user_id; ?>" class="btn btn-info btn-xs">详情</a>
+					<a href="/home/userDetail/id/<?php echo $v->user_id; ?>" class="btn btn-info btn-xs">
+						<span class="glyphicon glyphicon-user"></span> 详情
+					</a>
 				</td>
 			</tr>
 			<?php } ?>

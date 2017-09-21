@@ -23,9 +23,6 @@ class M_user extends \core\web\Model
 	const STATUS_OPEN		= 2;		//开放平台账户
 	const STATUS_SHOP		= 3;		//商家
 
-	const TOKEN_LIMIT 		= 1296000; 	//令牌缓存有效期
-	const TOKEN_PREFIX 		= 'token_'; //令牌缓存前缀
-
 	public $table_name = 't_user';
 
 	/**
@@ -80,35 +77,16 @@ class M_user extends \core\web\Model
 	}
 
 	/**
-	* 构建令牌
+	* 用户登出
 	* ======
-	* @param $user_id 	用户id
-	* @param $info 		登录信息
+	* @param $account 	账号
 	* ======
 	* @author 洪波
-	* @version 16.07.25
+	* @version 17.08.30
 	*/
-	public function buildToken($user_id, $info = array())
+	public function logout($user_id)
 	{
-		if($user_id == '')
-		{
-			return 0;
-		}
-		$key = self::TOKEN_PREFIX . $user_id;
-		$token_string = time() . $user_id . rand(1000, 9999);
-		$data = array(
-			'user_id' => $user_id,
-			'token' => md5($token_string),
-			'validity' => time() + self::TOKEN_LIMIT,
-			);
-		if(is_array($info) && count($info))
-		{
-			$data += $info;
-		}
-		//缓存token
-		Autumn::app()->redis->hSetAll($key, $data, self::TOKEN_LIMIT);
-
-		return $data;
+		return $this->update($user_id, ['user_token' => '']);
 	}
 
 	/**
@@ -118,25 +96,38 @@ class M_user extends \core\web\Model
 	* @param $info 		登录信息
 	* ======
 	* @author 洪波
-	* @version 16.07.25
+	* @version 17.08.30
+	*/
+	public function buildToken($user_id)
+	{
+		if($user_id == '')
+		{
+			return 0;
+		}
+		$token = md5(time() . $user_id . rand(1000, 9999));
+		$this->update($user_id, ['user_token' => $token]);
+		return $token;
+	}
+
+	/**
+	* 构建令牌
+	* ======
+	* @param $user_id 	用户id
+	* @param $info 		登录信息
+	* ======
+	* @author 洪波
+	* @version 17.08.30
 	*/
 	public function checkToken($user_id, $token)
 	{
-		$tokens = Autumn::app()->redis->hGetAll(self::TOKEN_PREFIX . $user_id);
-		if($tokens)
+		$user = $this->get($user_id);
+		if ($user)
 		{
-			if($tokens['token'] == $token)
+			if ($user->user_token == $token)
 			{
 				return true;
 			}
-			else
-			{
-				return false;
-			}
 		}
-		else
-		{
-			return false;
-		}
+		return false;
 	}
 }

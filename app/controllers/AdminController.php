@@ -12,12 +12,31 @@ use app\models\M_admin;
 
 class AdminController extends \core\web\Controller
 {
-
-	private $m_admin;
-
-	public function init()
+	/**
+	* 管理员页面
+	* ======
+	* @author 洪波
+	* @version 16.07.29
+	*/
+	public function actionIndex()
 	{
-		$this->m_admin = new M_admin;
+		$m_admin = new \app\models\M_admin;
+		$page = Autumn::app()->request->getQuery('page', 1);
+		$limit = 10;
+		$offset = ($page - 1) * $limit;
+		$criteria = new \core\db\Criteria;
+		$criteria->offset = $offset;
+		$criteria->limit = $limit;
+		$result = $m_admin->getList($criteria);
+		//分页
+		$url = '/home/admin';
+		$pages = new \core\tools\Pagination($result['count'], $limit, $page, $url);
+
+		$data = array(
+			'admin_list' => $result['result'],
+			'pages' => $pages->build()
+			);
+		Autumn::app()->view->render('index', $data);
 	}
 
 	/**

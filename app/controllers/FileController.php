@@ -77,7 +77,7 @@ class FileController extends \core\web\Controller
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
 				$data = [
-					'file_ctime' => time(),
+					'file_time' => time(),
 					'file_status' => M_file::STATUS_OPEN
 				];
 				$this->m_file->load($data, true);
@@ -113,10 +113,7 @@ class FileController extends \core\web\Controller
 				$file_id = Autumn::app()->request->getPost('file_id');
 				$field = Autumn::app()->request->getPost('field');
 				$value = Autumn::app()->request->getPost('value');
-				if ($this->m_file->update($file_id, [
-					$field => $value,
-					'file_utime' => time()
-				]))
+				if ($this->m_file->update($file_id, [$field => $value]))
 				{
 					Autumn::app()->response->setResult(Response::RES_OK);
 				}

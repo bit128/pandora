@@ -71,9 +71,13 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/home">控制台</a></li>
+            <li <?php if(\core\Autumn::app()->route->controller == 'home') echo 'class="active"'; ?>><a href="/home">控制台</a></li>
+            <li <?php if(\core\Autumn::app()->route->controller == 'admin') echo 'class="active"'; ?>><a href="/admin">管理员</a></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">用户（<?php echo \core\Autumn::app()->request->getSession('am_name', '未登录'); ?>） <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                欢迎您：<strong><?php echo \core\Autumn::app()->request->getSession('am_name', '未登录'); ?></strong>
+                <span class="caret"></span>
+              </a>
               <ul class="dropdown-menu">
                 <li><a href="/admin/logout">安全退出</a></li>
               </ul>
@@ -87,7 +91,7 @@
 
     <footer class="footer">
       <div class="container">
-        <p class="text-muted">&copy <?php echo \core\Autumn::app()->config->get('app_name'); ?> 2013-2016 版权所有 
+        <p class="text-muted">&copy <?php echo \core\Autumn::app()->config->get('app_name'); ?> 2013-2017 版权所有 
           <small>[ 当前版本：<?php echo \core\Autumn::app()->config->get('version'); ?> ]</small></p>
       </div>
     </footer>

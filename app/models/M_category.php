@@ -1,6 +1,6 @@
 <?php
 /**
-* 索引词库模型
+* 类目模型
 * ======
 * @author 洪波
 * @version 16.08.07
@@ -8,26 +8,38 @@
 namespace app\models;
 use core\db\Criteria;
 
-class M_dictionary extends \core\web\Model
+class M_category extends \core\web\Model
 {
-
-	public $table_name = 't_dictionary';
+	public $table_name = 't_category';
 
 	/**
-	* 新增词汇
+	* 设置封面
+	* ======
+	* @param $ca_id 	词汇id
+	* @param $image 	封面图片地址
+	* ======
+	* @author 洪波
+	* @version 17.09.21
+	*/
+	public function setAvatar($ca_id, $image)
+	{
+		return $this->update($ca_id, ['ca_image' => $image]);
+	}
+
+	/**
+	* 新增类目
 	* ======
 	* @param $dc_fid 		类型
 	* @param $dc_keyword 	关键字
 	* ======
 	* @author 洪波
-	* @version 16.08.10
+	* @version 16.09.21
 	*/
-	public function add($dc_fid, $dc_keyword)
+	public function add($ca_fid, $ca_name)
 	{
 		$data = array(
-			'dc_fid' => $dc_fid,
-			'dc_keyword' => $dc_keyword,
-			'dc_time' => time()
+			'ca_fid' => $ca_fid,
+			'ca_name' => $ca_name
 			);
 		$this->load($data);
 		return $this->save();
@@ -40,7 +52,7 @@ class M_dictionary extends \core\web\Model
 	* ======
 	* @author 洪波
 	* @version 16.08.11
-	*/
+	*//*
 	public function getEntryIds(array $keyword, $by_field = 'dc_keyword')
 	{
 		$keyword = array_filter($keyword);
@@ -63,21 +75,5 @@ class M_dictionary extends \core\web\Model
 				$ids[] = $k;
 		}
 		return $ids;
-	}
-
-	/**
-	* 增加词汇用量
-	* ======
-	* @param $dc_id 	词汇id
-	* ======
-	* @author 洪波
-	* @version 16.08.10
-	*/
-	public function addCount($dc_id)
-	{
-		$sql = "update t_dictionary set dc_count=dc_count+1 where dc_id='{$dc_id}'";
-		return $this->orm
-			->getDb()
-			->query($sql);
-	}
+	}*/
 }

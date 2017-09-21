@@ -1,385 +1,501 @@
-<link rel="stylesheet" href="/app/statics/home/css/zTreeStyle/zTreeStyle.css" type="text/css" />
+<style type="text/css">
+/*------ editor ------*/
+#note_editor {
+	margin-top: 10px;
+	font-size:16px;
+	border: 1px #ddd dashed;
+	border-radius: 8px;
+	color:#666;
+	min-height: 480px;
+	height: auto;
+	width:100%;
+	padding:10px;
+	background: #fff;
+	outline:none;
+}
+.btn-orange {
+	background-color: #fa6800;
+    color: #fff;
+}
+.btn-orange:hover {
+	background-color: #fa5500;
+    color: #fff;
+}
+.btn-grew {
+	background-color: #eee;
+    color: #333;
+}
+.btn-grew:hover {
+	background-color: #fa5500;
+    color: #fff;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/app/statics/home/css/prism.css">
 <div class="container">
 	<div class="row">
 		<div class="col-md-3">
-			<div class="panel panel-info">
-				<div class="panel-heading">栏目目录</div>
-				<div class="panel-body">
-					<div id="tree" class="ztree"></div>
+			<div style="padding: 20px 0 20px;margin-top:10px;" id="note_btns">
+				<div style="text-align:center;">
+					<button type="button" class="btn btn-sm btn-grew">
+						<span class="glyphicon glyphicon-floppy-disk"></span> 自动保存
+					</button>
+					<button type="button" class="btn btn-sm btn-grew" data-val="0">
+						<span class="glyphicon glyphicon-list-alt"></span> 代码模式
+					</button>
 				</div>
+				<div style="text-align:center;margin-top:20px;">
+					<span class="btn-group">
+						<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
+							字号 <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a href="javascript:;" class="size">一号</a></li>
+							<li><a href="javascript:;" class="size">二号</a></li>
+							<li><a href="javascript:;" class="size">三号</a></li>
+							<li><a href="javascript:;" class="size">四号</a></li>
+							<li><a href="javascript:;" class="size">五号</a></li>
+							<li><a href="javascript:;" class="size">六号</a></li>
+							<li><a href="javascript:;" class="size">七号</a></li>
+						</ul>
+					</span>
+					<span class="btn-group">
+						<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
+							颜色 <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#000">#000000</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#333">#333333</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#666">#666666</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#999">#999999</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#ccc">#cccccc</a></li>
+							<li><a href="javascript:;" class="color" style="color:#999;background:#fff">#ffffff</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#ff0000">#ff0000</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#ff4e00">#ff4e00</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#ff8a00">#ff8a00</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#baff00">#baff00</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#00fff6">#00fff6</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#00c0ff">#00c0ff</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#0084ff">#0084ff</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#6c00ff">#6c00ff</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#de00ff">#de00ff</a></li>
+							<li><a href="javascript:;" class="color" style="color:#fff;background:#ff008a">#ff008a</a></li>
+						</ul>
+					</span>
+					<span class="btn-group">
+						<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
+							背景 <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#000">#000000</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#333">#333333</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#666">#666666</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#999">#999999</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ccc">#cccccc</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#999;background:#fff">#ffffff</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff0000">#ff0000</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff4e00">#ff4e00</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff8a00">#ff8a00</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#baff00">#baff00</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#00fff6">#00fff6</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#00c0ff">#00c0ff</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#0084ff">#0084ff</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#6c00ff">#6c00ff</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#de00ff">#de00ff</a></li>
+							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff008a">#ff008a</a></li>
+						</ul>
+					</span>
+				</div>
+				<div style="text-align:center;margin-top:20px;">
+					<button type="button" class="btn btn-sm btn-grew" title="大标题">
+						<span class="glyphicon glyphicon-th-list"></span> 大标题
+					</button>
+					<button type="button" class="btn btn-sm btn-grew" title="小标题">
+						<span class="glyphicon glyphicon-list"></span> 小标题
+					</button>
+				</div>
+				<div style="text-align:center;margin-top:20px;">
+					<button type="button" class="btn btn-sm btn-grew" title="左对齐">
+						<span class="glyphicon glyphicon-align-left"></span> 左对齐
+					</button>
+					<button type="button" class="btn btn-sm btn-grew" title="居中">
+						<span class="glyphicon glyphicon-align-center"></span> 居中
+					</button>
+					<button type="button" class="btn btn-sm btn-grew" title="右对齐">
+						<span class="glyphicon glyphicon-align-right"></span> 右对齐
+					</button>
+				</div>
+				<div style="text-align:center;margin-top:20px;">
+					<button type="button" class="btn btn-sm btn-grew" title="粗体">
+						<span class="glyphicon glyphicon-bold"></span> 粗体
+					</button>
+					<button type="button" class="btn btn-sm btn-grew" title="斜体">
+						<span class="glyphicon glyphicon-italic"></span> 斜体
+					</button>
+				</div>
+				<div style="text-align:center;margin-top:20px;">
+					<button type="button" class="btn btn-sm btn-grew" data-toggle="modal" data-target="#code_box">
+						<span class="glyphicon glyphicon-font"></span> 插入代码
+					</button>
+					<button type="button" class="btn btn-sm btn-grew" data-toggle="modal" data-target="#table_box">
+						<span class="glyphicon glyphicon-th"></span> 插入表格
+					</button>
+				</div>
+				<div style="text-align:center;margin:20px 0 5px;">
+					<a href="/home/file/bid/<?php echo $cn_id; ?>" class="btn btn-sm btn-info">
+						<span class="glyphicon glyphicon-file"></span> 管理附件文件
+					</a>
+				</div>
+				<?php if ($file_list['count']) { ?>
+				<table class="table table-bordered" id="file_list">
+					<tbody>
+						<?php foreach ($file_list['result'] as $item) { ?>
+						<tr>
+							<td><a href="<?php echo $item->file_path; ?>" target="_blank"><?php echo $item->file_name != '' ? $item->file_name
+								: substr($item->file_path, strlen($item->file_path) - 17); ?></a></td>
+							<td style="width:100px;">
+								<button class="btn btn-xs btn-default" data-val="<?php echo $item->file_type; ?>" data-path="<?php echo $item->file_path; ?>">
+									<span class="glyphicon glyphicon-chevron-right"></span> 插入页面
+								</button>
+							</td>
+						</tr>
+						<?php } ?>
+					</tbody>
+				</table>
+				<?php } ?>
 			</div>
 		</div>
 		<div class="col-md-9">
-			<div class="row">
-				<div class="col-md-6">
-					<span style="font-size:18px;">内容管理列表 <strong id="channel_name">- 站点根目录</strong></span>
-				</div>
-				<div class="col-md-6">
-					<div class="pull-right" style="margin-top:-5px;" id="content_btns">
-						<a href="javascript:;" class="btn btn-success btn-sm" id="content_add">
-							<span class="glyphicon glyphicon-plus"></span> <strong>新增内容</strong>
-						</a>
-						<a href="javascript:;" class="btn btn-default btn-sm" id="refresh_list">
-							<span class="glyphicon glyphicon-refresh"></span> <strong>刷新列表</strong>
-						</a>
-						<span class="btn-group">
-							<a href="javascript:;" class="btn btn-info btn-sm set_sort" data-val="0">
-								<span class="glyphicon glyphicon-sort-by-attributes-alt"></span> 最近创建
-							</a>
-							<a href="javascript:;" class="btn btn-default btn-sm set_sort" data-val="2">
-								<span class="glyphicon glyphicon-sort-by-attributes-alt"></span> 最近更新
-							</a>
-						</span>
-					</div>
-				</div>
-			</div>	
-			<table class="table table-bordered table-hover" style="margin-top:16px;">
-				<thead>
-					<tr>
-						<th style="width:100px;">编号</th>
-						<th>封面</th>
-						<th>标题</th>
-						<th>时间</th>
-						<th>浏览量</th>
-						<th>操作</th>
-					</tr>
-				</thead>
-				<tbody id="content_list">
-					<!--
-					<tr>
-						<td style="text-align:center;">
-							<select>
-								<option>请选择</option>
-								<option>文本</option>
-								<option>相册</option>
-								<option>视屏</option>
-							</select>
-							<a href="javascript:;"><span class="glyphicon glyphicon-edit"></span> 编辑文本</a>
-							<small>112358132652a</small>
-						</td>
-						<td>
-							<img src="/app/statics/files/images/default.jpg" class="img-responsive" style="max-width:80px;">
-						</td>
-						<td>
-							<strong>这里是标题</strong><br>
-							<small style="color:#999;">这里是副标题，可以很长很长的哦</small>
-							<div style="font-size:10px;color:#cc63c9;">Java 架构 数据库</div>
-						</td>
-						<td><small>12月26日 12:56</small></td>
-						<td><small>12月26日 12:56</small></td>
-						<td>17</td>
-						<td style="width:50px;">
-							<select>
-								<option>公开</option>
-								<option>隐藏</option>
-								<option>删除</option>
-							</select>
-						</td>
-					</tr>-->
-				</tbody>
-			</table>
-			<div id="pages" style="text-align:center;"></div>
+			<div id="note_editor"></div>
 		</div>
 	</div>
+	<p>&nbsp;</p>
 </div>
-<!-- 内容结束 -->
-<!-- 栏目详情 -->
-<div id="channel_box" class="modal fade">
+<!-- 插入代码 开始 -->
+<div id="code_box" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				<h4 class="modal-title">栏目管理</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">插入代码</h4>
 			</div>
-			<div class="modal-body" style="padding-bottom:0px;">
-				<form id="channel_form">
-					<div class="row">
-						<div class="col-md-6">
-							<p>
-								<label>编号：</label>
-								<strong id="cn_id"></strong>
-							</p>
-						</div>
-						<div class="col-md-6">
-							<p>
-								<label>更新时间：</label>
-								<span class="text-info" id="cn_utime"></span>
-							</p>
-						</div>
-					</div>
-					<p>
-						<label>名称：</label>
-						<input type="text" class="form-control" id="cn_name" disabled>
-					</p>
-					<p>
-						<label>副标题：</label>
-						<input type="text" class="form-control" id="cn_nick">
-					</p>
-					<p>
-						<label>超链接：</label>
-						<input type="text" class="form-control" id="cn_url">
-					</p>
-					<p>
-						<label>状态：</label>
-						<span id="cn_status"></span>
-					</p>
-				</form>
+			<div class="modal-body">
+				<p>
+					<textarea class="form-control" rows="12" id="code_content"></textarea>
+				</p>
+				<div id="lang_select">
+					<a href="javascript:;" class="btn btn-orange btn-sm" data-val="language-markup">标记语言</a>
+					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-javascript">JavaScript</a>
+					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-java">Java</a>
+					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-php">PHP</a>
+					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-c">C</a>
+					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-cpp">C++</a>
+					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-python">Python</a>
+					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-bash">Bash</a>
+					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-json">JSON</a>
+				</div>
 			</div>
 			<div class="modal-footer">
-				<div class="row">
-					<div class="col-md-4"></div>
-					<div class="col-md-4">
-						<select class="form-control" id="cn_admin"></select>
-					</div>
-					<div class="col-md-4">
-						<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-						<button type="button" class="btn btn-primary" id="update_channel">更新栏目</button>
-					</div>
-				</div>
+				<button type="button" class="btn btn-grew" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-orange" id="insert_code">插入代码</button>
 			</div>
 		</div>
 	</div>
 </div>
-<!-- 设置关键词 -->
-<div id="keyword_box" class="modal fade">
+<!-- 插入代码 结束 -->
+<!-- 插入表格 开始 -->
+<div id="table_box" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-				<h4 class="modal-title">设置关键词</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">插入表格</h4>
 			</div>
-			<div class="modal-body" style="padding-bottom:0px;">
+			<div class="modal-body">
 				<div class="row">
-					<div class="col-md-6">
-						<p>
-							<label>备选关键词：</label>
-							<div id="select_keywords"></div>
-						</p>
+					<div class="col-md-4">
+						<input type="text" class="form-control" placeholder="行数" id="tab_rows">
 					</div>
-					<div class="col-md-6">
-						<p>
-							<label>已选关键词：</label>
-							<div id="keywords"></div>
-						</p>
+					<div class="col-md-4">
+						<input type="text" class="form-control" placeholder="列数" id="tab_cols">
+					</div>
+					<div class="col-md-4" style="padding-top:6px;">
+						<input type="checkbox" id="tab_thead" checked> <strong style="font-size:16px;">包含表头</strong>
 					</div>
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-grew" data-dismiss="modal">关闭</button>
+				<button type="button" class="btn btn-orange" id="insert_table">插入表格</button>
 			</div>
 		</div>
 	</div>
 </div>
-<!-- 设置关键词 -->
-<!-- 栏目详情 -->
-<script type="text/javascript" src="/app/statics/home/js/jquery.ztree.core-3.5.min.js"></script>
-<script type="text/javascript" src="/app/statics/home/js/jquery.ztree.excheck-3.5.min.js"></script>
-<script type="text/javascript" src="/app/statics/home/js/jquery.ztree.exedit-3.5.min.js"></script>
+<!-- 插入表格 结束 -->
+<script type="text/javascript" src="/app/statics/home/js/prism.js"></script>
 <script type="text/javascript" src="/app/statics/home/js/main.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-	var cn_id = 1;
-	var ct_id = 0;
-// ====== ====== 内容管理 ====== ======
-	var content = new Content($('#content_list'), $('#content_btns'), $('#pages'), $('#keyword_box'));
-// ====== ====== 栏目管理 ====== ======
-	//栏目树设置
-	var setting = {
-		async: {
-			enable: true,
-			url: '/channel/getChannelTree',
-			autoParam: ['id'],
-			dataFilter: filter
-		},
-		view: {
-			addHoverDom: addHoverDom,
-			removeHoverDom: removeHoverDom,
-			selectedMulti: false,
-			dblClickExpand: false
-		},
-		edit: {
-			enable: true
-		},
-		data: {
-			simpleData: {
-				enable: true
-			}
-		},
-		callback: {
-			beforeRemove: beforeRemove,
-			beforeRename: beforeRename,
-			onRightClick: onRightClick,
-			onDblClick: onDblClick,
-			onDrop: onDrop
-		}
+	var cn_id = '<?php echo $cn_id; ?>';
+	/*------ 笔记类 ------*/
+	var Note = function(editarea, btns){
+		//编辑区域dom
+		this.editarea = editarea;
+		//编辑按钮dom
+		this.btns = btns;
+
+		this.cn_id = 0;
+		this.savetime = 60;
+		this.timer;
+
+		this.bindEvent();
 	};
-	//数据过滤
-	function filter(treeId, parentNode, childNodes) {
-		if (! childNodes) {
-			return null;
-		}
-		/*
-		for (var i=0, l=childNodes.length; i<l; i++) {
-		  //childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
-		}*/
-		return childNodes;
-	}
-	//新建栏目
-	function addHoverDom(treeId, treeNode) {
-		var sObj = $("#" + treeNode.tId + "_span");
-		if (treeNode.editNameFlag || $("#addBtn_"+treeNode.id).length>0) return;
-		var addStr = "<span class='button add' id='addBtn_" + treeNode.id + "' title='添加' onfocus='this.blur();'></span>";
-		sObj.after(addStr);
-		var btn = $("#addBtn_"+treeNode.id);
-		if (btn) btn.bind("click", function() {
-			//提交创建子栏目数据
-			$.post(
-				'/channel/add',
-				{cn_name: '新建栏目', cn_fid: treeNode.id},
-				function(data) {
-					if(data.code == 1) {
-						var zTree = $.fn.zTree.getZTreeObj("tree");
-						if(treeNode.isParent) {
-							zTree.reAsyncChildNodes(treeNode,'refresh');
-						} else {
-							zTree.addNodes(treeNode, {id:data.result, pId:treeNode.id, name:"新建栏目"});
-						}
-					}
-				},
-				'json'
-			);
-		});
-	}
-	//隐藏操作按钮
-	function removeHoverDom(treeId, treeNode) {
-		$("#addBtn_"+treeNode.id).unbind().remove();
-	};
-	//删除栏目
-	function beforeRemove(treeId, treeNode) {
-		var zTree = $.fn.zTree.getZTreeObj("tree");
-		zTree.selectNode(treeNode);
-		if(treeNode.status == '2') {
-			alert('不可以删除系统栏目');
-			return false;
-		}
-		if(treeNode.isParent) {
-			alert('您需要先删除子栏目！');
-			return false;
-		}
-		if(confirm("确认删除 " + treeNode.name + " 栏目及内容吗？")) {
-			$.post(
-				'/channel/delete',
-				{cn_id: treeNode.id},
-				function(data) {
-					if (data.code == 1) {
-						zTree.removeNode(treeNode);
-					} else {
-						alert(data.error);
-					}
-				},
-				'json'
-			);
-		}
-		return false;
-	}
-	//重命名栏目
-	function beforeRename(treeId, treeNode, newName) {
-		if(newName.length == 0) {
-			alert('栏目名称不能为空.');
-			return false;
-		} else {
-			$.post(
-				'/channel/rename',
-				{cn_id: treeNode.id, cn_name: newName},
-				function(data) {
-					//
-				},
-				'json'
-			);
-		}
-		return true;
-	}
-	//栏目详情
-	function onRightClick(event, treeId, treeNode) {
-		cn_id = treeNode.id;
-		$.post(
-			'/channel/get',
-			{cn_id: cn_id},
-			function(data) {
-				if(data.code == 1) {
-					var date = new Date(parseInt(data.result.cn_time) * 1000);
-					$('#cn_utime').text(date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()+' '+date.getHours()+':'+date.getMinutes());
-					$('#cn_id').text(data.result.cn_id);
-					$('#cn_name').val(data.result.cn_name);
-					$('#cn_nick').val(data.result.cn_nick);
-					$('#cn_url').val(data.result.cn_url);
-					loadAdminList(data.result.cn_admin);
-					if(data.result.cn_status == '1') {
-						$('#cn_status').html('<input type="radio" name="cn_status" value="1" checked> 启用 <input type="radio" name="cn_status" value="0"> 禁用');
-					} else if(data.result.cn_status == '0') {
-						$('#cn_status').html('<input type="radio" name="cn_status" value="1"> 启用 <input type="radio" name="cn_status" value="0" checked> 禁用');
-					} else {
-						$('#cn_status').html('<strong class="text-danger">系统</strong>');
-					}
-				} else {
-					$('#channel_box').modal('hide');
+	Note.prototype = {
+		constructor: Note,
+		bindEvent: function(){
+			var f = this;
+			//编辑按钮事件
+			f.btns.on('click', 'button', function(){
+				var i = f.btns.find('button').index(this);
+				switch (i) {
+					case 0: //保存
+						f.update(f);
+						break;
+					case 1:
+						f.codeView(f, $(this));
+						break;
+					case 10: //加粗
+						document.execCommand('bold');
+						f.setTimer(f);
+						break;
+					case 11: //斜体
+						document.execCommand('italic');
+						f.setTimer(f);
+						break;
+					case 5: //大标题
+						f.insertTitle(f, 1);
+						break;
+					case 6: //小标题
+						f.insertTitle(f, 2);
+						break;
+					case 7: //左对齐
+						document.execCommand('justifyLeft');
+						f.setTimer(f);
+						break;
+					case 8: //居中
+						document.execCommand('justifyCenter');
+						f.setTimer(f);
+						break;
+					case 9: //右对齐
+						document.execCommand('justifyRight');
+						f.setTimer(f);
+						break;
 				}
-			},
-			'json'
-		);
-		$('#channel_box').modal('show');
-	}
-	//加载管理员列表
-	function loadAdminList(select){
-		$.get('/admin/getAccountList', function(data){
-			if(data.code == 1) {
-				var html = '<option value="">公开读写</option>';
-				$.each(data.result, function(i, d){
-					if(select != d.am_account)
-						html += '<option value="'+d.am_account+'">'+d.am_name+'</option>';
-					else
-						html += '<option value="'+d.am_account+'" selected>'+d.am_name+'</option>';
-				});
-				$('#cn_admin').html(html);
+			});
+			//设置字号
+			f.btns.on('click', '.size', function(){
+				var i = f.btns.find('.size').index(this);
+				document.execCommand('fontSize', false, i + 1);
+				f.setTimer(f);
+			});
+			//字体颜色
+			f.btns.on('click', '.color', function(){
+				document.execCommand('foreColor', false, $(this).text());
+				f.setTimer(f);
+			});
+			//背景色
+			f.btns.on('click', '.bg', function(){
+				document.execCommand('backColor', false, $(this).text());
+				f.setTimer(f);
+			});
+			//编辑内容事件
+			f.editarea.on('keyup', function(){
+				f.setTimer(f);
+			});
+		},
+		codeView: function(f, btn){
+			if(btn.attr('data-val') == '0'){
+				btn.removeClass('btn-grew').addClass("btn-orange").attr('data-val', '1');
+				f.editarea[0].contentEditable = false;
+				f.editarea.html('<textarea class="form-control" rows="22">'+f.editarea.html()+'</textarea>');
+				f.btns.find('button:gt(1)').hide();
+			}else{
+				btn.removeClass('btn-ornage').addClass("btn-grew").attr('data-val', '0');
+				f.editarea[0].contentEditable = true;
+				f.editarea.html(f.editarea.find('textarea').val());
+				f.btns.find('button:gt(1)').show();
 			}
-		}, 'json');
-	}
-	//更新栏目详情
-	$('#update_channel').on('click', function(){
-		if(cn_id) {
-			var cn_nick = $('#cn_nick').val();
-			var cn_url = $('#cn_url').val();
-			var cn_admin = $('#cn_admin').val();
-			var cn_status = $('input[name="cn_status"]:checked').val();
-			$.post(
-				'/channel/update',
-				{cn_id: cn_id, cn_nick: cn_nick, cn_url: cn_url, cn_admin: cn_admin, cn_status: cn_status},
-				function(){
-					$('#channel_form')[0].reset();
-				},
-				'json'
-			);
-			$('#channel_box').modal('hide');
+		},
+		refresh: function(){
+			this.cn_id = 0;
+			this.editarea.html('');
+			this.editarea.hide();
+		},/*
+		getPosition: function(){
+			var position = -1;
+			var obj = document.getElementById('note_editor');
+
+			if(window.getSelection()){
+				position = window.getSelection().focusOffset;
+			}else{
+				var range = document.selection.createRange();
+				range.moveStart('character', -obj.value.length);
+				position = range.text.length;
+			}
+			return position;
+		},*/
+		insertTitle: function(f, types){
+			var style,title;
+			if(types == 1){
+				style = 'font-size:28px;color:#333;';
+				title = '大号智能标题';
+			}else{
+				style = 'font-size:20px;color:#500;';
+				title = '小号智能标题';
+			}
+			document.execCommand('insertHTML', false, '<div class="title" style="'+style+'" data-val="'+types+'">'+title+'</div><br>');
+		},
+		setTimer: function(f){
+			if(f.timer == undefined && f.cn_id != 0) {
+				var limit = f.savetime;
+				var btn = f.btns.find('button:eq(0)');
+				btn.removeClass('btn-grew').addClass('btn-orange');
+				f.timer = setInterval(function(){
+					if(--limit > 0) {
+						btn.html('<span class="glyphicon glyphicon-floppy-disk"></span> 自动保存('+limit+'s)');
+					} else {
+						f.update(f);
+					}
+				}, 1000);
+			}
+		},
+		open: function(cn_id){
+			var f = this;
+			if(cn_id == f.cn_id)
+				return;
+			f.editarea.show();
+			if(cn_id != undefined)
+				f.cn_id = cn_id;
+			$.get('/channel/getContent/id/'+f.cn_id, function(data){
+				if(data.code == 1){
+					f.editarea[0].contentEditable = true;
+					f.editarea.html(data.result);
+				}else{
+					alert(data.error);
+				}
+			}, 'json');
+		},
+		update: function(f){
+			var btn = f.btns.find('button:eq(0)');
+			btn.html('<span class="glyphicon glyphicon-floppy-disk"></span> 自动保存');
+			btn.removeClass('btn-orange').addClass('btn-grew');
+			clearInterval(f.timer);
+			f.timer = undefined;
+			var ta = f.editarea.find('textarea');
+			if(ta.val()){
+				$.post('/channel/updateField', {cn_id: f.cn_id, field: 'cn_content', value: ta.val()});
+			}else{
+				$.post('/channel/updateField', {cn_id: f.cn_id, field: 'cn_content', value: f.editarea.html()});
+			}
+		}
+	};
+	/*------ 滚动目录类 ------*/
+	var ScrollMenu = function(menu){
+		this.menu = menu;
+		this.floats = false;
+		this.limit = 20;
+		this.bindEvent();
+	};
+	ScrollMenu.prototype = {
+		constructor: ScrollMenu,
+		bindEvent: function(){
+			var f = this;
+			$(window).on('scroll', function(){
+				if(f.getScrollTop() > f.limit) {
+					f.menu.attr('style', "position:fixed;top:80px;z-index:2000;");
+					f.floats = true;
+				} else if (f.floats) {
+					f.menu.attr('style', "padding: 20px 0 20px;margin-top:10px;");
+					f.floats = false;
+				}
+			});
+		},
+		setLimit: function(limit){
+			this.limit = limit;
+		},
+		getScrollTop: function() {  
+			var scrollPos;  
+			if (window.pageYOffset) {  
+				scrollPos = window.pageYOffset; 
+			} else if (document.compatMode && document.compatMode != 'BackCompat') {
+				scrollPos = document.documentElement.scrollTop; 
+			} else if (document.body) {
+				scrollPos = document.body.scrollTop;
+			}   
+			return scrollPos;   
+		}
+	};
+	//菜单滚动
+	new ScrollMenu($('#note_btns'));
+	//笔记编辑器
+	var note = new Note($('#note_editor'), $('#note_btns'));
+	note.open(cn_id);
+	//插入附件
+	$('#file_list').on('click', 'button', function(){
+		var types = $(this).attr('data-val');
+		if (types == 'jpg' || types == 'jpeg' || types == 'png' || types == 'gif') {
+			document.execCommand('insertHTML', false, '<p><img src="'+$(this).attr('data-path')+'" style="max-width:100%"/></p><br>');
+		}else{
+			document.execCommand('insertHTML', false, '<a href="'+$(this).attr('data-path')+'" >'+$(this).parents('tr').find('td:eq(0)').text()+'</a>');
 		}
 	});
-	//栏目内容列表
-	function onDblClick(event, treeId, treeNode) {
-		cn_id = treeNode.id;
-		$('#channel_name').text('- '+treeNode.name);
-		content.getList(cn_id);
-	}
-	//栏目排序
-	function onDrop(event, treeId, treeNodes, targetNode, moveType, isCopy) {
-		var data = treeNodes[0];
-		if(moveType) {
-			$.post(
-				'/channel/setSort',
-				{cn_id: data.id, cn_fid: data.pId, by_id: targetNode.id, type: moveType}
-			);
+	//插入代码
+	$('#lang_select').on('click', 'a', function(){
+		$('#lang_select').find('a').removeClass('btn-orange').addClass('btn-grew');
+		$(this).removeClass('btn-grew').addClass('btn-orange');
+	});
+	$('#insert_code').on('click', function(){
+		var c = $('#code_content').val();
+		if(c.trim().length == 0){alert('请填写内容!');$('#code_content').focus();return;}
+		var t = $('#lang_select').find('.btn-orange').attr('data-val');
+		c = c.replace(/&/g, '&amp;');
+		c = c.replace(/"/g, '&quot;');
+		c = c.replace(/</g, '&lt;');
+		c = c.replace(/>/g, '&gt;');
+		$('#note_editor').append('<pre><code class="'+t+'">'+c+'</code></pre><br>');
+		$('#code_content').val('');
+		$('#code_box').modal('hide');
+		Prism.highlightAll();
+		note.setTimer(note);
+	});
+	//插入表格
+	$('#insert_table').on('click', function(){
+		var rows = $('#tab_rows').val();
+		var cols = $('#tab_cols').val();
+		var pattern = /^\d+$/;
+		if(pattern.test(rows) && pattern.test(cols) && rows > 0 && cols > 0){
+			html = '';
+			ths = '';
+			tds = '';
+			while(cols){
+				ths += '<th></th>';
+				tds += '<td></td>';
+				--cols;
+			}
+			if($('#tab_thead')[0].checked){
+				html += '<thead style="background:#eee;"><tr>' + ths + '</tr></thead>';	
+			}
+			html += '<tbody>';
+			while(rows){
+				html += '<tr>' + tds + '</tr>';
+				--rows;
+			}
+			$('#note_editor').append('<table class="table table-bordered table-condensed">' + html + '</tbody></table><br>');
+			$('#tab_rows').val('');
+			$('#tab_cols').val('');
+			$('#table_box').modal('hide');
+		}else{
+			alert('行数和列数请填写正整数');
 		}
-	}
-	//初始化栏目树
-	$.fn.zTree.init($("#tree"), setting);
-
+	});
 });
 </script>

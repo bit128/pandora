@@ -6,8 +6,8 @@
 * @version 17.02.24
 */
 return [
-	'app_name' => 'Pandora企业网媒管理系统',
-	'version' => '2.0 alpha',
+	'app_name' => 'Pandora 网媒管理系统',
+	'version' => '2.0 内测版',
 	//开启session
 	'session_start' => true,
 	//业务模型载入路径
@@ -33,7 +33,7 @@ return [
 			'class' => 'core\web\View',
 			'layout' => 'layout',
 			'path' => 'app/views/',
-			'cache_dir' => 'app/runtime/',
+			'cache_dir' => 'app/runtimes/',
 			'cache_limit' => 86400
 		],
 		//数据库配置
@@ -43,14 +43,6 @@ return [
 			'user' => 'root',
 			'password' => 'hong_1987',
 			'dbname' => 'pandora'
-		],
-		//缓存配置
-		'cache' => [
-			'class' => 'library\Redis',
-			'host' => '127.0.0.1',
-			'port' => 6379,
-			'cache_db' => 0,
-			'cache_limit' => 60
 		]
 	]
 ];

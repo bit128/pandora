@@ -14,26 +14,6 @@ use app\models\M_admin;
 
 class ChannelController extends \core\web\Controller
 {
-
-	private $m_channel;
-
-	public function init()
-	{
-		$this->m_channel = new M_channel;
-	}
-
-	/**
-	* 获取栏目树
-	* ======
-	* @author 洪波
-	* @version 16.04.22
-	*/
-	public function actionGetChannelTree()
-	{
-		$id = Autumn::app()->request->getParam('id', '0');
- 		echo json_encode($this->m_channel->getTreeList($id));
-	}
-
 	/**
 	* 添加栏目
 	* ======
@@ -42,13 +22,20 @@ class ChannelController extends \core\web\Controller
 	*/
 	public function actionAdd()
 	{
-		if(Autumn::app()->request->isPostrequest())
+		if(Autumn::app()->request->isPost())
 		{
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
-				$cn_fid = Autumn::app()->request->getPost('cn_fid');
-				$cn_name = Autumn::app()->request->getPost('cn_name');
-				if($this->m_channel->add($cn_fid, $cn_name))
+				$cn_fid = Autumn::app()->request->getPost('cn_fid', '0');
+				$data = [
+					'cn_fid' => $cn_fid,
+					'cn_name' => '新建栏目',
+					'cn_data' => '{}',
+					'cn_sort' => $this->m_channel->maxSort($cn_fid),
+					'cn_ctime' => time()
+				];
+				$this->m_channel->load($data);
+				if($this->m_channel->save())
 				{
 					Autumn::app()->response->setResult($this->m_channel->getOrm()->cn_id);
 				}
@@ -73,69 +60,97 @@ class ChannelController extends \core\web\Controller
 	*/
 	public function actionGet()
 	{
-		$cn_id = Autumn::app()->request->getParam('cn_id', -1);
-		if($cn_id != -1)
+		if($cn_id = Autumn::app()->request->getParam('id'))
 		{
 			if($channel = $this->m_channel->get($cn_id))
 			{
-				Autumn::app()->response->setResult($channel);
+				Autumn::app()->response->setResult($channel->toArray());
 			}
 			else
 			{
-				Autumn::app()->response->setResult(Response::RES_NOHAS, '', '栏目不存在');
+				Autumn::app()->response->setResult(Response::RES_NOTHAS, '', '栏目不存在');
 			}
-			Autumn::app()->response->json();
 		}
+		else
+		{
+			Autumn::app()->response->setResult(Response::RES_PARAMF);
+		}
+		Autumn::app()->response->json();
 	}
 
 	/**
-	* 获取栏目列表
+	* 仅获取栏目扩展数据
 	* ======
 	* @author 洪波
-	* @version 16.08.12
+	* @version 16.04.22
 	*/
-	public function actionGetList()
+	public function actionGetData()
 	{
-		if(Autumn::app()->request->isPostRequest())
+		if($cn_id = Autumn::app()->request->getParam('id'))
 		{
-			$criteria = new Criteria;
-			$criteria->offset = Autumn::app()->request->getPost('offset', 0);
-			$criteria->limit = Autumn::app()->request->getPost('limit', 99);
-			$cn_id = Autumn::app()->request->getPost('cn_id');
-			if(strlen($cn_id) == 13)
+			$data = $this->m_channel->getData($cn_id);
+			if($data !== false)
 			{
-				$criteria->add('cn_fid', $cn_id);
-				$criteria->order = 'cn_sort asc';
-				$result = $this->m_channel->getList($criteria);
-				Autumn::app()->response->setResult($result);
+				Autumn::app()->response->setResult($data);
 			}
 			else
 			{
-				Autumn::app()->response->setResult(Response::RES_PARAMF);
+				Autumn::app()->response->setResult(Response::RES_NOTHAS, '', '栏目不存在');
 			}
 		}
+		else
+		{
+			Autumn::app()->response->setResult(Response::RES_PARAMF);
+		}
+		Autumn::app()->response->json();
+	}
+
+	/**
+	* 仅获取栏目内容
+	* ======
+	* @author 洪波
+	* @version 16.04.22
+	*/
+	public function actionGetContent()
+	{
+		if($cn_id = Autumn::app()->request->getParam('id'))
+		{
+			$content = $this->m_channel->getContent($cn_id);
+			if($content !== false)
+			{
+				Autumn::app()->response->setResult($content);
+			}
+			else
+			{
+				Autumn::app()->response->setResult(Response::RES_NOTHAS, '', '栏目不存在');
+			}
+		}
+		else
+		{
+			Autumn::app()->response->setResult(Response::RES_PARAMF);
+		}
+		Autumn::app()->response->json();
 	}
 
 	/**
 	* 更新栏目
 	* ======
 	* @author 洪波
-	* @version 16.04.22
+	* @version 16.09.15
 	*/
-	public function actionUpdate()
+	public function actionUpdateField()
 	{
 		if(Autumn::app()->request->isPostrequest())
 		{
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
 				$cn_id = Autumn::app()->request->getPost('cn_id');
-				$data = array(
-					'cn_nick' => Autumn::app()->request->getPost('cn_nick'),
-					'cn_url' => Autumn::app()->request->getPost('cn_url'),
-					'cn_admin' => Autumn::app()->request->getPost('cn_admin'),
-					'cn_status' => Autumn::app()->request->getPost('cn_status')
-					);
-				if($this->m_channel->update($cn_id, $data))
+				$field = Autumn::app()->request->getPost('field');
+				$value = Autumn::app()->request->getPost('value');
+				if($this->m_channel->update($cn_id, [
+					$field => $value,
+					'cn_utime' => time()
+				]))
 				{
 					Autumn::app()->response->setResult(Response::RES_OK);
 				}
@@ -153,111 +168,20 @@ class ChannelController extends \core\web\Controller
 	}
 
 	/**
-	* 栏目重命名
-	* ======
-	* @author 洪波
-	* @version 16.04.22
-	*/
-	public function actionRename()
-	{
-		if(Autumn::app()->request->isPostrequest())
-		{
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
-			{
-				$cn_id = Autumn::app()->request->getPost('cn_id');
-				$data = array(
-					'cn_name' => Autumn::app()->request->getPost('cn_name')
-					);
-				if($this->m_channel->update($cn_id, $data))
-				{
-					Autumn::app()->response->setResult(Response::RES_SUCCESS);
-				}
-				else
-				{
-					Autumn::app()->response->setResult(Response::RES_NOCHAN);
-				}
-			}
-			else
-			{
-				Autumn::app()->response->setResult(Response::RES_REFUSE);
-			}
-			Autumn::app()->response->json();
-		}
-	}
-
-	/**
-	* 设置排序
-	* ======
-	* @author 洪波
-	* @version 14.12.27
-	*/
-	public function actionSetSort()
-	{
-		if(Autumn::app()->request->isPostrequest())
-		{
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
-			{
-				$cn_id = Autumn::app()->request->getPost('cn_id');
-				$cn_fid = Autumn::app()->request->getPost('cn_fid');
-				$by_id = Autumn::app()->request->getPost('by_id');
-				$type = Autumn::app()->request->getPost('type');
-
-				$this->m_channel->setSort($cn_id, $cn_fid, $by_id, $type);
-				Autumn::app()->response->setResult(Response::RES_OK);
-			}
-			else
-			{
-				Autumn::app()->response->setResult(Response::RES_REFUSE);
-			}
-			Autumn::app()->response->json();
-		}
-	}
-
-	/**
 	* 删除栏目
 	* ======
 	* @author 洪波
-	* @version 14.12.27
+	* @version 17.09.15
 	*/
-	public function actionDelete()
+	public function actionDeleteAll()
 	{
 		if(Autumn::app()->request->isPostrequest())
 		{
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
 				$cn_id = Autumn::app()->request->getPost('cn_id');
-				if($cn_id != '1')
-				{
-					//判断有没有子栏目
-					if(! $this->m_channel->isParent($cn_id))
-					{
-						$m_content = new \app\models\M_content;
-						//判断有没有内容
-						if($m_content->countContent($cn_id) == 0)
-						{
-							if($this->m_channel->delete($cn_id))
-							{
-								Autumn::app()->response->setResult(Response::RES_OK);
-							}
-							else
-							{
-								Autumn::app()->response->setResult(Response::RES_FAIL);
-							}
-						}
-						else
-						{
-							Autumn::app()->response->setResult(Response::RES_FAIL, '', '栏目下有内容，请先删除内容');
-						}
-					}
-					else
-					{
-						Autumn::app()->response->setResult(Response::RES_FAIL, '', '存在子栏目，请先删除子栏目');
-					}
-				}
-				else
-				{
-					Autumn::app()->response->setResult(Response::RES_REFUSE, '', '不能删除根目录，不然就没得玩了');
-				}
+				$this->m_channel->recursionDelete($cn_id);
+				Autumn::app()->response->setResult(Response::RES_OK);
 			}
 			else
 			{

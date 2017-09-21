@@ -6,16 +6,18 @@
                 <span class="glyphicon glyphicon-plus"></span> 上传资源文件
             </button>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-5">
             <div style="padding-top:5px;"> 文件总数 <strong><?php echo $result['count']; ?></strong> 个</div>
         </div>
-        <div class="col-md-4">
-            <span class="btn-group pull-right">
-                <a href="/home/file/bid/<?php echo $file_bid; ?>/s/0" class="btn btn-sm <?php echo $sort == 0 ? 'btn-info' : 'btn-default'; ?>">最早创建</a>
-                <a href="/home/file/bid/<?php echo $file_bid; ?>/s/1" class="btn btn-sm <?php echo $sort == 1 ? 'btn-info' : 'btn-default'; ?>">最新创建</a>
-                <a href="/home/file/bid/<?php echo $file_bid; ?>/s/2" class="btn btn-sm <?php echo $sort == 2 ? 'btn-info' : 'btn-default'; ?>">最早更新</a>
-                <a href="/home/file/bid/<?php echo $file_bid; ?>/s/3" class="btn btn-sm <?php echo $sort == 3 ? 'btn-info' : 'btn-default'; ?>">最新更新</a>
-            </span>
+        <div class="col-md-3">
+            <form class="input-group" method="get" action="">
+				<input type="text" class="form-control input-sm" name="k" value="<?php echo $keyword; ?>">
+				<span class="input-group-btn">
+					<button type="submit" class="btn btn-info btn-sm">
+						<span class="glyphicon glyphicon-search"></span> 搜索
+					</button>
+				</span>
+			</form>
         </div>
     </div>
     <p>&nbsp;</p>
@@ -27,7 +29,6 @@
                 <th>存储路径</th>
                 <th>占用空间</th>
                 <th>创建时间</th>
-                <th>修改时间</th>
                 <th>排序</th>
                 <th>操作</th>
             </tr>
@@ -38,15 +39,18 @@
                 <td class="file_update" data-field="file_name"><?php echo $item->file_name; ?></td>
                 <td><?php echo $item->file_type; ?></td>
                 <td><a href="<?php echo $item->file_path; ?>"><?php echo $item->file_path; ?></a></td>
-                <td><?php echo round($item->file_size / 1024, 2), ' KB'; ?></td>
-                <td><?php echo date('Y-m-d H:i:s', $item->file_ctime); ?></td>
-                <td><?php if ($item->file_utime > 0) echo date('Y-m-d H:i:s', $item->file_utime); ?></td>
+                <td><small><?php echo round($item->file_size / 1024, 2), ' KB'; ?></small></td>
+                <td><small><?php echo date('Y-m-d H:i:s', $item->file_time); ?></small></td>
                 <td class="file_update" data-field="file_sort"><?php echo $item->file_sort; ?></td>
                 <td>
                     <?php if (in_array($item->file_type, ['jpg', 'png', 'gif']) && $avatar != '') { ?>
-                        <button type="button" class="btn btn-xs btn-success set_avatar">设为封面</button>
+                        <button type="button" class="btn btn-xs btn-success set_avatar">
+                            <span class="glyphicon glyphicon-picture"></span> 设为封面
+                        </button>
                     <?php } ?>
-                    <button type="button" class="btn btn-xs btn-warning file_delete">删除</button>
+                    <button type="button" class="btn btn-xs btn-warning file_delete">
+                        <span class="glyphicon glyphicon-trash"></span> 删除
+                    </button>
                 </td>
             <tr>
             <?php } ?>

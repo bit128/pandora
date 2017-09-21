@@ -66,7 +66,7 @@ class UserController extends \core\web\Controller
 	*/
 	public function actionRegister()
 	{
-		if(Psdk::checkSign())
+		if(Autumn::app()->request->isPost())
 		{
 			$user_phone = Autumn::app()->request->getPost('user_phone');
 			$user_password = Autumn::app()->request->getPost('user_password');
@@ -90,8 +90,8 @@ class UserController extends \core\web\Controller
 				{
 					$user_id = $this->m_user->getOrm()->user_id;
 					//构建令牌
-					$token = RedisCache::model('token')->build($user_id, $token_info);
-					$token['user_name'] = $info['user_name'];
+					//$token = RedisCache::model('token')->build($user_id, $token_info);
+					//$token['user_name'] = $info['user_name'];
 					Autumn::app()->response->setResult($token);
 				}
 				else
@@ -115,7 +115,7 @@ class UserController extends \core\web\Controller
 	*/
 	public function actionLogin()
 	{
-		if(Psdk::checkSign())
+		if(Autumn::app()->request->isPost())
 		{
 			$user_phone = Autumn::app()->request->getPost('user_phone');
 			$user_password = Autumn::app()->request->getPost('user_password');
@@ -131,8 +131,8 @@ class UserController extends \core\web\Controller
 					$user_id = $user->user_id;
 					$this->m_user->update($user_id, $info);
 					//构建令牌
-					$token = RedisCache::model('token')->build($user_id, $info);
-					$token['user_name'] = $user->user_name;
+					//$token = RedisCache::model('token')->build($user_id, $info);
+					//$token['user_name'] = $user->user_name;
 					Autumn::app()->response->setResult($token);
 				}
 				else
@@ -142,7 +142,7 @@ class UserController extends \core\web\Controller
 			}
 			else
 			{
-				Autumn::app()->response->setResult(Response::RES_PWDF, '', '用户名或密码错误');
+				Autumn::app()->response->setResult(Response::RES_TOKENF, '', '用户名或密码错误');
 			}
 			Autumn::app()->response->json();
 		}
@@ -167,7 +167,7 @@ class UserController extends \core\web\Controller
 					'user_devid' => ''
 					));
 				//清除用户令牌
-				RedisCache::model('token')->flush($user_id);
+				//RedisCache::model('token')->flush($user_id);
 				Autumn::app()->response->setResult(Response::RES_OK);
 			}
 			else

@@ -10,33 +10,42 @@ use core\db\Criteria;
 
 class M_channel extends \core\web\Model
 {
-
-	const STATUS_HIDE	= 0;
-	const STATUS_OPEN	= 1;
-
 	public $table_name = 't_channel';
 
 	/**
-	* 判断是否为父级栏目
+	* 设置封面
 	* ======
 	* @param $cn_id 	栏目id
+	* @param $image 	封面图片地址
 	* ======
 	* @author 洪波
-	* @version 16.04.21
+	* @version 17.09.15
 	*/
-	public function isParent($cn_id)
+	public function setAvatar($cn_id, $image)
 	{
-		$criteria = new Criteria;
-		$criteria->add('cn_id', $cn_id);
-		$count = $this->orm->count("cn_fid = '{$cn_id}'");
-		if($count)
+		return $this->update($cn_id, [
+			'cn_image' => $image,
+			'cn_utime' => time()
+		]);
+	}
+
+	public function get($cn_id)
+	{
+		$channel = parent::get($cn_id);
+		if ($channel)
 		{
-			return true;
+			$channel = $channel->toArray();
+			if (str_replace(' ', '', $channel['cn_data']) != '{}')
+			{
+				$channel['cn_data'] = json_decode($channel['cn_data']);
+			}
+			else
+			{
+				$channel['cn_data'] = '';
+			}
+			return $channel;
 		}
-		else
-		{
-			return false;
-		}
+		return [];
 	}
 
 	/**
@@ -47,7 +56,7 @@ class M_channel extends \core\web\Model
 	* @author 洪波
 	* @version 13.10.17
 	*/
-	private function maxSort($cn_fid)
+	public function maxSort($cn_fid)
 	{
 		$sql = "select max(cn_sort) from " . $this->table_name . " where cn_fid='{$cn_fid}'";
 		$max = $this->orm
@@ -64,147 +73,66 @@ class M_channel extends \core\web\Model
 	}
 
 	/**
-	* 添加新栏目
-	* ======
-	* @param $cn_fid 	栏目父id
-	* @param $cn_name 	栏目名称
-	* ======
-	* @author 洪波
-	* @version 13.10.17
-	*/
-	public function add($cn_fid, $cn_name)
-	{
-		$data = array(
-			'cn_id' => uniqid(),
-			'cn_fid' => $cn_fid,
-			'cn_name' => $cn_name,
-			'cn_nick' => '',
-			'cn_url' => '',
-			'cn_time' => time(),
-			'cn_sort' => $this->maxSort($cn_fid),
-			'cn_admin' => '',
-			'cn_status' => self::STATUS_OPEN
-			);
-		$this->load($data);
-		return $this->save();
-	}
-
-	/**
-	* 获取栏目树结构
-	* ======
-	* @param $cn_fid 	栏目父级id
-	* ======
-	* @author 洪波
-	* @version 14.12.25
-	*/
-	public function getTreeList($cn_fid)
-	{
-		$criteria = new Criteria;
-		$criteria->add('cn_fid', $cn_fid);
-		$criteria->order = 'cn_sort asc';
-		$list = $this->orm->findAll($criteria);
-		//拼装结构
-		$tree = array();
-		foreach ($list as $v)
-		{
-			$item = array(
-				'id' => $v->cn_id,
-				'name' => $v->cn_name,
-				'status' => $v->cn_status,
-				'isParent' => $this->isParent($v->cn_id) ? 'true' : 'false'
-				);
-			$tree[] = $item;
-		}
-		return $tree;
-	}
-
-	/**
-	* 获取栏目全部子孙节点
-	* ======
-	* @param $cn_id 	父栏目id
-	* @param $self 		是否包含父栏目id
-	* ======
-	* @author 洪波
-	* @version 16.08.12
-	*/
-	public function getChildIds($cn_id, $self = true)
-	{
-		$result = array();
-		if($self)
-		{
-			$result[] = $cn_id;
-		}
-		$condition = array($cn_id);
-		//迭代子目录
-		do {
-			$list = $this->orm
-				->getDb()
-				->queryAll("select cn_id from t_channel where cn_fid in ('".implode("','", $condition)."')");
-			$rs = array();
-			foreach ($list as $v)
-			{
-				$result[] = $v->cn_id;
-				$rs[] = $v->cn_id;
-			}
-			$condition = $rs;
-		} while ($condition);
-		unset($condition);
-		return $result;
-	}
-
-	/**
-	* 设置栏目排序
+	* 仅获取栏目扩展数据
 	* ======
 	* @param $cn_id 	栏目id
-	* @param $cn_fid 	父级栏目id
-	* @param $by_id 	作用对象栏目id
-	* @param $type 		排序方式
 	* ======
 	* @author 洪波
-	* @version 14.12.27
+	* @version 17.09.15
 	*/
-	public function setSort($cn_id, $cn_fid, $by_id, $type)
+	public function getData($cn_id)
 	{
-		$data = array(
-			'cn_fid' => $cn_fid
-			);
-		//如果作为子对象被添加，则排到尾端
-		if($type == 'inner')
+		$criteria = new Criteria;
+		$criteria->select = 'cn_data';
+		$criteria->add('cn_id', $cn_id);
+		if ($channel = $this->getOrm()->find($criteria))
 		{
-			$sort_id = $this->maxSort($cn_fid);
-			$data['cn_sort'] = $sort_id;
-			$this->update($cn_id, $data);
+			return json_decode($channel->cn_data);
 		}
-		//否则是同级别排序
 		else
 		{
-			$data['cn_sort'] = '0';
-			//$this->update($cn_id, $data);
-			//取作用栏目序号
-			$pointer = $this->orm
-				->getDb()
-				->queryScalar("select cn_sort from t_channel where cn_id = '{$by_id}'");
-			//相对位置前
-			if($type == 'prev')
-			{
-				$sql = "update t_channel set cn_sort=cn_sort+1 where cn_sort >= '{$pointer}' and cn_fid = '{$cn_fid}'";
-				$this->orm
-					->getDb()
-					->query($sql);
-				//更新当前栏目序号
-				$this->update($cn_id, array('cn_sort'=>$pointer));
-			}
-			//相对位置后
-			else if ($type == 'next')
-			{
-				$sql = "update t_channel set cn_sort=cn_sort+1 where cn_sort > '{$pointer}' and cn_fid = '{$cn_fid}'";
-				$this->orm
-					->getDb()
-					->query($sql);
-				//更新当前栏目序号
-				$pointer += 1;
-				$this->update($cn_id, array('cn_sort'=>$pointer));
-			}
+			return false;
 		}
+	}
+
+	/**
+	* 仅获取栏目内容
+	* ======
+	* @param $cn_id 	栏目id
+	* ======
+	* @author 洪波
+	* @version 17.09.15
+	*/
+	public function getContent($cn_id)
+	{
+		$criteria = new Criteria;
+		$criteria->select = 'cn_content';
+		$criteria->add('cn_id', $cn_id);
+		if ($channel = $this->getOrm()->find($criteria))
+		{
+			return $channel->cn_content;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	/**
+	* 递归删除栏目
+	* ======
+	* @param $cn_id 栏目id
+	* ======
+	* @author 洪波
+	* @version 17.09.15
+	*/
+	public function recursionDelete($cn_id)
+	{
+		$children = $this->getOrm()->findAll("cn_fid = '{$cn_id}'");
+		foreach ($children as $child)
+		{
+			$this->recursionDelete($child->cn_id);
+		}
+		parent::delete($cn_id);
 	}
 }
