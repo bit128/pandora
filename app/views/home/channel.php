@@ -2,6 +2,27 @@
     table .btn {
         margin-bottom:5px;
     }
+    #data_list td {
+        padding:0;
+        vertical-align:middle;
+        text-align:center;
+    }
+    #data_list td input {
+        width:100%;
+        padding:4px 10px 4px;
+        border:0;
+    }
+    .channel-title {
+        margin-bottom:5px;
+    }
+    .channel-title a {
+        color: #333;
+        font-weight:bold;
+        font-size:15px;
+    }
+    .channel-index {
+        font-size:12px;
+    }
 </style>
 <div class="container">
 	<div class="row">
@@ -17,7 +38,13 @@
             <?php } ?>
 		</div>
 		<div class="col-md-5">
-            <div style="padding-top:5px;"> 内容总数 <strong><?php echo $count; ?></strong> 个</div>
+            <span class="btn-group">
+                <?php $status_uri = $keyword == '' ? $cn_fid : $cn_fid.'/?k='.$keyword; ?>
+                <a href="/home/channel/s/0/fid/<?php echo $status_uri; ?>" class="btn btn-sm <?php echo $status == 0 ? 'btn-info' : 'btn-default'; ?>">全部</a>
+                <a href="/home/channel/s/1/fid/<?php echo $status_uri; ?>" class="btn btn-sm <?php echo $status == 1 ? 'btn-danger' : 'btn-default'; ?>">隐藏</a>
+                <a href="/home/channel/s/2/fid/<?php echo $status_uri; ?>" class="btn btn-sm <?php echo $status == 2 ? 'btn-success' : 'btn-default'; ?>">公开</a>
+                <a href="/home/channel/s/3/fid/<?php echo $status_uri; ?>" class="btn btn-sm <?php echo $status == 3 ? 'btn-warning' : 'btn-default'; ?>">热门</a>
+            </span>
         </div>
 		<div class="col-md-3">
 			<form class="input-group" method="get" action="">
@@ -39,7 +66,7 @@
 				<th style="text-align:center;">名称</th>
 				<th style="width:160px;">时间</th>
 				<th style="width:60px;">排序</th>
-				<th style="width:180px;">管理员</th>
+                <th style="width:80px;">状态</th>
 				<th style="width:180px;">操作</th>
 			</tr>
 		</thead>
@@ -56,15 +83,32 @@
 					} ?>
                     </a>
                 </td>
-                <td><a href="javascript:;" class="set_text" data-field="cn_name"><?php echo $item->cn_name; ?></a></td>
+                <td>
+                    <div class="channel-title">
+                        <a href="javascript:;" class="set_text" data-field="cn_name"><?php echo $item->cn_name; ?></a>
+                    </div>
+                    <!--
+                    <div class="channel-index">
+                        <a href="javascript:;" class="set_index">设置关键词</a>
+                    </div>-->
+                </td>
                 <td>
                     <small class="text-success"><?php echo '创建：', date('Y-m-d H:i',$item->cn_ctime); ?></small><br>
                     <small class="text-warning"><?php if($item->cn_utime) echo '更新：', date('Y-m-d H:i',$item->cn_utime); ?></small><br>
                 </td>
                 <td><a href="javascript:;" class="set_text" data-field="cn_sort"><?php echo $item->cn_sort; ?></a></td>
-                <td><small><?php echo $item->cn_admin; ?></small></td>
                 <td>
-                    
+                    <select class="set_status">
+                    <?php foreach (['隐藏','公开','热门'] as $k => $v) {
+                        $tk = $k + 1;
+                        if ($tk != $item->cn_status)
+                            echo '<option value="',$tk,'">',$v,'</option>';
+                        else
+                            echo '<option value="',$tk,'" selected>',$v,'</option>';
+                    } ?>
+                    </select>
+                </td>
+                <td>
                     <a href="/home/content/id/<?php echo $item->cn_id; ?>" target="_blank" class="btn btn-xs btn-default">
                         <span class="glyphicon glyphicon-print"></span> 内容
                     </a>
@@ -138,44 +182,37 @@ $(document).ready(function(){
         /*------ 绑定页面事件 ------*/
         //新字段
         f.handle.on('click', '#data_new_field', function(){
-            f.data_list.append('<tr><td> </td><td> </td><td><a href="javascript:;"><span class="glyphicon glyphicon-trash"></span></a></td></tr>');
+            f.data_list.append('<tr><td><input type="text"/></td><td><input type="text"/></td>'
+                +'<td><a href="javascript:;"><span class="glyphicon glyphicon-trash"></span></a></td></tr>');
         });
         //删除字段
         f.handle.on('click', '#data_list a', function(){
             var tr = $(this).parents('tr');
-            var key = $.trim(tr.find('td:eq(0)').text());
+            var key = $.trim(tr.find('input:eq(0)').val());
             if (f.data[key] != undefined)
                 delete f.data[key];
             tr.remove();
             f.cacheData();
         });
         //插入内容
-        f.handle.on('click', '#data_list td', function(){
-            var ins = $(this).parent().find('td').index(this);
-            if (ins < 2) {
-                var td = $(this);
-                var value = $.trim($(this).text());
-                var input = $(this).html('<input type="text" value="'+value+'">').find('input');
-                input.focus();
-                input.on('click', function(e){
-                    e.stopPropagation();
-                });
-                input.one('blur', function(){
-                    var v = $.trim($(this).val());
-                    if (v != '' && v != value) {
-                        if (ins == 0 && ! /^[a-zA-Z]+[a-zA-Z0-9]+$/.test(v)) {
-                            alert('字段名必须是以字母开头，字母和数字的组合');
-                        } else if (f.data[v] != undefined) {
-                            alert('字段名不能重名');
-                        } else {
-                            value = v;
-                        }
+        f.handle.on('focus', '#data_list input', function(){
+            var is_key = $(this).parents('tr').find('input').index(this) == 0 ? true : false;
+            var input = $(this);
+            var ov = $.trim(input.val());
+            input.one('blur', function(){
+                var nv = $.trim($(this).val());
+                if (nv != ov) {
+                    if (is_key && ! /^[a-zA-Z]+[a-zA-Z0-9]+$/.test(nv)) {
+                        alert('字段名必须是以字母开头，字母和数字的组合');
+                    } else if (is_key && f.data[nv] != undefined) {
+                        alert('字段名不能重名');
+                    } else {
+                        ov = nv;
+                        f.cacheData();
                     }
-                    input.unbind();
-                    td.text(value);
-                    f.cacheData();
-                });
-            }
+                }
+                input.val(ov);
+            });
         });
         //保存扩展数据
         f.handle.on('click', '#data_save_data', function(){
@@ -213,18 +250,19 @@ $(document).ready(function(){
         render: function(){
             var html = '';
             $.each(this.data, function(k, v){
-                html += '<tr><td>'+k+'</td><td>'+v+'</td><td><a href="javascript:;"><span class="glyphicon glyphicon-trash"></span></a></td></tr>';
+                html += '<tr><td><input type="text" value="'+k
+                    +'"></td><td><input type="text" value="'+v
+                    +'"></td><td><a href="javascript:;"><span class="glyphicon glyphicon-trash"></span></a></td></tr>';
             });
             this.data_list.html(html);
         },
         cacheData: function(){
             var f = this;
             f.data_list.find('tr').each(function(){
-                var key = $.trim($(this).find('td:eq(0)').text());
+                var key = $.trim($(this).find('input:eq(0) ').val());
                 if (key != '')
-                    f.data[key] = $(this).find('td:eq(1)').text();
+                    f.data[key] = $(this).find('input:eq(1)').val();
             });
-            console.log(f.data);
         }
     };
     //扩展字段
@@ -252,7 +290,7 @@ $(document).ready(function(){
         var value = $(this).text();
         var field = $(this).attr('data-field');
         if (field == 'cn_name')
-            var input = td.html('<textarea class="form-control">'+value+'</textarea>').find('textarea');
+            var input = td.html('<input type="text" class="form-control" value="'+value+'">').find('input');
         else
             var input = td.html('<input type="text" value='+value+' style="width:50px;">').find('input');
         input.focus();
@@ -274,6 +312,21 @@ $(document).ready(function(){
             }
             td.html('<a href="javascript:;" class="set_text" data-field="'+field+'">'+value+'</a>');
         });
+    });
+    //设置状态
+    $('#channel_list').on('change', '.set_status', function(){
+        var cn_id = $(this).parents('tr').find('td:eq(0)').text();
+        $.post(
+            '/channel/updateField',
+            {cn_id: cn_id, field: 'cn_status', value: $(this).val()},
+            function(res){
+                if (res.code == 1)
+                    location.reload();
+                else
+                    alert(res.error);
+            },
+            'json'
+        );
     });
     //扩展字段
     $('#channel_list').on('click', '.set_data', function(){

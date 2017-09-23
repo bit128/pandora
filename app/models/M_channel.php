@@ -12,6 +12,10 @@ class M_channel extends \core\web\Model
 {
 	public $table_name = 't_channel';
 
+	const STATUS_HIDE	= 1; //状态 - 隐藏
+	const STATUS_OPEN	= 2; //状态 - 开放
+	const STATUS_HOT	= 3; //状态 - 热点
+
 	/**
 	* 设置封面
 	* ======
@@ -27,25 +31,6 @@ class M_channel extends \core\web\Model
 			'cn_image' => $image,
 			'cn_utime' => time()
 		]);
-	}
-
-	public function get($cn_id)
-	{
-		$channel = parent::get($cn_id);
-		if ($channel)
-		{
-			$channel = $channel->toArray();
-			if (str_replace(' ', '', $channel['cn_data']) != '{}')
-			{
-				$channel['cn_data'] = json_decode($channel['cn_data']);
-			}
-			else
-			{
-				$channel['cn_data'] = '';
-			}
-			return $channel;
-		}
-		return [];
 	}
 
 	/**
@@ -70,6 +55,33 @@ class M_channel extends \core\web\Model
 		{
 			return 1;
 		}
+	}
+
+	/**
+	* 获取栏目内容详情
+	* ======
+	* @param $cn_id 	栏目id
+	* ======
+	* @author 洪波
+	* @version 17.09.22
+	*/
+	public function getDetail($cn_id)
+	{
+		$channel = parent::get($cn_id);
+		if ($channel)
+		{
+			$channel = $channel->toArray();
+			if (str_replace(' ', '', $channel['cn_data']) != '{}')
+			{
+				$channel['cn_data'] = json_decode($channel['cn_data']);
+			}
+			else
+			{
+				$channel['cn_data'] = '';
+			}
+			return $channel;
+		}
+		return [];
 	}
 
 	/**

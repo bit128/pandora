@@ -39,12 +39,52 @@ class M_category extends \core\web\Model
 	{
 		$data = array(
 			'ca_fid' => $ca_fid,
-			'ca_name' => $ca_name
+			'ca_name' => $ca_name,
+			'ca_time' => time()
 			);
 		$this->load($data);
 		return $this->save();
 	}
 
+	/**
+	* 【批量】获取类目名称
+	* ======
+	* @param $ca_ids	类目id列表
+	* ======
+	* @author 洪波
+	* @version 17.09.23
+	*/
+	public function getMultiNames(array $ca_ids)
+	{
+		$criteria = new Criteria;
+		$criteria->select = 'ca_id,ca_name';
+		$criteria->addIn('ca_id', $ca_ids);
+		$result = [];
+		foreach ($this->getOrm()->findAll($criteria) as $item)
+		{
+			$result[$item->ca_id] = $item->ca_name;
+		}
+		return $result;
+	}
+
+	/**
+	* 递归删除类目
+	* ======
+	* @param $ca_id 类目id
+	* ======
+	* @author 洪波
+	* @version 17.09.22
+	*/
+	public function recursionDelete($ca_id)
+	{
+		$children = $this->getOrm()->findAll("ca_fid = '{$ca_id}'");
+		foreach ($children as $child)
+		{
+			$this->recursionDelete($child->ca_id);
+		}
+		parent::delete($ca_id);
+	}
+	
 	/**
 	* 通过关键词获取实体id
 	* ======

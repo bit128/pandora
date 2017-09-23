@@ -101,16 +101,22 @@ class HomeController extends \core\web\Controller
 	public function actionChannel()
 	{
 		$fid = Autumn::app()->request->getQuery('fid', '0');
+		$status = (int) Autumn::app()->request->getQuery('s', 0);
 		$keyword = Autumn::app()->request->getQuery('k', '');
 		$page = Autumn::app()->request->getQuery('page', 1);
 		$page_uri = '/home/channel';
 		//查询条件
 		$criteria = new Criteria;
 		$criteria->add('cn_fid', $fid);
+		if ($status > 0)
+		{
+			$criteria->add('cn_status', $status);
+			$page_uri .= '/s/' . $status;
+		}
 		if ($keyword != '')
 		{
 			$criteria->addCondition("cn_name like '%{$keyword}%'");
-			$page_uri .= '/k/' . $keyword;
+			$page_uri .= '/?k=' . $keyword;
 		}
 		$criteria->limit = 10;
 		$criteria->offset = ($page - 1) * $criteria->limit;
@@ -122,6 +128,7 @@ class HomeController extends \core\web\Controller
 
 		$data = [
 			'cn_fid' => $fid,
+			'status' => $status,
 			'keyword' => $keyword,
 			'count' => $result['count'],
 			'result' => $result['result'],

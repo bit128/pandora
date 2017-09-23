@@ -32,7 +32,8 @@ class ChannelController extends \core\web\Controller
 					'cn_name' => '新建栏目',
 					'cn_data' => '{}',
 					'cn_sort' => $this->m_channel->maxSort($cn_fid),
-					'cn_ctime' => time()
+					'cn_ctime' => time(),
+					'cn_status' => M_channel::STATUS_HIDE
 				];
 				$this->m_channel->load($data);
 				if($this->m_channel->save())

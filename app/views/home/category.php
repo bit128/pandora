@@ -3,7 +3,7 @@
 		<div class="col-md-4">
 			<?php if ($keyword == '') { ?>
 			<button type="button" class="btn btn-sm btn-success" id="dict_new">
-				<span class="glyphicon glyphicon-plus"></span> 增加词汇
+				<span class="glyphicon glyphicon-plus"></span> 增加类目
 			</button>
 			<?php } if ($fid != '0' || $keyword != '') { ?>
 			<a href="javascript:history.back();" class="btn btn-sm btn-default">
@@ -12,7 +12,7 @@
 			<?php } ?>
 		</div>
 		<div class="col-md-5">
-			<div style="padding-top:8px;">词汇总数：<strong><?php echo $count; ?></strong> 个</div>
+			<div style="padding-top:8px;">类目总数：<strong><?php echo $count; ?></strong> 个</div>
 		</div>
 		<div class="col-md-3">
 			<form class="input-group" method="get" action="">
@@ -30,8 +30,7 @@
 		<thead>
 			<tr>
 				<th style="width:100px;">ID</th>
-				<th style="width:100px;">封面</th>
-				<th style="text-align:center;">词汇</th>
+				<th style="text-align:center;">名称</th>
 				<th style="width:130px;">操作</th>
 			</tr>
 		</thead>
@@ -39,16 +38,7 @@
 			<?php foreach ($category_list as $v) { ?>
 			<tr data-val="<?php echo $v->ca_id; ?>">
 				<td><?php echo $v->ca_id; ?></td>
-				<td>
-					<a href="/home/file/avatar/category/bid/<?php echo $v->ca_id; ?>">
-					<?php if($v->ca_image == '') {
-						echo '<img src="/app/statics/files/default.jpg" class="img-responsive" style="max-width:80px;">';
-					}else{
-						echo '<img src="/nfs/image',$v->ca_image,'" class="img-responsive" style="max-width:80px;">';
-					} ?>
-					</a>
-				</td>
-				<td style="text-align:center;"><strong style="font-size:18px;" class="dict_update"><?php echo $v->ca_name; ?></strong></td>
+				<td><span class="dict_update"><?php echo $v->ca_name; ?></span></td>
 				<td>
 					<a href="/home/category/f/<?php echo $v->ca_id; ?>" class="btn btn-xs btn-info">
 						<span class="glyphicon glyphicon-tags"></span> 成员
@@ -71,7 +61,7 @@ $(document).ready(function(){
 	$('#dict_new').on('click', function(){
 		$.post(
 			'/category/add',
-			{ca_fid: fid, ca_name: '新关键词'},
+			{ca_fid: fid, ca_name: '新增类目'},
 			function(data){
 				if(data.code == 1)
 					location.reload();
@@ -97,7 +87,7 @@ $(document).ready(function(){
 					{ca_id: ca_id, field: 'ca_name', value: nv}
 				);
 			}
-			td.html('<strong style="font-size:18px;" class="dict_update">'+ov+'</strong>');
+			td.html('<span class="dict_update">'+ov+'</span>');
 		});
 	});
 	//删除词汇

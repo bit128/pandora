@@ -90,15 +90,8 @@ class CategoryController extends \core\web\Controller
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
 			{
 				$ca_id = Autumn::app()->request->getPost('ca_id');
-				if($this->m_category->delete($ca_id))
-				{
-					//TODO 删除索引
-					Autumn::app()->response->setResult(Response::RES_OK);
-				}
-				else
-				{
-					Autumn::app()->response->setResult(Response::RES_FAIL);
-				}
+				$this->m_category->recursionDelete($ca_id);
+				Autumn::app()->response->setResult(Response::RES_OK);
 			}
 			else
 			{
