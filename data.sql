@@ -41,7 +41,7 @@ CREATE TABLE `t_admin` (
 
 LOCK TABLES `t_admin` WRITE;
 /*!40000 ALTER TABLE `t_admin` DISABLE KEYS */;
-INSERT INTO `t_admin` VALUES ('hongbo','98b4a59cbf4d5b6293ecfc7de0db870b','洪波','产品',4103,1505971290,'127.0.0.1',1),('bit128','123456','测试账号2','运营',5,0,'',0);
+INSERT INTO `t_admin` VALUES ('hongbo','98b4a59cbf4d5b6293ecfc7de0db870b','洪波','产品',4103,1506244857,'127.0.0.1',1),('bit128','123456','测试账号2','运营',5,0,'',0);
 /*!40000 ALTER TABLE `t_admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57,8 +57,10 @@ CREATE TABLE `t_category` (
   `ca_fid` int(11) NOT NULL,
   `ca_image` varchar(64) NOT NULL,
   `ca_name` varchar(64) NOT NULL,
+  `ca_count` int(11) NOT NULL,
+  `ca_time` int(11) NOT NULL,
   PRIMARY KEY (`ca_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +69,7 @@ CREATE TABLE `t_category` (
 
 LOCK TABLES `t_category` WRITE;
 /*!40000 ALTER TABLE `t_category` DISABLE KEYS */;
-INSERT INTO `t_category` VALUES (1,0,'','新关键词1'),(2,1,'','新关键词1-2'),(3,0,'/app/statics/files/17/09/21/59c3643ad3198.png','新关键词2'),(4,0,'','新关键词3'),(5,4,'','新关键词3-1');
+INSERT INTO `t_category` VALUES (7,0,'','新世界航道',0,0),(8,7,'','这是子分类',0,0),(9,0,'','蓝海航线',0,0);
 /*!40000 ALTER TABLE `t_category` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -83,12 +85,13 @@ CREATE TABLE `t_channel` (
   `cn_fid` char(13) NOT NULL,
   `cn_image` varchar(64) NOT NULL,
   `cn_name` varchar(64) NOT NULL,
+  `cn_keyword` varchar(128) NOT NULL,
   `cn_data` varchar(500) NOT NULL,
   `cn_content` text NOT NULL,
   `cn_sort` int(11) NOT NULL,
-  `cn_admin` varchar(32) NOT NULL,
   `cn_ctime` int(11) NOT NULL,
   `cn_utime` int(11) NOT NULL,
+  `cn_status` tinyint(4) NOT NULL,
   PRIMARY KEY (`cn_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -99,7 +102,7 @@ CREATE TABLE `t_channel` (
 
 LOCK TABLES `t_channel` WRITE;
 /*!40000 ALTER TABLE `t_channel` DISABLE KEYS */;
-INSERT INTO `t_channel` VALUES ('59bb850fa6c77','0','','新建栏目aaa，上海合作','{\"area\":\"上海2\",\"address\":\"浦东新区\"}','这里是内容',5,'',1505461519,1505971307),('59bba8b19b70e','0','','新建栏目','{}','',2,'',1505470641,1505470719),('59c352920de2d','0','','我是一条空内容','{}','',6,'',1505972882,1505972890),('59c3531122b6f','59c352920de2d','','ok,我是一条子内容','{}','',1,'',1505973009,1505973019);
+INSERT INTO `t_channel` VALUES ('59bb850fa6c77','0','','新建栏目aaa，上海合作','递归 计算','{\"area\":\"上海2\",\"address\":\"浦东新区\"}','这里是内容,1123',5,1505461519,1506254554,1),('59bba8b19b70e','0','','新建栏目s','文学 云计算 大数据','{\"top\":\"123\"}','ok',2,1505470641,1506254478,2),('59c352920de2d','0','','我是一条空内容22','','{}','',6,1505972882,1506254270,3),('59c3531122b6f','59c352920de2d','','ok,我是一条子内容','','{}','',1,1505973009,1506138100,2);
 /*!40000 ALTER TABLE `t_channel` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -132,8 +135,60 @@ CREATE TABLE `t_file` (
 
 LOCK TABLES `t_file` WRITE;
 /*!40000 ALTER TABLE `t_file` DISABLE KEYS */;
-INSERT INTO `t_file` VALUES ('58b8ebe95bff8','','57afc7ec763ac','jpg','/app/statics/files/17/03/03/58b8ebe9104fa.jpg','photo name',26304,1488514025,0,2,''),('58c0bc7d36cc0','','58aa49e288d20','jpg','/app/statics/files/17/03/09/58c0bc7d0b4df.jpg','封面',39891,1489026173,0,2,''),('59bb81068c984','','59bb7b15f2d19','jpg','/app/statics/files/17/09/15/59bb81067cd81.jpg','ccc',26304,1505460486,0,2,''),('58c7b4192b632','','58aa49e288d20','jpg','/app/statics/files/17/03/14/58c7b4190cdbb.jpg','数字风标',194223,1489482777,0,2,''),('59bb80f287537','','59bb7b15f2d19','jpg','/app/statics/files/17/09/15/59bb80f27e19a.jpg','lss',39891,1505460466,0,2,''),('59c35d5507063','','58b91e4506ce7','jpg','/app/statics/files/17/09/21/59c35d54ed140.jpg','',19552,1505975637,0,2,''),('59c3643ae23c5','','3','png','/app/statics/files/17/09/21/59c3643ad3198.png','',35426,1505977402,0,2,'');
+INSERT INTO `t_file` VALUES ('59c3643ae23c5','','3','png','/app/statics/files/17/09/21/59c3643ad3198.png','spring mvc',35426,1505977402,0,2,'');
 /*!40000 ALTER TABLE `t_file` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_index`
+--
+
+DROP TABLE IF EXISTS `t_index`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_index` (
+  `id_id` int(11) NOT NULL AUTO_INCREMENT,
+  `id_keyword` varchar(16) NOT NULL,
+  `id_channel` char(13) NOT NULL,
+  PRIMARY KEY (`id_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_index`
+--
+
+LOCK TABLES `t_index` WRITE;
+/*!40000 ALTER TABLE `t_index` DISABLE KEYS */;
+INSERT INTO `t_index` VALUES (28,'文学','59bba8b19b70e'),(29,'云计算','59bba8b19b70e'),(30,'大数据','59bba8b19b70e'),(31,'递归','59bb850fa6c77'),(32,'计算','59bb850fa6c77');
+/*!40000 ALTER TABLE `t_index` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `t_keyword`
+--
+
+DROP TABLE IF EXISTS `t_keyword`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `t_keyword` (
+  `kw_id` int(11) NOT NULL AUTO_INCREMENT,
+  `kw_name` varchar(16) NOT NULL,
+  `kw_time` int(11) NOT NULL,
+  `kw_use` int(11) NOT NULL,
+  `kw_search` int(11) NOT NULL,
+  PRIMARY KEY (`kw_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `t_keyword`
+--
+
+LOCK TABLES `t_keyword` WRITE;
+/*!40000 ALTER TABLE `t_keyword` DISABLE KEYS */;
+INSERT INTO `t_keyword` VALUES (2,'中文',1506141917,0,0),(3,'计算',1506254554,1,0),(4,'文学',1506141926,8,0),(5,'云计算',1506168050,9,0),(6,'Java',1506168057,0,0),(7,'数据库',1506168064,1,0),(8,'人工智能',1506168069,0,0),(9,'区块链',1506168074,0,0),(10,'仿生学',1506168083,0,0),(11,'比特币',1506168089,0,0),(12,'大数据',1506168117,2,0),(13,'计算机',1506252883,3,0);
+/*!40000 ALTER TABLE `t_keyword` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -185,4 +240,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-09-21 15:07:30
+-- Dump completed on 2017-09-24 20:18:16

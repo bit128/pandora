@@ -16,12 +16,15 @@
         margin-bottom:5px;
     }
     .channel-title a {
-        color: #333;
+        color: #369;
         font-weight:bold;
         font-size:15px;
     }
     .channel-index {
         font-size:12px;
+    }
+    .channel-index a {
+        color: #396;
     }
 </style>
 <div class="container">
@@ -47,7 +50,7 @@
             </span>
         </div>
 		<div class="col-md-3">
-			<form class="input-group" method="get" action="">
+			<form class="input-group" method="get" action="/home/channel/s/<?php echo $status,'/fid/',$status_uri; ?>">
 				<input type="text" class="form-control input-sm" name="k" value="<?php echo $keyword; ?>">
 				<span class="input-group-btn">
 					<button type="submit" class="btn btn-info btn-sm">
@@ -87,10 +90,11 @@
                     <div class="channel-title">
                         <a href="javascript:;" class="set_text" data-field="cn_name"><?php echo $item->cn_name; ?></a>
                     </div>
-                    <!--
                     <div class="channel-index">
-                        <a href="javascript:;" class="set_index">设置关键词</a>
-                    </div>-->
+                        <a href="javascript:;" class="set_index">
+                            <?php echo $item->cn_keyword != '' ? $item->cn_keyword : '设置关键词'; ?>
+                        </a>
+                    </div>
                 </td>
                 <td>
                     <small class="text-success"><?php echo '创建：', date('Y-m-d H:i',$item->cn_ctime); ?></small><br>
@@ -153,22 +157,53 @@
                     </thead>
                     <tbody id="data_list"></tbody>
                 </table>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-success pull-left" id="data_new_field">
-                    <span class="glyphicon glyphicon-plus"></span> 新字段
-                </button>
-                <button type="button" class="btn btn-info" id="data_save_data">
-                    <span class="glyphicon glyphicon-save"></span> 保存
-                </button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">
-                    <span class="glyphicon glyphicon-remove"></span> 关闭
-                </button>
+                <div style="text-align:center;">
+                    <button type="button" class="btn btn-xs btn-default" id="data_new_field">
+                        <span class="glyphicon glyphicon-plus"></span> 插入新字段行
+                    </button>
+                    <button type="button" class="btn btn-xs btn-success" id="data_save_data">
+                        <span class="glyphicon glyphicon-save"></span> 保存扩展字段数据
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 <!-- 扩展字段 -->
+<!-- 设置关键字 -->
+<div id="keyword_modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <legend>选择关键字</legend>
+                        <p>
+                            <input id="search_keyword" type="text" class="form-control input-sm" placeholder="搜索关键词...">
+                        </p>
+                        <div id="keyword_search_list"></div>
+                        <div id="keyword_hot_list"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <legend>已选关键字</legend>
+                        <p>
+                            <textarea class="form-control" id="select_keyword"></textarea>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span> 关闭
+                </button>
+                <button type="button" class="btn btn-info" id="save_keyword">
+                <span class="glyphicon glyphicon-save"></span> 保存关键词
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 设置关键字 -->
 <script type="text/javascript">
 $(document).ready(function(){
     const cn_fid = '<?php echo $cn_fid; ?>';
@@ -350,5 +385,83 @@ $(document).ready(function(){
             );
         }
     });
+    /*------设置关键字逻辑------*/
+    (function(){
+        var cn_id = '';
+        //显示设置关键字框
+        $('#channel_list').on('click', '.set_index', function(){
+            cn_id = $(this).parents('tr').find('td:eq(0)').text();
+            var sk = $.trim($(this).text());
+            if (sk == '设置关键词')
+                sk = '';
+            $('#select_keyword').val(sk);
+            $('#keyword_modal').modal('show');
+            //加载热门关键词
+            $.post(
+                '/keyword/getList',
+                {offset:0, limit:5, sort:2},
+                function(res){
+                    if (res.code == 1) {
+                        var html = '';
+                        $.each(res.result.result, function(i,d){
+                            html += '<span class="label label-warning">'+d.kw_name+'</span> ';
+                        });
+                        $('#keyword_hot_list').html(html);
+                    }
+                },
+                'json'
+            );
+        });
+        //搜索关键词
+        var search_timer;
+        $('#search_keyword').on('keyup', function(){
+            if (search_timer != undefined)
+                clearTimeout(search_timer);
+            var keyword = $(this).val();
+            if (keyword == '')
+                keyword = ' ';
+            search_timer = setTimeout(function(){
+                $.post(
+                    '/keyword/getList',
+                    {offset:0, limit:4, keyword:keyword, sort:1},
+                    function(res){
+                        var html = '';
+                        if (res.code == 1) {
+                            if($.trim(keyword) != '')
+                                html += '<span class="label label-info">'+keyword+'</span> ';
+                            $.each(res.result.result, function(i,d){
+                                html += '<span class="label label-success">'+d.kw_name+'</span> ';
+                            });
+                            $('#keyword_search_list').html(html);
+                        }
+                    },
+                    'json'
+                );
+            }, 500);
+        });
+        //选中关键词
+        $('#keyword_modal').on('click', '.label', function(){
+            var keyword = $(this).text();
+            var keyword_list = $('#select_keyword').val();
+            if (keyword_list.indexOf(keyword) === -1) {
+                $('#select_keyword').val(keyword_list+' '+keyword);
+            }
+            $(this).remove();
+        });
+        //保存关键词
+        $('#save_keyword').on('click', function(){
+            $.post(
+                '/channel/setKeyword',
+                {cn_id: cn_id, keyword: $('#select_keyword').val()},
+                function(res){
+                    if (res.code == 1)
+                        location.reload();
+                    else
+                        alert(res.error);
+                },
+                'json'
+            );
+        });
+    })();
 });
 </script>

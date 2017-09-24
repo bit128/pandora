@@ -116,7 +116,7 @@ class HomeController extends \core\web\Controller
 		if ($keyword != '')
 		{
 			$criteria->addCondition("cn_name like '%{$keyword}%'");
-			$page_uri .= '/?k=' . $keyword;
+			$page_uri .= '/k/' . $keyword;
 		}
 		$criteria->limit = 10;
 		$criteria->offset = ($page - 1) * $criteria->limit;
@@ -164,39 +164,38 @@ class HomeController extends \core\web\Controller
 	}
 
 	/**
-	* 类目管理页面
+	* 关键词管理页面
 	* ======
 	* @author 洪波
-	* @version 16.08.07
+	* @version 16.09.23
 	*/
-	public function actionCategory()
+	public function actionKeyword()
 	{
-		$fid = Autumn::app()->request->getQuery('f', '0');
 		$keyword = Autumn::app()->request->getQuery('k');
+		$sort = Autumn::app()->request->getQuery('s', 0);
 		$page = Autumn::app()->request->getQuery('page', 1);
-		$page_uri = '/site/dictionary';
+		$page_uri = '/home/keyword';
 		//查询数据列表
 		$criteria = new Criteria;
 		$criteria->limit = 10;
 		$criteria->offset = ($page - 1) * $criteria->limit;
-		$criteria->add('ca_fid', $fid);
+		$criteria->order = ['kw_name asc','kw_time desc','kw_use desc','kw_search desc'][$sort];
 		if($keyword != '')
 		{
-			$criteria->addCondition("ca_name like '%{$keyword}%'");
-			$page_uri = '/k/' . $keyword;
+			$criteria->addCondition("kw_name like '%{$keyword}%'");
+			$page_uri .= '/k/' . $keyword;
 		};
 		
-		$result = $this->m_category->getList($criteria);
+		$result = $this->m_keyword->getList($criteria);
 		//分页
 		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page, $page_uri);
 		$data = array(
-			'fid' => $fid,
 			'keyword' => $keyword,
-			'count' => $result['count'],
-			'category_list' => $result['result'],
+			'sort' => $sort,
+			'result' => $result['result'],
 			'pages' => $pages->build()
 			);
-		Autumn::app()->view->render('category', $data);
+		Autumn::app()->view->render('keyword', $data);
 	}
 
 	/**

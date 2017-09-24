@@ -10,6 +10,7 @@ use core\Autumn;
 use core\db\Criteria;
 use core\http\Response;
 use app\models\M_channel;
+use app\models\M_index;
 use app\models\M_admin;
 
 class ChannelController extends \core\web\Controller
@@ -159,6 +160,54 @@ class ChannelController extends \core\web\Controller
 				{
 					Autumn::app()->response->setResult(Response::RES_NOCHAN);
 				}
+			}
+			else
+			{
+				Autumn::app()->response->setResult(Response::RES_REFUSE);
+			}
+			Autumn::app()->response->json();
+		}
+	}
+
+	/**
+	* 设置栏目内容关键词
+	* ======
+	* @author 洪波
+	* @version 16.09.15
+	*/
+	public function actionSetKeyword()
+	{
+		if(Autumn::app()->request->isPostrequest())
+		{
+			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
+			{
+				$cn_id = Autumn::app()->request->getPost('cn_id');
+				$keyword = trim(Autumn::app()->request->getPost('keyword'));
+				//变更栏目内容关键字字段
+				$this->m_channel->update($cn_id, [
+					'cn_keyword' => $keyword,
+					'cn_utime' => time()
+				]);
+				//删除旧索引
+				$this->m_index->deleteByChannel($cn_id);
+				//批量建立索引
+				if ($keyword != '')
+				{
+					foreach (explode(' ', $keyword) as $kw_name)
+					{
+						if ($kw_name != '')
+						{
+							//使用计数
+							$this->m_keyword->useCount($kw_name);
+							//建立索引
+							$m_index = new M_index;
+							$m_index->getOrm()->id_keyword = $kw_name;
+							$m_index->getOrm()->id_channel = $cn_id;
+							$m_index->save();
+						}
+					}
+				}
+				Autumn::app()->response->setResult(Response::RES_OK);
 			}
 			else
 			{

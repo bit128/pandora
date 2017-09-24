@@ -57,9 +57,9 @@
 			</a>
 		</div>
 		<div class="col-md-2">
-			<a class="desk-item" href="/home/category">
+			<a class="desk-item" href="/home/keyword">
 				<p><img src="/app/statics/home/images/png-0017.png"></p>
-				<p><strong style="font-size:16px;">类目</strong> <br><small>[权限：内容]</small></p>
+				<p><strong style="font-size:16px;">关键词模型</strong> <br><small>[权限：内容]</small></p>
 			</a>
 		</div>
 		<!--
