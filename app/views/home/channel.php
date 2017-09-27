@@ -42,15 +42,15 @@
 		</div>
 		<div class="col-md-5">
             <span class="btn-group">
-                <?php $status_uri = $keyword == '' ? $cn_fid : $cn_fid.'/?k='.$keyword; ?>
-                <a href="/home/channel/s/0/fid/<?php echo $status_uri; ?>" class="btn btn-sm <?php echo $status == 0 ? 'btn-info' : 'btn-default'; ?>">全部</a>
-                <a href="/home/channel/s/1/fid/<?php echo $status_uri; ?>" class="btn btn-sm <?php echo $status == 1 ? 'btn-danger' : 'btn-default'; ?>">隐藏</a>
-                <a href="/home/channel/s/2/fid/<?php echo $status_uri; ?>" class="btn btn-sm <?php echo $status == 2 ? 'btn-success' : 'btn-default'; ?>">公开</a>
-                <a href="/home/channel/s/3/fid/<?php echo $status_uri; ?>" class="btn btn-sm <?php echo $status == 3 ? 'btn-warning' : 'btn-default'; ?>">热门</a>
+                <?php $s_uri = \core\Autumn::app()->route->reUrl(['s'=>null,'page'=>null]); ?>
+                <a href="<?php echo $s_uri,'/s/',0; ?>" class="btn btn-sm <?php echo $status == 0 ? 'btn-info' : 'btn-default'; ?>">全部</a>
+                <a href="<?php echo $s_uri,'/s/',1; ?>" class="btn btn-sm <?php echo $status == 1 ? 'btn-danger' : 'btn-default'; ?>">隐藏</a>
+                <a href="<?php echo $s_uri,'/s/',2; ?>" class="btn btn-sm <?php echo $status == 2 ? 'btn-success' : 'btn-default'; ?>">公开</a>
+                <a href="<?php echo $s_uri,'/s/',3; ?>" class="btn btn-sm <?php echo $status == 3 ? 'btn-warning' : 'btn-default'; ?>">热门</a>
             </span>
         </div>
 		<div class="col-md-3">
-			<form class="input-group" method="get" action="/home/channel/s/<?php echo $status,'/fid/',$status_uri; ?>">
+			<form class="input-group" method="get" action="<?php echo \core\Autumn::app()->route->reUrl(['k'=>null,'page'=>null]); ?>">
 				<input type="text" class="form-control input-sm" name="k" value="<?php echo $keyword; ?>">
 				<span class="input-group-btn">
 					<button type="submit" class="btn btn-info btn-sm">

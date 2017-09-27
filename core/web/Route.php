@@ -15,7 +15,7 @@ class Route
 	//默认action
 	public $action = '';
 	//url参数表
-	public $query_params = array();
+	public $query_params = [];
 	//配置项
 	private $config;
 
@@ -158,5 +158,40 @@ class Route
 				-- $parse_count;
 			}
 		}
+	}
+
+	/**
+	* 返回替换过键值的url
+	* ======
+	* @param $kvpair 键值对（如果值为null，表示移除对应的键值）
+	* ======
+	* @author 洪波
+	* @version 17.09.25
+	*/
+	public function reUrl(array $kvpair)
+	{
+		$url = '/' . $this->controller . '/' . $this->action;
+		foreach ($this->query_params + $_GET as $k => $v)
+		{
+			if (array_key_exists($k, $kvpair))
+			{
+				if ($kvpair[$k] !== NULL && $kvpair[$k] !== '')
+				{
+					$url .= '/' . $k . '/' . $kvpair[$k];
+				}
+				unset($kvpair[$k]);
+			}
+			else
+			{
+				if ($v != '')
+					$url .= '/' . $k . '/' . $v;
+			}
+		}
+		foreach ($kvpair as $k => $v)
+		{
+			if ($v !== NULL && $v !== '')
+				$url .= '/' . $k . '/' . $v;
+		}
+		return $url;
 	}
 }

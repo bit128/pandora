@@ -104,19 +104,16 @@ class HomeController extends \core\web\Controller
 		$status = (int) Autumn::app()->request->getQuery('s', 0);
 		$keyword = Autumn::app()->request->getQuery('k', '');
 		$page = Autumn::app()->request->getQuery('page', 1);
-		$page_uri = '/home/channel';
 		//查询条件
 		$criteria = new Criteria;
 		$criteria->add('cn_fid', $fid);
 		if ($status > 0)
 		{
 			$criteria->add('cn_status', $status);
-			$page_uri .= '/s/' . $status;
 		}
 		if ($keyword != '')
 		{
 			$criteria->addCondition("cn_name like '%{$keyword}%'");
-			$page_uri .= '/k/' . $keyword;
 		}
 		$criteria->limit = 10;
 		$criteria->offset = ($page - 1) * $criteria->limit;
@@ -124,7 +121,8 @@ class HomeController extends \core\web\Controller
 		//获取栏目列表
 		$result = $this->m_channel->getList($criteria);
 		//分页
-		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page, $page_uri);
+		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page,
+			Autumn::app()->route->reUrl(['page'=>null]));
 
 		$data = [
 			'cn_fid' => $fid,
@@ -174,7 +172,6 @@ class HomeController extends \core\web\Controller
 		$keyword = Autumn::app()->request->getQuery('k');
 		$sort = Autumn::app()->request->getQuery('s', 0);
 		$page = Autumn::app()->request->getQuery('page', 1);
-		$page_uri = '/home/keyword';
 		//查询数据列表
 		$criteria = new Criteria;
 		$criteria->limit = 10;
@@ -183,12 +180,12 @@ class HomeController extends \core\web\Controller
 		if($keyword != '')
 		{
 			$criteria->addCondition("kw_name like '%{$keyword}%'");
-			$page_uri .= '/k/' . $keyword;
 		};
 		
 		$result = $this->m_keyword->getList($criteria);
 		//分页
-		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page, $page_uri);
+		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page,
+			Autumn::app()->route->reUrl(['page'=>null]));
 		$data = array(
 			'keyword' => $keyword,
 			'sort' => $sort,
@@ -210,7 +207,6 @@ class HomeController extends \core\web\Controller
 		$avatar = Autumn::app()->request->getQuery('avatar');
 		$keyword = Autumn::app()->request->getQuery('k');
 		$page = Autumn::app()->request->getQuery('page', 1);
-		$page_uri = '/home/file';
 		if ($avatar)
 		{
 			$page_uri .= '/avatar/' . $avatar;
@@ -221,19 +217,17 @@ class HomeController extends \core\web\Controller
 		if ($file_bid != '')
 		{
 			$criteria->add('file_bid', $file_bid);
-			$page_uri .= '/bid/' . $file_bid;
 		}
 		if ($keyword != '')
 		{
 			$criteria->addCondition("file_name like '%{$keyword}%'");
-			$page_uri . '/k/' . $keyword;
 		}
 		$criteria->order = 'file_time desc';
 		$criteria->limit = 10;
 		$criteria->offset = ($page - 1) * $criteria->limit;
 		$result = $m_file->getList($criteria);
-		
-		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page, $page_uri);
+		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page,
+			Autumn::app()->route->reUrl(['page'=>null]));
 		$data = array(
 			'file_bid' => $file_bid,
 			'keyword' => $keyword,

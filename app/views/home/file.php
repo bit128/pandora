@@ -10,7 +10,7 @@
             <div style="padding-top:5px;"> 文件总数 <strong><?php echo $result['count']; ?></strong> 个</div>
         </div>
         <div class="col-md-3">
-            <form class="input-group" method="get" action="">
+            <form class="input-group" method="get" action="<?php echo \core\Autumn::app()->route->reUrl(['k'=>null,'page'=>null]); ?>">
 				<input type="text" class="form-control input-sm" name="k" value="<?php echo $keyword; ?>">
 				<span class="input-group-btn">
 					<button type="submit" class="btn btn-info btn-sm">

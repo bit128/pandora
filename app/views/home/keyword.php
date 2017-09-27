@@ -12,15 +12,15 @@
 		</div>
 		<div class="col-md-6">
 			<span class="btn-group">
-				<?php $sort_uri = $keyword == '' ? '' : '/k/' . $keyword; ?>
-				<a href="/home/keyword/s/0<?php echo $sort_uri; ?>" class="btn btn-sm <?php echo $sort==0 ? 'btn-info' : 'btn-default'; ?>">字序</a>
-				<a href="/home/keyword/s/1<?php echo $sort_uri; ?>" class="btn btn-sm <?php echo $sort==1 ? 'btn-info' : 'btn-default'; ?>">创建时间</a>
-				<a href="/home/keyword/s/2<?php echo $sort_uri; ?>" class="btn btn-sm <?php echo $sort==2 ? 'btn-info' : 'btn-default'; ?>">使用量</a>
-				<a href="/home/keyword/s/3<?php echo $sort_uri; ?>" class="btn btn-sm <?php echo $sort==3 ? 'btn-info' : 'btn-default'; ?>">搜索量</a>
+				<?php $s_uri = \core\Autumn::app()->route->reUrl(['s'=>null,'page'=>null]); ?>
+				<a href="<?php echo $s_uri,'/s/',0; ?>" class="btn btn-sm <?php echo $sort==0 ? 'btn-info' : 'btn-default'; ?>">字序</a>
+				<a href="<?php echo $s_uri,'/s/',1; ?>" class="btn btn-sm <?php echo $sort==1 ? 'btn-info' : 'btn-default'; ?>">创建时间</a>
+				<a href="<?php echo $s_uri,'/s/',2; ?>" class="btn btn-sm <?php echo $sort==2 ? 'btn-info' : 'btn-default'; ?>">使用量</a>
+				<a href="<?php echo $s_uri,'/s/',3; ?>" class="btn btn-sm <?php echo $sort==3 ? 'btn-info' : 'btn-default'; ?>">搜索量</a>
 			</span>
 		</div>
 		<div class="col-md-3">
-			<form class="input-group" method="get" action="/home/keyword/s/<?php echo $sort; ?>">
+			<form class="input-group" method="get" action="<?php echo \core\Autumn::app()->route->reUrl(['k'=>null,'page'=>null]); ?>">
 				<input type="text" class="form-control input-sm" name="k" value="<?php echo $keyword; ?>">
 				<span class="input-group-btn">
 					<button type="submit" class="btn btn-info btn-sm">
