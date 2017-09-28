@@ -8,8 +8,8 @@
 namespace app\models;
 use core\db\Criteria;
 
-class M_keyword extends \core\web\Model
-{
+class M_keyword extends \core\web\Model {
+
     public $table_name = 't_keyword';
 
     /**
@@ -20,18 +20,14 @@ class M_keyword extends \core\web\Model
     * @author 洪波
     * @version 17.09.24
     */
-    public function useCount($kw_name)
-    {
+    public function useCount($kw_name) {
         $criteria = new Criteria;
         $criteria->add('kw_name', $kw_name);
         $keyword = $this->getOrm()->find($criteria);
-        if ($keyword)
-        {
+        if ($keyword) {
             $keyword->kw_use++;
             return $keyword->save();
-        }
-        else
-        {
+        } else {
             $data = [
                 'kw_name' => $kw_name,
                 'kw_time' => time(),

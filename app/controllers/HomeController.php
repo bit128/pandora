@@ -9,13 +9,10 @@ namespace app\controllers;
 use core\Autumn;
 use core\db\Criteria;
 
-class HomeController extends \core\web\Controller
-{
+class HomeController extends \core\web\Controller {
 
-	public function init()
-	{
-		if(! Autumn::app()->request->getSession('am_account'))
-		{
+	public function init() {
+		if(! Autumn::app()->request->getSession('am_account')) {
 			header("Location:/admin/loginPage");
 		}
 	}
@@ -26,8 +23,7 @@ class HomeController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.07.29
 	*/
-	public function actionIndex()
-	{
+	public function actionIndex() {
 		Autumn::app()->view->render('index');
 	}
 
@@ -37,8 +33,7 @@ class HomeController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.08.02
 	*/
-	public function actionUser()
-	{
+	public function actionUser() {
 		$m_user = new \app\models\M_user;
 		$page = Autumn::app()->request->getQuery('page', 1);
 		$status = Autumn::app()->request->getQuery('s', 1);
@@ -50,8 +45,7 @@ class HomeController extends \core\web\Controller
 		$criteria->offset = $offset;
 		$criteria->limit = $limit;
 		$criteria->add('user_status', $status);
-		if($keyword != '')
-		{
+		if($keyword != '') {
 			$criteria->addCondition("user_phone='{$keyword}' OR user_email='{$keyword}' OR user_name like '%{$keyword}%'");
 			$url .= '/k/' . $keyword;
 		}
@@ -75,15 +69,12 @@ class HomeController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.08.02
 	*/
-	public function actionUserDetail()
-	{
+	public function actionUserDetail() {
 		$user_id = Autumn::app()->request->getQuery('id');
-		if(strlen($user_id) == 13)
-		{
+		if(strlen($user_id) == 13) {
 			$m_user = new \app\models\M_user;
 			$user = $m_user->get($user_id);
-			if($user)
-			{
+			if($user) {
 				$data = array(
 					'user' => $user
 					);
@@ -98,8 +89,7 @@ class HomeController extends \core\web\Controller
 	* @author 洪波
 	* @version 17.09.15
 	*/
-	public function actionChannel()
-	{
+	public function actionChannel() {
 		$fid = Autumn::app()->request->getQuery('fid', '0');
 		$status = (int) Autumn::app()->request->getQuery('s', 0);
 		$keyword = Autumn::app()->request->getQuery('k', '');
@@ -107,12 +97,10 @@ class HomeController extends \core\web\Controller
 		//查询条件
 		$criteria = new Criteria;
 		$criteria->add('cn_fid', $fid);
-		if ($status > 0)
-		{
+		if ($status > 0) {
 			$criteria->add('cn_status', $status);
 		}
-		if ($keyword != '')
-		{
+		if ($keyword != '') {
 			$criteria->addCondition("cn_name like '%{$keyword}%'");
 		}
 		$criteria->limit = 10;
@@ -141,11 +129,9 @@ class HomeController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.08.01
 	*/
-	public function actionContent()
-	{
+	public function actionContent() {
 		$cn_id = Autumn::app()->request->getParam('id');
-		if(strlen($cn_id) == 13)
-		{
+		if(strlen($cn_id) == 13) {
 			//获取附件列表
 			$m_file = new \app\models\M_file;
 			$criteria = new Criteria;
@@ -167,8 +153,7 @@ class HomeController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.09.23
 	*/
-	public function actionKeyword()
-	{
+	public function actionKeyword() {
 		$keyword = Autumn::app()->request->getQuery('k');
 		$sort = Autumn::app()->request->getQuery('s', 0);
 		$page = Autumn::app()->request->getQuery('page', 1);
@@ -177,8 +162,7 @@ class HomeController extends \core\web\Controller
 		$criteria->limit = 10;
 		$criteria->offset = ($page - 1) * $criteria->limit;
 		$criteria->order = ['kw_name asc','kw_time desc','kw_use desc','kw_search desc'][$sort];
-		if($keyword != '')
-		{
+		if($keyword != '') {
 			$criteria->addCondition("kw_name like '%{$keyword}%'");
 		};
 		
@@ -201,25 +185,21 @@ class HomeController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.08.04
 	*/
-	public function actionFile()
-	{
+	public function actionFile() {
 		$file_bid = Autumn::app()->request->getQuery('bid');
 		$avatar = Autumn::app()->request->getQuery('avatar');
 		$keyword = Autumn::app()->request->getQuery('k');
 		$page = Autumn::app()->request->getQuery('page', 1);
-		if ($avatar)
-		{
+		if ($avatar) {
 			$page_uri .= '/avatar/' . $avatar;
 		}
 
 		$m_file= new \app\models\M_file;
 		$criteria = new Criteria;
-		if ($file_bid != '')
-		{
+		if ($file_bid != '') {
 			$criteria->add('file_bid', $file_bid);
 		}
-		if ($keyword != '')
-		{
+		if ($keyword != '') {
 			$criteria->addCondition("file_name like '%{$keyword}%'");
 		}
 		$criteria->order = 'file_time desc';

@@ -8,17 +8,14 @@ use core\Autumn;
 * @author 洪波
 * @version 16.09.21
 */
-class SiteController extends \core\web\Controller
-{
+class SiteController extends \core\web\Controller {
 	//private $view;
 	
-	public function init()
-	{
+	public function init() {
 		//$this->view = \core\web\View::layout('site/layout_site');
 	}
 
-	public function actionIndex()
-	{
+	public function actionIndex() {
 		echo 'Welcome to Pandora ' , Autumn::app()->config->get('version'), '.';
 		//Autumn::app()->view->renderPartial('index');
 	}

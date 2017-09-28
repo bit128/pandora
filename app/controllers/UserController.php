@@ -11,23 +11,14 @@ use core\http\Response;
 use app\models\M_user;
 use app\models\M_admin;
 
-class UserController extends \core\web\Controller
-{
-	private $m_user;
-
-	public function init()
-	{
-		$this->m_user = new M_user;
-	}
-
+class UserController extends \core\web\Controller {
 	/**
 	* 获取客户端信息
 	* ======
 	* @author 洪波
 	* @version 16.07.29
 	*/
-	private function getDeviceInfo()
-	{
+	private function getDeviceInfo() {
 		$info = array(
 			'user_device' => Autumn::app()->request->getPost('user_device', 0),
 			'user_devid' => Autumn::app()->request->getPost('user_devid'),
@@ -36,8 +27,7 @@ class UserController extends \core\web\Controller
 			'user_ip' => Autumn::app()->request->getPost('user_ip')
 			);
 		//ip地址判定
-		if(isset($info['user_device']) && $info['user_device'] != M_user::DEVICE_WEB)
-		{
+		if(isset($info['user_device']) && $info['user_device'] != M_user::DEVICE_WEB) {
 			$info['user_ip'] = $_SERVER['REMOTE_ADDR'];
 		}
 		return $info;
@@ -49,10 +39,8 @@ class UserController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.07.28
 	*/
-	public function actionExist()
-	{
-		if($account = Autumn::app()->request->getParam('account'))
-		{
+	public function actionExist() {
+		if($account = Autumn::app()->request->getParam('account')) {
 			Autumn::app()->response->setResult($this->m_user->exist($account));
 			Autumn::app()->response->json();
 		}
@@ -64,10 +52,8 @@ class UserController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.07.28
 	*/
-	public function actionRegister()
-	{
-		if(Autumn::app()->request->isPost())
-		{
+	public function actionRegister() {
+		if(Autumn::app()->request->isPost()) {
 			$user_phone = Autumn::app()->request->getPost('user_phone');
 			$user_password = Autumn::app()->request->getPost('user_password');
 			$info = $this->getDeviceInfo();
@@ -76,8 +62,7 @@ class UserController extends \core\web\Controller
 			$info['user_gender'] = Autumn::app()->request->getPost('user_gender', 0);
 			$info['user_avatar'] = Autumn::app()->request->getPost('user_avatar');
 			//检查重名
-			if(! $this->m_user->exist($user_phone))
-			{
+			if(! $this->m_user->exist($user_phone)) {
 				$token_info = $info;
 				$info['user_phone'] = $user_phone;
 				$info['user_password'] = md5($user_password);
@@ -86,22 +71,17 @@ class UserController extends \core\web\Controller
 				$info['user_status'] = M_user::STATUS_NORMAL;
 				//写入数据库
 				$this->m_user->load($info);
-				if($this->m_user->save())
-				{
+				if($this->m_user->save()) {
 					$user_id = $this->m_user->getOrm()->user_id;
 					//构建令牌
 					//$token = RedisCache::model('token')->build($user_id, $token_info);
 					//$token['user_name'] = $info['user_name'];
 					Autumn::app()->response->setResult($token);
-				}
-				else
-				{
+				} else {
 					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
-			}
-			else
-			{
-				Autumn::app()->response->setResult(Response::RES_NAMEDF);
+			} else {
+				Autumn::app()->response->setResult(Response::RES_FAIL, '', '重名');
 			}
 			Autumn::app()->response->json();
 		}
@@ -115,16 +95,13 @@ class UserController extends \core\web\Controller
 	*/
 	public function actionLogin()
 	{
-		if(Autumn::app()->request->isPost())
-		{
+		if(Autumn::app()->request->isPost()) {
 			$user_phone = Autumn::app()->request->getPost('user_phone');
 			$user_password = Autumn::app()->request->getPost('user_password');
 			//查询用户信息
 			$user = $this->m_user->login($user_phone, md5($user_password));
-			if($user)
-			{
-				if ($user->user_status > M_user::STATUS_LOCK)
-				{
+			if($user) {
+				if ($user->user_status > M_user::STATUS_LOCK) {
 					$info['user_ltime'] = time();
 					$info['user_count'] = ++ $user->user_count;
 					//更新登录信息
@@ -134,14 +111,10 @@ class UserController extends \core\web\Controller
 					//$token = RedisCache::model('token')->build($user_id, $info);
 					//$token['user_name'] = $user->user_name;
 					Autumn::app()->response->setResult($token);
-				}
-				else
-				{
+				} else {
 					Autumn::app()->response->setResult(Response::RES_REFUSE, '', '账户被锁定');
 				}
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_TOKENF, '', '用户名或密码错误');
 			}
 			Autumn::app()->response->json();
@@ -154,28 +127,24 @@ class UserController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.07.28
 	*/
-	public function actionLogout()
-	{
-		if(Psdk::checkSign())
+	public function actionLogout() {
+		$user_id = Autumn::app()->request->getPost('user_id');
+		$token = Autumn::app()->request->getPost('token');
+		if(RedisCache::model('token')->check($user_id, $token))
 		{
-			$user_id = Autumn::app()->request->getPost('user_id');
-			$token = Autumn::app()->request->getPost('token');
-			if(RedisCache::model('token')->check($user_id, $token))
-			{
-				//清空device_id
-				$this->m_user->update($user_id, array(
-					'user_devid' => ''
-					));
-				//清除用户令牌
-				//RedisCache::model('token')->flush($user_id);
-				Autumn::app()->response->setResult(Response::RES_OK);
-			}
-			else
-			{
-				Autumn::app()->response->setResult(Response::RES_TOKENF);
-			}
-			Autumn::app()->response->json();
+			//清空device_id
+			$this->m_user->update($user_id, array(
+				'user_devid' => ''
+				));
+			//清除用户令牌
+			//RedisCache::model('token')->flush($user_id);
+			Autumn::app()->response->setResult(Response::RES_OK);
 		}
+		else
+		{
+			Autumn::app()->response->setResult(Response::RES_TOKENF);
+		}
+		Autumn::app()->response->json();
 	}
 
 	/**
@@ -188,25 +157,18 @@ class UserController extends \core\web\Controller
 	{
 		$user_id = Autumn::app()->request->getParam('user_id');
 		$token = Autumn::app()->request->getParam('token');
-		if(strlen($user_id) == 13)
-		{
+		if(strlen($user_id) == 13) {
 			$user = $this->m_user->get($user_id);
-			if($user)
-			{
+			if($user) {
 				unset($user->user_password);
-				if(! $this->m_user->checkToken($user_id, $token))
-				{
+				if(! $this->m_user->checkToken($user_id, $token)) {
 					unset($user->user_phone, $user->user_email, $user->user_devid, $user->user_note, $user->user_ip);
 				}
 				Autumn::app()->response->setResult($user);
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_NOHAS, '', '用户不存在');
 			}
-		}
-		else
-		{
+		} else {
 			Autumn::app()->response->setResult(Response::RES_PARAMF);
 		}
 		Autumn::app()->response->json();
@@ -218,36 +180,25 @@ class UserController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.07.28
 	*/
-	public function actionSetInfo()
-	{
-		if(Autumn::app()->request->isPostRequest())
-		{
-			if(M_admin::checkRole(M_admin::ROLE_USER))
-			{
+	public function actionSetInfo() {
+		if(Autumn::app()->request->isPostRequest()) {
+			if(M_admin::checkRole(M_admin::ROLE_USER)) {
 				$user_id = Autumn::app()->request->getPost('user_id');
 				$field = Autumn::app()->request->getPost('field');
 				$value = Autumn::app()->request->getPost('value');
-				if(($field == 'user_phone' || $field == 'user_email') && $this->m_user->exist($value))
-				{
+				if(($field == 'user_phone' || $field == 'user_email') && $this->m_user->exist($value)) {
 					Autumn::app()->response->setResult(Response::RES_NAMEDF);
-				}
-				else
-				{
+				} else {
 					$data = array(
 						$field => $field != 'user_password' ? $value : md5($value)
 						);
-					if($this->m_user->update($user_id, $data))
-					{
+					if($this->m_user->update($user_id, $data)) {
 						Autumn::app()->response->setResult(Response::RES_OK);
-					}
-					else
-					{
+					} else {
 						Autumn::app()->response->setResult(Response::RES_NOCHAN);
 					}
 				}
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_REFUSE, '', '需要用户权限');
 			}
 			Autumn::app()->response->json();
@@ -260,28 +211,20 @@ class UserController extends \core\web\Controller
 	* @author 洪波
 	* @version 17.02.14
 	*/
-	private function setInfo($field)
-	{
-		if (Autumn::app()->request->isPostRequest())
-		{
+	private function setInfo($field) {
+		if (Autumn::app()->request->isPostRequest()) {
 			$user_id = Autumn::app()->request->getPost('user_id');
 			$token = Autumn::app()->request->getPost('token');
-			if ($this->m_user->checkToken($user_id, $token))
-			{
+			if ($this->m_user->checkToken($user_id, $token)) {
 				$data = array(
 					$field => Autumn::app()->request->getPost($field)
 				);
-				if ($this->m_user->update($user_id, $data))
-				{
+				if ($this->m_user->update($user_id, $data)) {
 					Autumn::app()->response->setResult(Response::RES_OK);
-				}
-				else
-				{
+				} else {
 					Autumn::app()->response->setResult(Response::RES_NOCHAN);
 				}
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_TOKENF, '', '令牌错误');
 			}
 			Autumn::app()->response->json();
@@ -294,8 +237,7 @@ class UserController extends \core\web\Controller
 	* @author 洪波
 	* @version 17.02.14
 	*/
-	public function actionSetName()
-	{
+	public function actionSetName() {
 		$this->setInfo('user_name');
 	}
 
@@ -305,8 +247,7 @@ class UserController extends \core\web\Controller
 	* @author 洪波
 	* @version 17.02.14
 	*/
-	public function actionSetAvatar()
-	{
+	public function actionSetAvatar() {
 		$this->setInfo('user_avatar');
 	}
 
@@ -316,8 +257,7 @@ class UserController extends \core\web\Controller
 	* @author 洪波
 	* @version 17.02.14
 	*/
-	public function actionSetGender()
-	{
+	public function actionSetGender() {
 		$this->setInfo('user_gender');
 	}
 
@@ -327,8 +267,7 @@ class UserController extends \core\web\Controller
 	* @author 洪波
 	* @version 17.02.14
 	*/
-	public function actionSetNote()
-	{
+	public function actionSetNote() {
 		$this->setInfo('user_note');
 	}
 
@@ -338,30 +277,22 @@ class UserController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.07.28
 	*/
-	public function actionChangePassword()
-	{
-		if (Autumn::app()->request->isPostRequest())
-		{
+	public function actionChangePassword() {
+		if (Autumn::app()->request->isPostRequest()) {
 			$user_id = Autumn::app()->request->getPost('user_id');
 			$token = Autumn::app()->request->getPost('token');
-			if ($this->m_user->checkToken($user_id, $token))
-			{
+			if ($this->m_user->checkToken($user_id, $token)) {
 				$old_password = md5(Autumn::app()->request->getPost('old_password'));
 				$new_password = md5(Autumn::app()->request->getPost('new_password'));
 				$user = $this->m_user->get($user_id);
-				if ($user->user_password == $old_password)
-				{
+				if ($user->user_password == $old_password) {
 					$data = array('user_password' => $new_password);
 					$this->m_user->update($user_id, $data);
 					Autumn::app()->response->setResult(Response::RES_OK);
-				}
-				else
-				{
+				} else {
 					Autumn::app()->response->setResult(Response::RES_PWDF, '', '原密码不正确');
 				}
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_TOKENF, '', '令牌错误');
 			}
 			Autumn::app()->response->json();

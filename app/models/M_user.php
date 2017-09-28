@@ -9,8 +9,9 @@ namespace app\models;
 use core\Autumn;
 use core\db\Criteria;
 
-class M_user extends \core\web\Model
-{
+class M_user extends \core\web\Model {
+
+	public $table_name = 't_user';
 	
 	const DEVICE_DEFAULT 	= 0; 		//登录设备 - 未知
 	const DEVICE_WEB		= 1;		//登录设备 - 网站
@@ -23,8 +24,6 @@ class M_user extends \core\web\Model
 	const STATUS_OPEN		= 2;		//开放平台账户
 	const STATUS_SHOP		= 3;		//商家
 
-	public $table_name = 't_user';
-
 	/**
 	* 判断用户是否存在
 	* ======
@@ -33,8 +32,7 @@ class M_user extends \core\web\Model
 	* @author 洪波
 	* @version 16.07.29
 	*/
-	public function exist($account)
-	{
+	public function exist($account) {
 		$criteria = new Criteria;
 		$criteria->add('user_phone', $account);
 		$criteria->add('user_email', $account, '=', 'OR');
@@ -49,8 +47,7 @@ class M_user extends \core\web\Model
 	* @author 洪波
 	* @version 16.07.25
 	*/
-	public function getUser($account)
-	{
+	public function getUser($account) {
 		$criteria = new Criteria;
 		$criteria->add('user_id', $account);
 		$criteria->add('user_phone', $account, '=', 'OR');
@@ -68,8 +65,7 @@ class M_user extends \core\web\Model
 	* @author 洪波
 	* @version 16.07.12
 	*/
-	public function login($account, $password)
-	{
+	public function login($account, $password) {
 		$criteria = new Criteria;
 		$criteria->add('user_email', $account);
 		$criteria->add('user_password', $password);
@@ -84,8 +80,7 @@ class M_user extends \core\web\Model
 	* @author 洪波
 	* @version 17.08.30
 	*/
-	public function logout($user_id)
-	{
+	public function logout($user_id) {
 		return $this->update($user_id, ['user_token' => '']);
 	}
 
@@ -98,10 +93,8 @@ class M_user extends \core\web\Model
 	* @author 洪波
 	* @version 17.08.30
 	*/
-	public function buildToken($user_id)
-	{
-		if($user_id == '')
-		{
+	public function buildToken($user_id) {
+		if($user_id == '') {
 			return 0;
 		}
 		$token = md5(time() . $user_id . rand(1000, 9999));
@@ -118,13 +111,10 @@ class M_user extends \core\web\Model
 	* @author 洪波
 	* @version 17.08.30
 	*/
-	public function checkToken($user_id, $token)
-	{
+	public function checkToken($user_id, $token) {
 		$user = $this->get($user_id);
-		if ($user)
-		{
-			if ($user->user_token == $token)
-			{
+		if ($user) {
+			if ($user->user_token == $token) {
 				return true;
 			}
 		}

@@ -8,8 +8,8 @@
 namespace app\models;
 use core\db\Criteria;
 
-class M_channel extends \core\web\Model
-{
+class M_channel extends \core\web\Model {
+	
 	public $table_name = 't_channel';
 
 	const STATUS_HIDE	= 1; //状态 - 隐藏
@@ -25,8 +25,7 @@ class M_channel extends \core\web\Model
 	* @author 洪波
 	* @version 17.09.15
 	*/
-	public function setAvatar($cn_id, $image)
-	{
+	public function setAvatar($cn_id, $image) {
 		return $this->update($cn_id, [
 			'cn_image' => $image,
 			'cn_utime' => time()
@@ -41,18 +40,14 @@ class M_channel extends \core\web\Model
 	* @author 洪波
 	* @version 13.10.17
 	*/
-	public function maxSort($cn_fid)
-	{
+	public function maxSort($cn_fid) {
 		$sql = "select max(cn_sort) from " . $this->table_name . " where cn_fid='{$cn_fid}'";
 		$max = $this->orm
 			->getDb()
 			->queryScalar($sql);
-		if($max)
-		{
+		if($max) {
 			return ++$max;
-		}
-		else
-		{
+		} else {
 			return 1;
 		}
 	}
@@ -65,18 +60,13 @@ class M_channel extends \core\web\Model
 	* @author 洪波
 	* @version 17.09.22
 	*/
-	public function getDetail($cn_id)
-	{
+	public function getDetail($cn_id) {
 		$channel = parent::get($cn_id);
-		if ($channel)
-		{
+		if ($channel) {
 			$channel = $channel->toArray();
-			if (str_replace(' ', '', $channel['cn_data']) != '{}')
-			{
+			if (str_replace(' ', '', $channel['cn_data']) != '{}') {
 				$channel['cn_data'] = json_decode($channel['cn_data']);
-			}
-			else
-			{
+			} else {
 				$channel['cn_data'] = '';
 			}
 			return $channel;
@@ -92,17 +82,13 @@ class M_channel extends \core\web\Model
 	* @author 洪波
 	* @version 17.09.15
 	*/
-	public function getData($cn_id)
-	{
+	public function getData($cn_id) {
 		$criteria = new Criteria;
 		$criteria->select = 'cn_data';
 		$criteria->add('cn_id', $cn_id);
-		if ($channel = $this->getOrm()->find($criteria))
-		{
+		if ($channel = $this->getOrm()->find($criteria)) {
 			return json_decode($channel->cn_data);
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
@@ -115,17 +101,13 @@ class M_channel extends \core\web\Model
 	* @author 洪波
 	* @version 17.09.15
 	*/
-	public function getContent($cn_id)
-	{
+	public function getContent($cn_id) {
 		$criteria = new Criteria;
 		$criteria->select = 'cn_content';
 		$criteria->add('cn_id', $cn_id);
-		if ($channel = $this->getOrm()->find($criteria))
-		{
+		if ($channel = $this->getOrm()->find($criteria)) {
 			return $channel->cn_content;
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
@@ -138,11 +120,9 @@ class M_channel extends \core\web\Model
 	* @author 洪波
 	* @version 17.09.15
 	*/
-	public function recursionDelete($cn_id)
-	{
+	public function recursionDelete($cn_id) {
 		$children = $this->getOrm()->findAll("cn_fid = '{$cn_id}'");
-		foreach ($children as $child)
-		{
+		foreach ($children as $child) {
 			$this->recursionDelete($child->cn_id);
 		}
 		parent::delete($cn_id);

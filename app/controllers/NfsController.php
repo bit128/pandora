@@ -7,8 +7,7 @@
 */
 namespace app\controllers;
 
-class NfsController extends \core\web\Controller
-{
+class NfsController extends \core\web\Controller {
 
 	/**
 	* 上传文件
@@ -16,8 +15,7 @@ class NfsController extends \core\web\Controller
 	* @author 洪波
 	* @version 15.07.05
 	*/
-	public function actionUpload()
-	{
+	public function actionUpload() {
 		$nfs = new \core\http\NetFile;
 		$result = $nfs->upload('./app/statics/files/', 'file_name', \core\http\NetFile::HASH_DATE);
 		echo json_encode($result);
@@ -29,8 +27,7 @@ class NfsController extends \core\web\Controller
 	* @author 洪波
 	* @version 15.08.22
 	*/
-	public function actionImage()
-	{
+	public function actionImage() {
 		$src = substr($_SERVER['REQUEST_URI'], 10);
 		$out = new \core\tools\ImageOutput;
 		$out->render($src);

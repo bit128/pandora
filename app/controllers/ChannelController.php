@@ -13,20 +13,16 @@ use app\models\M_channel;
 use app\models\M_index;
 use app\models\M_admin;
 
-class ChannelController extends \core\web\Controller
-{
+class ChannelController extends \core\web\Controller {
 	/**
 	* 添加栏目
 	* ======
 	* @author 洪波
 	* @version 16.04.22
 	*/
-	public function actionAdd()
-	{
-		if(Autumn::app()->request->isPost())
-		{
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
-			{
+	public function actionAdd() {
+		if(Autumn::app()->request->isPost()) {
+			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
 				$cn_fid = Autumn::app()->request->getPost('cn_fid', '0');
 				$data = [
 					'cn_fid' => $cn_fid,
@@ -37,17 +33,12 @@ class ChannelController extends \core\web\Controller
 					'cn_status' => M_channel::STATUS_HIDE
 				];
 				$this->m_channel->load($data);
-				if($this->m_channel->save())
-				{
+				if($this->m_channel->save()) {
 					Autumn::app()->response->setResult($this->m_channel->getOrm()->cn_id);
-				}
-				else
-				{
+				} else {
 					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
@@ -60,21 +51,14 @@ class ChannelController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.04.22
 	*/
-	public function actionGet()
-	{
-		if($cn_id = Autumn::app()->request->getParam('id'))
-		{
-			if($channel = $this->m_channel->get($cn_id))
-			{
+	public function actionGet() {
+		if($cn_id = Autumn::app()->request->getParam('id')) {
+			if($channel = $this->m_channel->get($cn_id)) {
 				Autumn::app()->response->setResult($channel->toArray());
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_NOTHAS, '', '栏目不存在');
 			}
-		}
-		else
-		{
+		} else {
 			Autumn::app()->response->setResult(Response::RES_PARAMF);
 		}
 		Autumn::app()->response->json();
@@ -86,22 +70,15 @@ class ChannelController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.04.22
 	*/
-	public function actionGetData()
-	{
-		if($cn_id = Autumn::app()->request->getParam('id'))
-		{
+	public function actionGetData() {
+		if($cn_id = Autumn::app()->request->getParam('id')) {
 			$data = $this->m_channel->getData($cn_id);
-			if($data !== false)
-			{
+			if($data !== false) {
 				Autumn::app()->response->setResult($data);
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_NOTHAS, '', '栏目不存在');
 			}
-		}
-		else
-		{
+		} else {
 			Autumn::app()->response->setResult(Response::RES_PARAMF);
 		}
 		Autumn::app()->response->json();
@@ -113,22 +90,15 @@ class ChannelController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.04.22
 	*/
-	public function actionGetContent()
-	{
-		if($cn_id = Autumn::app()->request->getParam('id'))
-		{
+	public function actionGetContent() {
+		if($cn_id = Autumn::app()->request->getParam('id')) {
 			$content = $this->m_channel->getContent($cn_id);
-			if($content !== false)
-			{
+			if($content !== false) {
 				Autumn::app()->response->setResult($content);
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_NOTHAS, '', '栏目不存在');
 			}
-		}
-		else
-		{
+		} else {
 			Autumn::app()->response->setResult(Response::RES_PARAMF);
 		}
 		Autumn::app()->response->json();
@@ -140,29 +110,21 @@ class ChannelController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.09.15
 	*/
-	public function actionUpdateField()
-	{
-		if(Autumn::app()->request->isPostrequest())
-		{
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
-			{
+	public function actionUpdateField() {
+		if(Autumn::app()->request->isPost()) {
+			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
 				$cn_id = Autumn::app()->request->getPost('cn_id');
 				$field = Autumn::app()->request->getPost('field');
 				$value = Autumn::app()->request->getPost('value');
 				if($this->m_channel->update($cn_id, [
 					$field => $value,
 					'cn_utime' => time()
-				]))
-				{
+				])) {
 					Autumn::app()->response->setResult(Response::RES_OK);
-				}
-				else
-				{
+				} else {
 					Autumn::app()->response->setResult(Response::RES_NOCHAN);
 				}
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
@@ -175,12 +137,9 @@ class ChannelController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.09.15
 	*/
-	public function actionSetKeyword()
-	{
-		if(Autumn::app()->request->isPostrequest())
-		{
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
-			{
+	public function actionSetKeyword() {
+		if(Autumn::app()->request->isPost()) {
+			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
 				$cn_id = Autumn::app()->request->getPost('cn_id');
 				$keyword = trim(Autumn::app()->request->getPost('keyword'));
 				//变更栏目内容关键字字段
@@ -191,12 +150,9 @@ class ChannelController extends \core\web\Controller
 				//删除旧索引
 				$this->m_index->deleteByChannel($cn_id);
 				//批量建立索引
-				if ($keyword != '')
-				{
-					foreach (explode(' ', $keyword) as $kw_name)
-					{
-						if ($kw_name != '')
-						{
+				if ($keyword != '') {
+					foreach (explode(' ', $keyword) as $kw_name) {
+						if ($kw_name != '') {
 							//使用计数
 							$this->m_keyword->useCount($kw_name);
 							//建立索引
@@ -208,9 +164,7 @@ class ChannelController extends \core\web\Controller
 					}
 				}
 				Autumn::app()->response->setResult(Response::RES_OK);
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
@@ -223,18 +177,13 @@ class ChannelController extends \core\web\Controller
 	* @author 洪波
 	* @version 17.09.15
 	*/
-	public function actionDeleteAll()
-	{
-		if(Autumn::app()->request->isPostrequest())
-		{
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT))
-			{
+	public function actionDeleteAll() {
+		if(Autumn::app()->request->isPost()) {
+			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
 				$cn_id = Autumn::app()->request->getPost('cn_id');
 				$this->m_channel->recursionDelete($cn_id);
 				Autumn::app()->response->setResult(Response::RES_OK);
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_REFUSE, '', '无权操作');
 			}
 			Autumn::app()->response->json();

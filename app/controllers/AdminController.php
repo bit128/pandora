@@ -10,16 +10,14 @@ use core\Autumn;
 use \core\http\Response;
 use app\models\M_admin;
 
-class AdminController extends \core\web\Controller
-{
+class AdminController extends \core\web\Controller {
 	/**
 	* 管理员页面
 	* ======
 	* @author 洪波
 	* @version 16.07.29
 	*/
-	public function actionIndex()
-	{
+	public function actionIndex() {
 		$m_admin = new \app\models\M_admin;
 		$page = Autumn::app()->request->getQuery('page', 1);
 		$limit = 10;
@@ -45,8 +43,7 @@ class AdminController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.07.29
 	*/
-	public function actionLoginPage()
-	{
+	public function actionLoginPage() {
 		Autumn::app()->view->renderPartial('login_page');
 	}
 
@@ -56,19 +53,14 @@ class AdminController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.07.29
 	*/
-	public function actionLogin()
-	{
-		if(Autumn::app()->request->isPostRequest())
-		{
+	public function actionLogin() {
+		if(Autumn::app()->request->isPost()) {
 			$account = Autumn::app()->request->getPost('account');
 			$password = md5(Autumn::app()->request->getPost('password'));
 
-			if($this->m_admin->login($account, $password))
-			{
+			if($this->m_admin->login($account, $password)) {
 				$this->redirect('/home');
-			}
-			else
-			{
+			} else {
 				echo 'login fail.';
 			}
 		}
@@ -80,8 +72,7 @@ class AdminController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.07.29
 	*/
-	public function actionLogout()
-	{
+	public function actionLogout() {
 		Autumn::app()->request->destorySession();
 		$this->redirect('/admin/loginPage');
 	}
@@ -92,43 +83,29 @@ class AdminController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.07.29
 	*/
-	public function actionAdd()
-	{
-		if(Autumn::app()->request->isPostRequest())
-		{
-			if(M_admin::checkRole(M_admin::ROLE_ADMIN))
-			{
+	public function actionAdd() {
+		if(Autumn::app()->request->isPost()) {
+			if(M_admin::checkRole(M_admin::ROLE_ADMIN)) {
 				$am_account = Autumn::app()->request->getPost('am_account');
-				if(trim($am_account) != '')
-				{
-					if (! $this->m_admin->get($am_account))
-					{
+				if(trim($am_account) != '') {
+					if (! $this->m_admin->get($am_account)) {
 						$data = array(
 							'am_time' => time(),
 							'am_ip' => Autumn::app()->request->getIp()
 							);
 						$this->m_admin->load($data, true);
-						if($this->m_admin->save())
-						{
+						if($this->m_admin->save()) {
 							Autumn::app()->response->setResult(Response::RES_OK);
-						}
-						else
-						{
+						} else {
 							Autumn::app()->response->setResult(Response::RES_FAIL);
 						}
-					}
-					else
-					{
+					} else {
 						Autumn::app()->response->setResult(Response::RES_NAMEDF);
 					}
-				}
-				else
-				{
+				} else {
 					Autumn::app()->response->setResult(Response::RES_PARAMF, '', '需要填写管理员账号');
 				}
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_REFUSE, '', '需要管理员权限');
 			}
 			Autumn::app()->response->json();
@@ -141,34 +118,23 @@ class AdminController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.07.29
 	*/
-	public function actionUpdate()
-	{
-		if(Autumn::app()->request->isPostRequest())
-		{
-			if(M_admin::checkRole(M_admin::ROLE_ADMIN))
-			{
+	public function actionUpdate() {
+		if(Autumn::app()->request->isPost()) {
+			if(M_admin::checkRole(M_admin::ROLE_ADMIN)) {
 				$account = Autumn::app()->request->getPost('account');
 				$field = Autumn::app()->request->getPost('field');
 				$data = array();
-				if($field == 'am_password')
-				{
+				if($field == 'am_password') {
 					$data['am_password'] = md5(Autumn::app()->request->getPost('value'));
-				}
-				else
-				{
+				} else {
 					$data[$field] = Autumn::app()->request->getPost('value');
 				}
-				if($this->m_admin->update($account, $data))
-				{
+				if($this->m_admin->update($account, $data)) {
 					Autumn::app()->response->setResult(Response::RES_OK);
-				}
-				else
-				{
+				} else {
 					Autumn::app()->response->setResult(Response::RES_NOCHAN);
 				}
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
@@ -181,19 +147,15 @@ class AdminController extends \core\web\Controller
 	* @author 洪波
 	* @version 16.12.18
 	*/
-	public function actionGetAccountList()
-	{
-		if(M_admin::checkRole(M_admin::ROLE_ADMIN + M_admin::ROLE_CONTENT))
-		{
+	public function actionGetAccountList() {
+		if(M_admin::checkRole(M_admin::ROLE_ADMIN + M_admin::ROLE_CONTENT)) {
 			$criteria = new \core\db\Criteria;
 			$criteria->select = 'am_account,am_name';
 			$criteria->offset = 0;
 			$criteria->limit = 99;
 			$admin_list = $this->m_admin->getList($criteria);
 			Autumn::app()->response->setResult($admin_list['result']);
-		}
-		else
-		{
+		} else {
 			Autumn::app()->response->setResult(Response::RES_REFUSE);
 		}
 		Autumn::app()->response->json();
@@ -205,26 +167,18 @@ class AdminController extends \core\web\Controller
 	* @author 洪波
 	* @version 14.04.10
 	*/
-	public function actionChangeRole()
-	{
-		if(Autumn::app()->request->isPostRequest())
-		{
-			if(M_admin::checkRole(M_admin::ROLE_ADMIN))
-			{
+	public function actionChangeRole() {
+		if(Autumn::app()->request->isPost()) {
+			if(M_admin::checkRole(M_admin::ROLE_ADMIN)) {
 				$account = Autumn::app()->request->getPost('am_account');
 				$role = Autumn::app()->request->getPost('role');
 				$op = Autumn::app()->request->getPost('op');
-				if($this->m_admin->changeRole($account, $role, $op))
-				{
+				if($this->m_admin->changeRole($account, $role, $op)) {
 					Autumn::app()->response->setResult(Response::RES_OK);
-				}
-				else
-				{
+				} else {
 					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();
@@ -237,24 +191,16 @@ class AdminController extends \core\web\Controller
 	* @author 洪波
 	* @version 14.04.10
 	*/
-	public function actionDelete()
-	{
-		if(Autumn::app()->request->isPostRequest())
-		{
-			if(M_admin::checkRole(M_admin::ROLE_SUPER))
-			{
+	public function actionDelete() {
+		if(Autumn::app()->request->isPost()) {
+			if(M_admin::checkRole(M_admin::ROLE_SUPER)) {
 				$account = Autumn::app()->request->getPost('account');
-				if($this->m_admin->delete($account))
-				{
+				if($this->m_admin->delete($account)) {
 					Autumn::app()->response->setResult(Response::RES_OK);
-				}
-				else
-				{
+				} else {
 					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
-			}
-			else
-			{
+			} else {
 				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
 			Autumn::app()->response->json();

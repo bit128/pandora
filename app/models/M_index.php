@@ -8,8 +8,8 @@
 namespace app\models;
 use core\db\Criteria;
 
-class M_index extends \core\web\Model
-{
+class M_index extends \core\web\Model {
+    
     public $table_name = 't_index';
 
     /**
@@ -20,8 +20,7 @@ class M_index extends \core\web\Model
     * @author 洪波
     * @version 17.09.24
     */
-    public function deleteByChannel($cn_id)
-    {
+    public function deleteByChannel($cn_id) {
         $criteria = new Criteria;
         $criteria->add('id_channel', $cn_id);
         return $this->getOrm()->deleteAll($criteria);
