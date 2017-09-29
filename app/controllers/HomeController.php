@@ -111,13 +111,12 @@ class HomeController extends \core\web\Controller {
 		//分页
 		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page,
 			Autumn::app()->route->reUrl(['page'=>null]));
-
 		$data = [
 			'cn_fid' => $fid,
 			'status' => $status,
 			'keyword' => $keyword,
-			'count' => $result['count'],
 			'result' => $result['result'],
+			'breadcrumb' => $this->model('m_channel')->breadcrumb($fid),
 			'pages' => $pages->build()
 		];
 		Autumn::app()->view->render('channel', $data);

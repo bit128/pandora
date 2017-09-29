@@ -111,6 +111,26 @@ class M_channel extends \core\web\Model {
 	}
 
 	/**
+	* 面包屑路径（递归上级目录路径）
+	* ======
+	* @param $cn_id 目录id
+	* ======
+	* @author 洪波
+	* @version 17.09.29
+	*/
+	public function breadcrumb($cn_id) {
+		$path = [];
+		while ($channel = $this->getOrm()->find("cn_id = '{$cn_id}'")) {
+			array_unshift($path, [
+				'id' => $channel->cn_id,
+				'name' => $channel->cn_name
+			]);
+			$cn_id = $channel->cn_fid;
+		}
+		return $path;
+	}
+
+	/**
 	* 递归删除栏目
 	* ======
 	* @param $cn_id 栏目id

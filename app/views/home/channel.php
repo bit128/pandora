@@ -26,21 +26,37 @@
     .channel-index a {
         color: #396;
     }
+    .breadcrumb {
+        margin:0;
+        font-size:12px;
+        padding:7px ;
+    }
 </style>
 <div class="container">
 	<div class="row">
+        <div class="col-md-5">
+            <ol class="breadcrumb">
+                <li></li>
+                <?php
+                    array_unshift($breadcrumb, ['id'=>'0','name'=>'根目录']);
+                    $bc = count($breadcrumb)-1;
+                    foreach ($breadcrumb as $c => $b) {
+                    echo $c == $bc ? '<li>' : '<li><a href="/home/channel/fid/'.$b['id'].'">';
+                    if (strlen($b['name']) > 15) {
+                        echo \core\tools\MbString::substr($b['name'], 0, 5), '...';
+                    } else {
+                        echo $b['name'];
+                    }
+                    echo $c == $bc ? '</li>' : '</a></li>';
+                } ?>
+            </ol>
+        </div>
 		<div class="col-md-4">
             <?php if ($keyword == '') { ?>
 			<button type="button" class="btn btn-sm btn-success" id="create_channel">
 				<span class="glyphicon glyphicon-plus"></span> 创建栏目内容
 			</button>
-            <?php } if ($cn_fid != '0' || $keyword != '') { ?>
-			<a href="javascript:history.back();" class="btn btn-sm btn-default">
-				<span class="glyphicon glyphicon-chevron-left"></span> 返回上一页
-			</a>
             <?php } ?>
-		</div>
-		<div class="col-md-5">
             <span class="btn-group">
                 <?php $s_uri = \core\Autumn::app()->route->reUrl(['s'=>null,'page'=>null]); ?>
                 <a href="<?php echo $s_uri,'/s/',0; ?>" class="btn btn-sm <?php echo $status == 0 ? 'btn-info' : 'btn-default'; ?>">全部</a>
@@ -48,7 +64,7 @@
                 <a href="<?php echo $s_uri,'/s/',2; ?>" class="btn btn-sm <?php echo $status == 2 ? 'btn-success' : 'btn-default'; ?>">公开</a>
                 <a href="<?php echo $s_uri,'/s/',3; ?>" class="btn btn-sm <?php echo $status == 3 ? 'btn-warning' : 'btn-default'; ?>">热门</a>
             </span>
-        </div>
+		</div>
 		<div class="col-md-3">
 			<form class="input-group" method="get" action="<?php echo \core\Autumn::app()->route->reUrl(['k'=>null,'page'=>null]); ?>">
 				<input type="text" class="form-control input-sm" name="k" value="<?php echo $keyword; ?>">
@@ -235,7 +251,6 @@ $(document).ready(function(){
             var input = $(this);
             var ov = $.trim(input.val());
             input.one('blur', function(){
-                console.log('----> blur:',$(this).val());
                 var nv = $.trim($(this).val());
                 if (nv != ov) {
                     if (is_key && ! /^[a-zA-Z]+[a-zA-Z0-9]+$/.test(nv)) {
@@ -299,7 +314,6 @@ $(document).ready(function(){
                 if (key != '')
                     f.data[key] = $(this).find('input:eq(1)').val();
             });
-            console.log('--> ', f.data);
         }
     };
     //扩展字段
