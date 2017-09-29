@@ -1,13 +1,13 @@
 <?php
-namespace app\controllers;
-use core\Autumn;
-
 /**
-* 站点控制器示例
+* 主站控制器
 * ======
 * @author 洪波
 * @version 16.09.21
 */
+namespace app\controllers;
+use core\Autumn;
+
 class SiteController extends \core\web\Controller {
 	//private $view;
 	
