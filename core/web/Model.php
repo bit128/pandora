@@ -3,21 +3,29 @@
 * 模型基础类
 * ======
 * @author 洪波
-* @version 16.03.02
+* @version 16.03.02 - 17.09.28
 */
 namespace core\web;
+use core\Autumn;
 
 abstract class Model {
+
 	//数据对象实例
-	protected $orm = null;
+	protected $orm = NULL;
+
+	//[重写]数据库驱动名称
+	public $dbi = 'db';
+
 	//[重写]模型表名称
 	public $table_name = '';
+
 	//验证字段错误信息
 	private $errors = [];
 
 	public function __construct() {
 		$this->init();
-		$this->orm = new \core\db\Orm($this->table_name);
+		
+		$this->orm = new \core\db\Orm($this->table_name, $this->getDb());
 	}
 
 	/**
@@ -29,6 +37,17 @@ abstract class Model {
 	public function init(){}
 
 	/**
+	* 获取模型配置的数据库驱动实例
+	* ======
+	* @author 洪波
+	* @version 17.09.28
+	*/
+	public function getDb() {
+		$dbi_str = $this->dbi;
+		return Autumn::app()->$dbi_str;
+	}
+
+	/**
 	* 获取表对象orm实例
 	* ======
 	* @author 洪波
@@ -36,6 +55,44 @@ abstract class Model {
 	*/
 	public function getOrm() {
 		return $this->orm;
+	}
+
+	/**
+	* 设置字段
+	* ======
+	* @param $key 	键
+	* @param $value 值
+	* ======
+	* @author 洪波
+	* @version 17.09.28
+	*/
+	public function __set($key, $value) {
+		$this->orm->$key = $value;
+	}
+
+	/**
+	* 获取字段
+	* ======
+	* @param $key 	键
+	* ======
+	* @author 洪波
+	* @version 17.09.28
+	*/
+	public function __get($key) {
+		return $this->orm->$key;
+	}
+
+	/**
+	* （非格式化处理）设置字段
+	* ======
+	* @param $key 	键
+	* @param $key 	值
+	* ======
+	* @author 洪波
+	* @version 17.09.29
+	*/
+	public function setAttribute($key, $value) {
+		return $this->orm->setAttribute($key, $value);
 	}
 
 	/**
@@ -107,10 +164,26 @@ abstract class Model {
 			'user_age' => [true, 'number', 2],
 			'user_note' => [false, 'text', 20]
 		];*/
-    }
+	}
+	
+	/**
+	* 加载数据到ar模型中
+	* ======
+	* @param $data 	数据
+	* ======
+	* @author 洪波
+	* @version 17.09.28
+	*/
+	public function loadData(array $data) {
+		foreach ($data as $k => $v) {
+			if (isset ($this->orm->ar[$k])) {
+				$this->orm->ar[$k] = htmlspecialchars(addslashes($v));
+			}
+		}
+	}
 
 	/**
-	* 加载数据到模型中
+	* [新版不建议使用]加载数据到模型中
 	* ======
 	* @param $data 	数据
 	* @param $post 	是否从post表单中映射

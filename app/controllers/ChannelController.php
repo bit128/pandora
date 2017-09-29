@@ -24,6 +24,7 @@ class ChannelController extends \core\web\Controller {
 		if(Autumn::app()->request->isPost()) {
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
 				$cn_fid = Autumn::app()->request->getPost('cn_fid', '0');
+				$m_channel = new \app\models\M_channel;
 				$data = [
 					'cn_fid' => $cn_fid,
 					'cn_name' => '新建栏目',
@@ -32,9 +33,15 @@ class ChannelController extends \core\web\Controller {
 					'cn_ctime' => time(),
 					'cn_status' => M_channel::STATUS_HIDE
 				];
-				$this->m_channel->load($data);
-				if($this->m_channel->save()) {
-					Autumn::app()->response->setResult($this->m_channel->getOrm()->cn_id);
+				$m_channel->loadData($data);
+				//复制扩展内容
+				if ($cn_fid != '0') {
+					$parent = $this->model('m_channel')->get($cn_fid);
+					if ($parent)
+						$m_channel->setAttribute('cn_data', $parent->cn_data);
+				}
+				if($m_channel->save()) {
+					Autumn::app()->response->setResult($m_channel->cn_id);
 				} else {
 					Autumn::app()->response->setResult(Response::RES_FAIL);
 				}
@@ -53,7 +60,7 @@ class ChannelController extends \core\web\Controller {
 	*/
 	public function actionGet() {
 		if($cn_id = Autumn::app()->request->getParam('id')) {
-			if($channel = $this->m_channel->get($cn_id)) {
+			if($channel = $this->model('m_channel')->get($cn_id)) {
 				Autumn::app()->response->setResult($channel->toArray());
 			} else {
 				Autumn::app()->response->setResult(Response::RES_NOTHAS, '', '栏目不存在');
@@ -72,7 +79,7 @@ class ChannelController extends \core\web\Controller {
 	*/
 	public function actionGetData() {
 		if($cn_id = Autumn::app()->request->getParam('id')) {
-			$data = $this->m_channel->getData($cn_id);
+			$data = $this->model('m_channel')->getData($cn_id);
 			if($data !== false) {
 				Autumn::app()->response->setResult($data);
 			} else {
@@ -92,7 +99,7 @@ class ChannelController extends \core\web\Controller {
 	*/
 	public function actionGetContent() {
 		if($cn_id = Autumn::app()->request->getParam('id')) {
-			$content = $this->m_channel->getContent($cn_id);
+			$content = $this->model('m_channel')->getContent($cn_id);
 			if($content !== false) {
 				Autumn::app()->response->setResult($content);
 			} else {
@@ -116,13 +123,13 @@ class ChannelController extends \core\web\Controller {
 				$cn_id = Autumn::app()->request->getPost('cn_id');
 				$field = Autumn::app()->request->getPost('field');
 				$value = Autumn::app()->request->getPost('value');
-				if($this->m_channel->update($cn_id, [
+				if($this->model('m_channel')->update($cn_id, [
 					$field => $value,
 					'cn_utime' => time()
 				])) {
 					Autumn::app()->response->setResult(Response::RES_OK);
 				} else {
-					Autumn::app()->response->setResult(Response::RES_NOCHAN);
+					Autumn::app()->response->setResult(Response::RES_CHANF);
 				}
 			} else {
 				Autumn::app()->response->setResult(Response::RES_REFUSE);
@@ -143,7 +150,7 @@ class ChannelController extends \core\web\Controller {
 				$cn_id = Autumn::app()->request->getPost('cn_id');
 				$keyword = trim(Autumn::app()->request->getPost('keyword'));
 				//变更栏目内容关键字字段
-				$this->m_channel->update($cn_id, [
+				$this->model('m_channel')->update($cn_id, [
 					'cn_keyword' => $keyword,
 					'cn_utime' => time()
 				]);
@@ -154,11 +161,11 @@ class ChannelController extends \core\web\Controller {
 					foreach (explode(' ', $keyword) as $kw_name) {
 						if ($kw_name != '') {
 							//使用计数
-							$this->m_keyword->useCount($kw_name);
+							$this->model('m_keyword')->useCount($kw_name);
 							//建立索引
 							$m_index = new M_index;
-							$m_index->getOrm()->id_keyword = $kw_name;
-							$m_index->getOrm()->id_channel = $cn_id;
+							$m_index->id_keyword = $kw_name;
+							$m_index->id_channel = $cn_id;
 							$m_index->save();
 						}
 					}
@@ -181,7 +188,7 @@ class ChannelController extends \core\web\Controller {
 		if(Autumn::app()->request->isPost()) {
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
 				$cn_id = Autumn::app()->request->getPost('cn_id');
-				$this->m_channel->recursionDelete($cn_id);
+				$this->model('m_channel')->recursionDelete($cn_id);
 				Autumn::app()->response->setResult(Response::RES_OK);
 			} else {
 				Autumn::app()->response->setResult(Response::RES_REFUSE, '', '无权操作');

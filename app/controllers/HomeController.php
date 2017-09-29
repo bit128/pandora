@@ -107,7 +107,7 @@ class HomeController extends \core\web\Controller {
 		$criteria->offset = ($page - 1) * $criteria->limit;
 		$criteria->order = 'cn_sort asc';
 		//获取栏目列表
-		$result = $this->m_channel->getList($criteria);
+		$result = $this->model('m_channel')->getList($criteria);
 		//分页
 		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page,
 			Autumn::app()->route->reUrl(['page'=>null]));
@@ -166,7 +166,7 @@ class HomeController extends \core\web\Controller {
 			$criteria->addCondition("kw_name like '%{$keyword}%'");
 		};
 		
-		$result = $this->m_keyword->getList($criteria);
+		$result = $this->model('m_keyword')->getList($criteria);
 		//分页
 		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page,
 			Autumn::app()->route->reUrl(['page'=>null]));

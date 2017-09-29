@@ -85,7 +85,7 @@
 						</p>
 						<p>&nbsp;</p>
 						<p>
-							<button type="button" class="btn btn-primary" id="add_admin">创建管理员</button>
+							<button type="button" class="btn btn-info" id="add_admin">创建管理员</button>
 						</p>
 						<p>&nbsp;</p>
 					</form>

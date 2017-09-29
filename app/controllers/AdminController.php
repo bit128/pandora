@@ -18,14 +18,13 @@ class AdminController extends \core\web\Controller {
 	* @version 16.07.29
 	*/
 	public function actionIndex() {
-		$m_admin = new \app\models\M_admin;
 		$page = Autumn::app()->request->getQuery('page', 1);
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
 		$criteria = new \core\db\Criteria;
 		$criteria->offset = $offset;
 		$criteria->limit = $limit;
-		$result = $m_admin->getList($criteria);
+		$result = $this->model('m_admin')->getList($criteria);
 		//分页
 		$url = '/home/admin';
 		$pages = new \core\tools\Pagination($result['count'], $limit, $page, $url);
@@ -58,7 +57,7 @@ class AdminController extends \core\web\Controller {
 			$account = Autumn::app()->request->getPost('account');
 			$password = md5(Autumn::app()->request->getPost('password'));
 
-			if($this->m_admin->login($account, $password)) {
+			if($this->model('m_admin')->login($account, $password)) {
 				$this->redirect('/home');
 			} else {
 				echo 'login fail.';
@@ -88,13 +87,18 @@ class AdminController extends \core\web\Controller {
 			if(M_admin::checkRole(M_admin::ROLE_ADMIN)) {
 				$am_account = Autumn::app()->request->getPost('am_account');
 				if(trim($am_account) != '') {
-					if (! $this->m_admin->get($am_account)) {
+					if (! $this->model('m_admin')->get($am_account)) {
 						$data = array(
+							'am_account' => $am_account,
+							'am_password' => md5(trim(Autumn::app()->request->getPost('am_password'))),
+							'am_name' => Autumn::app()->request->getPost('am_name'),
+							'am_group' => Autumn::app()->request->getPost('am_group'),
+							'am_role' => Autumn::app()->request->getPost('am_role'),
 							'am_time' => time(),
 							'am_ip' => Autumn::app()->request->getIp()
 							);
-						$this->m_admin->load($data, true);
-						if($this->m_admin->save()) {
+						$this->model('m_admin')->loadData($data);
+						if($this->model('m_admin')->save()) {
 							Autumn::app()->response->setResult(Response::RES_OK);
 						} else {
 							Autumn::app()->response->setResult(Response::RES_FAIL);
@@ -129,7 +133,7 @@ class AdminController extends \core\web\Controller {
 				} else {
 					$data[$field] = Autumn::app()->request->getPost('value');
 				}
-				if($this->m_admin->update($account, $data)) {
+				if($this->model('m_admin')->update($account, $data)) {
 					Autumn::app()->response->setResult(Response::RES_OK);
 				} else {
 					Autumn::app()->response->setResult(Response::RES_NOCHAN);
@@ -153,7 +157,7 @@ class AdminController extends \core\web\Controller {
 			$criteria->select = 'am_account,am_name';
 			$criteria->offset = 0;
 			$criteria->limit = 99;
-			$admin_list = $this->m_admin->getList($criteria);
+			$admin_list = $this->model('m_admin')->getList($criteria);
 			Autumn::app()->response->setResult($admin_list['result']);
 		} else {
 			Autumn::app()->response->setResult(Response::RES_REFUSE);
@@ -173,7 +177,7 @@ class AdminController extends \core\web\Controller {
 				$account = Autumn::app()->request->getPost('am_account');
 				$role = Autumn::app()->request->getPost('role');
 				$op = Autumn::app()->request->getPost('op');
-				if($this->m_admin->changeRole($account, $role, $op)) {
+				if($this->model('m_admin')->changeRole($account, $role, $op)) {
 					Autumn::app()->response->setResult(Response::RES_OK);
 				} else {
 					Autumn::app()->response->setResult(Response::RES_FAIL);
@@ -195,7 +199,7 @@ class AdminController extends \core\web\Controller {
 		if(Autumn::app()->request->isPost()) {
 			if(M_admin::checkRole(M_admin::ROLE_SUPER)) {
 				$account = Autumn::app()->request->getPost('account');
-				if($this->m_admin->delete($account)) {
+				if($this->model('m_admin')->delete($account)) {
 					Autumn::app()->response->setResult(Response::RES_OK);
 				} else {
 					Autumn::app()->response->setResult(Response::RES_FAIL);

@@ -42,9 +42,7 @@ class M_channel extends \core\web\Model {
 	*/
 	public function maxSort($cn_fid) {
 		$sql = "select max(cn_sort) from " . $this->table_name . " where cn_fid='{$cn_fid}'";
-		$max = $this->orm
-			->getDb()
-			->queryScalar($sql);
+		$max = $this->getDb()->queryScalar($sql);
 		if($max) {
 			return ++$max;
 		} else {

@@ -32,7 +32,7 @@
 		<div class="col-md-4">
             <?php if ($keyword == '') { ?>
 			<button type="button" class="btn btn-sm btn-success" id="create_channel">
-				<span class="glyphicon glyphicon-plus"></span> 创建栏目
+				<span class="glyphicon glyphicon-plus"></span> 创建栏目内容
 			</button>
             <?php } if ($cn_fid != '0' || $keyword != '') { ?>
 			<a href="javascript:history.back();" class="btn btn-sm btn-default">
@@ -235,10 +235,11 @@ $(document).ready(function(){
             var input = $(this);
             var ov = $.trim(input.val());
             input.one('blur', function(){
+                console.log('----> blur:',$(this).val());
                 var nv = $.trim($(this).val());
                 if (nv != ov) {
                     if (is_key && ! /^[a-zA-Z]+[a-zA-Z0-9]+$/.test(nv)) {
-                        alert('字段名必须是以字母开头，字母和数字的组合');
+                        alert('字段名必须是以字母开头，字母和数字的组合，2个以上的字符');
                     } else if (is_key && f.data[nv] != undefined) {
                         alert('字段名不能重名');
                     } else {
@@ -298,6 +299,7 @@ $(document).ready(function(){
                 if (key != '')
                     f.data[key] = $(this).find('input:eq(1)').val();
             });
+            console.log('--> ', f.data);
         }
     };
     //扩展字段

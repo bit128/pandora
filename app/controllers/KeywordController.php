@@ -25,8 +25,8 @@ class KeywordController extends \core\web\Controller {
                     'kw_name' => Autumn::app()->request->getPost('kw_name'),
 					'kw_time' => time()
 				];
-				$this->m_keyword->load($data);
-				if ($this->m_keyword->save()) {
+				$this->model('m_keyword')->loadData($data);
+				if ($this->model('m_keyword')->save()) {
 					Autumn::app()->response->setResult(Response::RES_OK);
 				} else {
 					Autumn::app()->response->setResult(Response::RES_FAIL);
@@ -61,7 +61,7 @@ class KeywordController extends \core\web\Controller {
 					'kw_search desc',
 					'kw_use desc'
 				][$sort];
-				Autumn::app()->response->setResult($this->m_keyword->getList($criteria));
+				Autumn::app()->response->setResult($this->model('m_keyword')->getList($criteria));
 			} else {
 				Autumn::app()->response->setResult(Response::RES_REFUSE);
 			}
@@ -78,7 +78,7 @@ class KeywordController extends \core\web\Controller {
     public function actionDelete() {
         if (Autumn::app()->request->isPost()) {
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
-				if ($this->m_keyword->delete(Autumn::app()->request->getPost('kw_id'))) {
+				if ($this->model('m_keyword')->delete(Autumn::app()->request->getPost('kw_id'))) {
 					Autumn::app()->response->setResult(Response::RES_OK);
 				} else {
 					Autumn::app()->response->setResult(Response::RES_FAIL);

@@ -54,11 +54,15 @@ class FileController extends \core\web\Controller {
 		if (Autumn::app()->request->isPostRequest()) {
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
 				$data = [
+					'file_bid' => Autumn::app()->request->getPost('file_bid'),
+					'file_path' => Autumn::app()->request->getPost('file_path'),
+					'file_type' => Autumn::app()->request->getPost('file_type'),
+					'file_size' => Autumn::app()->request->getPost('file_size'),
 					'file_time' => time(),
 					'file_status' => M_file::STATUS_OPEN
 				];
-				$this->m_file->load($data, true);
-				if ($this->m_file->save()) {
+				$this->model('m_file')->loadData($data);
+				if ($this->model('m_file')->save()) {
 					Autumn::app()->response->setResult(Response::RES_OK);
 				} else {
 					Autumn::app()->response->setResult(Response::RES_FAIL);
@@ -82,7 +86,7 @@ class FileController extends \core\web\Controller {
 				$file_id = Autumn::app()->request->getPost('file_id');
 				$field = Autumn::app()->request->getPost('field');
 				$value = Autumn::app()->request->getPost('value');
-				if ($this->m_file->update($file_id, [$field => $value])) {
+				if ($this->model('m_file')->update($file_id, [$field => $value])) {
 					Autumn::app()->response->setResult(Response::RES_OK);
 				} else {
 					Autumn::app()->response->setResult(Response::RES_NOCHAN);
@@ -104,7 +108,7 @@ class FileController extends \core\web\Controller {
 		if (Autumn::app()->request->isPostRequest()) {
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
 				$file_id = Autumn::app()->request->getPost('file_id');
-				$file_obj = $this->m_file->get($file_id);
+				$file_obj = $this->model('m_file')->get($file_id);
 				if ($file_obj) {
 					@unlink('.' . $file_obj->file_path);
 					$this->m_file->delete($file_id);
