@@ -41,7 +41,7 @@ CREATE TABLE `t_admin` (
 
 LOCK TABLES `t_admin` WRITE;
 /*!40000 ALTER TABLE `t_admin` DISABLE KEYS */;
-INSERT INTO `t_admin` VALUES ('hongbo','98b4a59cbf4d5b6293ecfc7de0db870b','洪波','产品',4103,1506649498,'127.0.0.1',1),('bit128','e10adc3949ba59abbe56e057f20f883e','测试账号','产品',6,1506591530,'127.0.0.1',0);
+INSERT INTO `t_admin` VALUES ('hongbo','98b4a59cbf4d5b6293ecfc7de0db870b','洪波','产品',4103,1510795033,'127.0.0.1',1),('bit128','e10adc3949ba59abbe56e057f20f883e','测试账号','产品',6,1506591530,'127.0.0.1',0);
 /*!40000 ALTER TABLE `t_admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -102,7 +102,7 @@ CREATE TABLE `t_channel` (
 
 LOCK TABLES `t_channel` WRITE;
 /*!40000 ALTER TABLE `t_channel` DISABLE KEYS */;
-INSERT INTO `t_channel` VALUES ('59bb850fa6c77','0','','新建栏目aaa，上海合作','递归 计算','{\"area\":\"上海2\",\"address\":\"浦东新区\"}','这里是内容,1123',5,1505461519,1506592510,1),('59bba8b19b70e','0','','新建栏目s,ok','文学 云计算 大数据','{\"top\":\"123\",\"name\":\"\",\"hi\":\"\"}','ok',2,1505470641,1506580982,2),('59c352920de2d','0','','我是一条空内容22','比特币 区块链','{}','',6,1505972882,1506649643,3),('59c3531122b6f','59c352920de2d','','ok,我是一条子内容','','{}','',1,1505973009,1506138100,2),('59cdaa11b301c','0','','测试新的栏目内容和扩展字段','','{\"search\":\"https://cn.bing.com\"}','',7,1506650641,1506650717,1),('59cdac514799d','59cdaa11b301c','','可复制父栏目的扩展内容','','{\"search\":\"https://cn.bing.com\"}','',1,1506651217,1506651240,1);
+INSERT INTO `t_channel` VALUES ('59bb850fa6c77','0','','新建栏目aaa，上海合作','递归 计算','{\"area\":\"上海2\",\"address\":\"浦东新区\"}','这里是内容,1123',5,1505461519,1506592510,1),('59bba8b19b70e','0','','新建栏目s,ok','文学 云计算 大数据','{\"top\":\"123\",\"name\":\"\",\"hi\":\"\"}','ok',2,1505470641,1506580982,2),('59c352920de2d','0','','我是一条空内容22','比特币 区块链','{}','ok',6,1505972882,1510795268,3),('59c3531122b6f','59c352920de2d','','ok,我是一条子内容','','{}','',1,1505973009,1506138100,2);
 /*!40000 ALTER TABLE `t_channel` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -240,4 +240,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-09-29 10:32:07
+-- Dump completed on 2017-11-16  9:27:03

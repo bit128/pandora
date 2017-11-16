@@ -7,7 +7,7 @@
 */
 return [
 	'app_name' => 'Pandora 网媒管理系统',
-	'version' => '2.1 公测版',
+	'version' => '2.1',
 	//开启session
 	'session_start' => true,
 	//业务模型载入路径
@@ -41,7 +41,7 @@ return [
 			'class' => 'core\db\Mysqli',
 			'host' => '127.0.0.1',
 			'user' => 'root',
-			'password' => 'hong_1987',
+			'password' => '',
 			'dbname' => 'pandora'
 		]
 	]
