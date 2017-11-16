@@ -53,6 +53,25 @@ class ChannelController extends \core\web\Controller {
 	}
 
 	/**
+	 * 获取栏目目录
+	 * ======
+	 * @author 洪波
+	 * @version 17.10.28
+	 */
+	public function actionGetSimpleList() {
+		if (Autumn::app()->request->isPost()) {
+			$criteria = new Criteria;
+			$criteria->select = 'cn_id,cn_fid,cn_image,cn_name';
+			$criteria->offset = Autumn::app()->request->getPost('offset', 0);
+			$criteria->limit = Autumn::app()->request->getPost('limit', 20);
+			$criteria->add('cn_fid', Autumn::app()->request->getPost('cn_fid', '0'));
+			$criteria->order = 'cn_sort asc';
+			Autumn::app()->response->setResult($this->m_channel->getOrm()->findAll($criteria));
+			Autumn::app()->response->json();
+		}
+	}
+
+	/**
 	* 获取栏目详情
 	* ======
 	* @author 洪波

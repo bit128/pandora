@@ -74,7 +74,7 @@
         <label class="checkbox">
           <input type="checkbox" value="remember-me"> Remember me
         </label>-->
-        <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+        <button class="btn btn-lg btn-info btn-block" type="submit">登录</button>
       </form>
 
     </div> <!-- /container -->

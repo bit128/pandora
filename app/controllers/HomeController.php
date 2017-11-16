@@ -92,6 +92,7 @@ class HomeController extends \core\web\Controller {
 	public function actionChannel() {
 		$fid = Autumn::app()->request->getQuery('fid', '0');
 		$status = (int) Autumn::app()->request->getQuery('s', 0);
+		$order = (int) Autumn::app()->request->getQuery('o', 0);
 		$keyword = Autumn::app()->request->getQuery('k', '');
 		$page = Autumn::app()->request->getQuery('page', 1);
 		//查询条件
@@ -105,7 +106,7 @@ class HomeController extends \core\web\Controller {
 		}
 		$criteria->limit = 10;
 		$criteria->offset = ($page - 1) * $criteria->limit;
-		$criteria->order = 'cn_sort asc';
+		$criteria->order = ['cn_sort desc','cn_sort asc'][$order];
 		//获取栏目列表
 		$result = $this->model('m_channel')->getList($criteria);
 		//分页
@@ -114,6 +115,7 @@ class HomeController extends \core\web\Controller {
 		$data = [
 			'cn_fid' => $fid,
 			'status' => $status,
+			'order' => $order,
 			'keyword' => $keyword,
 			'result' => $result['result'],
 			'breadcrumb' => $this->model('m_channel')->breadcrumb($fid),
@@ -189,10 +191,10 @@ class HomeController extends \core\web\Controller {
 		$avatar = Autumn::app()->request->getQuery('avatar');
 		$keyword = Autumn::app()->request->getQuery('k');
 		$page = Autumn::app()->request->getQuery('page', 1);
+		$page_uri = '/home/file';
 		if ($avatar) {
 			$page_uri .= '/avatar/' . $avatar;
 		}
-
 		$m_file= new \app\models\M_file;
 		$criteria = new Criteria;
 		if ($file_bid != '') {

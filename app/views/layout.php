@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Pandora</title>
+    <title>1Doc后台管理系统</title>
 
     <!-- Bootstrap core CSS -->
     <link href="/app/statics/home/css/bootstrap.min.css" rel="stylesheet">
@@ -67,7 +67,9 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/home"><?php echo \core\Autumn::app()->config->get('app_name'); ?></a>
+          <a class="navbar-brand" href="/home">
+            <?php echo \core\Autumn::app()->config->get('app_name'); ?> - 后台管理系统
+          </a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
@@ -92,7 +94,9 @@
     <footer class="footer">
       <div class="container">
         <p class="text-muted">&copy <?php echo \core\Autumn::app()->config->get('app_name'); ?> 2013-2017 版权所有 
-          <small>[ 当前版本：<?php echo \core\Autumn::app()->config->get('version'); ?> ]</small></p>
+          <small>[ 当前版本：<?php echo \core\Autumn::app()->config->get('version'); ?> ]</small>
+          浙ICP备16017720号-2
+        </p>
       </div>
     </footer>
   </body>

@@ -30,7 +30,6 @@
     color: #fff;
 }
 </style>
-<link rel="stylesheet" type="text/css" href="/app/statics/home/css/prism.css">
 <div class="container">
 	<div class="row">
 		<div class="col-md-3">
@@ -133,35 +132,13 @@
 					</button>
 				</div>
 				<div style="text-align:center;margin-top:20px;">
-					<button type="button" class="btn btn-sm btn-grew" data-toggle="modal" data-target="#code_box">
-						<span class="glyphicon glyphicon-font"></span> 插入代码
+					<button type="button" class="btn btn-sm btn-grew" data-toggle="modal" data-target="#file_box">
+						<span class="glyphicon glyphicon-font"></span> 插入资源
 					</button>
 					<button type="button" class="btn btn-sm btn-grew" data-toggle="modal" data-target="#table_box">
 						<span class="glyphicon glyphicon-th"></span> 插入表格
 					</button>
 				</div>
-				<div style="text-align:center;margin:20px 0 5px;">
-					<a href="/home/file/bid/<?php echo $cn_id; ?>" class="btn btn-sm btn-info">
-						<span class="glyphicon glyphicon-file"></span> 管理附件文件
-					</a>
-				</div>
-				<?php if ($file_list['count']) { ?>
-				<table class="table table-bordered" id="file_list">
-					<tbody>
-						<?php foreach ($file_list['result'] as $item) { ?>
-						<tr>
-							<td><a href="<?php echo $item->file_path; ?>" target="_blank"><?php echo $item->file_name != '' ? $item->file_name
-								: substr($item->file_path, strlen($item->file_path) - 17); ?></a></td>
-							<td style="width:100px;">
-								<button class="btn btn-xs btn-default" data-val="<?php echo $item->file_type; ?>" data-path="<?php echo $item->file_path; ?>">
-									<span class="glyphicon glyphicon-chevron-right"></span> 插入页面
-								</button>
-							</td>
-						</tr>
-						<?php } ?>
-					</tbody>
-				</table>
-				<?php } ?>
 			</div>
 		</div>
 		<div class="col-md-9">
@@ -171,32 +148,35 @@
 	<p>&nbsp;</p>
 </div>
 <!-- 插入代码 开始 -->
-<div id="code_box" class="modal fade">
+<div id="file_box" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">插入代码</h4>
+				<h4 class="modal-title">插入资源</h4>
 			</div>
-			<div class="modal-body">
-				<p>
-					<textarea class="form-control" rows="12" id="code_content"></textarea>
-				</p>
-				<div id="lang_select">
-					<a href="javascript:;" class="btn btn-orange btn-sm" data-val="language-markup">标记语言</a>
-					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-javascript">JavaScript</a>
-					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-java">Java</a>
-					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-php">PHP</a>
-					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-c">C</a>
-					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-cpp">C++</a>
-					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-python">Python</a>
-					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-bash">Bash</a>
-					<a href="javascript:;" class="btn btn-grew btn-sm" data-val="language-json">JSON</a>
-				</div>
+			<div class="modal-body" style="padding-bottom:0;">
+				<?php if ($file_list['count']) { ?>
+				<table class="table table-bordered" id="file_list">
+					<tbody>
+						<?php foreach ($file_list['result'] as $item) { ?>
+						<tr>
+							<td><a href="<?php echo $item->file_path; ?>" target="_blank"><?php echo $item->file_name != '' ? $item->file_name
+								: substr($item->file_path, strlen($item->file_path) - 17); ?></a></td>
+							<td style="width:110px;">
+								<button class="btn btn-xs btn-default" data-val="<?php echo $item->file_type; ?>" data-path="<?php echo $item->file_path; ?>">
+									<span class="glyphicon glyphicon-chevron-right"></span> 插入到页面
+								</button>
+							</td>
+						</tr>
+						<?php } ?>
+					</tbody>
+				</table>
+				<?php } ?>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-grew" data-dismiss="modal">关闭</button>
-				<button type="button" class="btn btn-orange" id="insert_code">插入代码</button>
+				<a type="button" href="/home/file/bid/<?php echo $cn_id; ?>" class="btn btn-orange">管理资源附件</a>
 			</div>
 		</div>
 	</div>
@@ -231,7 +211,6 @@
 	</div>
 </div>
 <!-- 插入表格 结束 -->
-<script type="text/javascript" src="/app/statics/home/js/prism.js"></script>
 <script type="text/javascript" src="/app/statics/home/js/main.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
@@ -347,12 +326,12 @@ $(document).ready(function(){
 			var style,title;
 			if(types == 1){
 				style = 'font-size:28px;color:#333;';
-				title = '大号智能标题';
+				title = '大号模版标题';
 			}else{
-				style = 'font-size:20px;color:#500;';
-				title = '小号智能标题';
+				style = 'font-size:20px;color:#33ccff;';
+				title = '小号模版标题';
 			}
-			document.execCommand('insertHTML', false, '<div class="title" style="'+style+'" data-val="'+types+'">'+title+'</div><br>');
+			document.execCommand('insertHTML', false, '<div style="'+style+'">'+title+'</div><br>');
 		},
 		setTimer: function(f){
 			if(f.timer == undefined && f.cn_id != 0) {
@@ -443,29 +422,10 @@ $(document).ready(function(){
 	$('#file_list').on('click', 'button', function(){
 		var types = $(this).attr('data-val');
 		if (types == 'jpg' || types == 'jpeg' || types == 'png' || types == 'gif') {
-			document.execCommand('insertHTML', false, '<p><img src="'+$(this).attr('data-path')+'" style="max-width:100%"/></p><br>');
+			document.execCommand('insertHTML', false, '<p style="text-align:center;"><img src="'+$(this).attr('data-path')+'" style="max-width:100%"/></p><br>');
 		}else{
 			document.execCommand('insertHTML', false, '<a href="'+$(this).attr('data-path')+'" >'+$(this).parents('tr').find('td:eq(0)').text()+'</a>');
 		}
-	});
-	//插入代码
-	$('#lang_select').on('click', 'a', function(){
-		$('#lang_select').find('a').removeClass('btn-orange').addClass('btn-grew');
-		$(this).removeClass('btn-grew').addClass('btn-orange');
-	});
-	$('#insert_code').on('click', function(){
-		var c = $('#code_content').val();
-		if(c.trim().length == 0){alert('请填写内容!');$('#code_content').focus();return;}
-		var t = $('#lang_select').find('.btn-orange').attr('data-val');
-		c = c.replace(/&/g, '&amp;');
-		c = c.replace(/"/g, '&quot;');
-		c = c.replace(/</g, '&lt;');
-		c = c.replace(/>/g, '&gt;');
-		$('#note_editor').append('<pre><code class="'+t+'">'+c+'</code></pre><br>');
-		$('#code_content').val('');
-		$('#code_box').modal('hide');
-		Prism.highlightAll();
-		note.setTimer(note);
 	});
 	//插入表格
 	$('#insert_table').on('click', function(){

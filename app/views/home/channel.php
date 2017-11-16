@@ -31,6 +31,10 @@
         font-size:12px;
         padding:7px ;
     }
+    .list-active {
+        color:#31708f;
+        background-color:#d9edf7;
+    }
 </style>
 <div class="container">
 	<div class="row">
@@ -64,6 +68,13 @@
                 <a href="<?php echo $s_uri,'/s/',2; ?>" class="btn btn-sm <?php echo $status == 2 ? 'btn-success' : 'btn-default'; ?>">公开</a>
                 <a href="<?php echo $s_uri,'/s/',3; ?>" class="btn btn-sm <?php echo $status == 3 ? 'btn-warning' : 'btn-default'; ?>">热门</a>
             </span>
+            <a href="<?php echo \core\Autumn::app()->route->reUrl(['o'=>$order==0?1:0]);?>" class="btn btn-sm btn-default">
+                <?php if ($order == 0){ ?>    
+                <span class="glyphicon glyphicon-sort-by-order-alt"></span>
+                <?php } else { ?>
+                <span class="glyphicon glyphicon-sort-by-order"></span>
+                <?php } ?>
+            </a>
 		</div>
 		<div class="col-md-3">
 			<form class="input-group" method="get" action="<?php echo \core\Autumn::app()->route->reUrl(['k'=>null,'page'=>null]); ?>">
@@ -138,12 +149,12 @@
                     <button type="button" class="btn btn-xs btn-default set_data">
                         <span class="glyphicon glyphicon-list"></span> 扩展
                     </button>
-                    <a href="/home/channel/fid/<?php echo $item->cn_id; ?>" class="btn btn-xs btn-info">
+                    <a href="/home/channel/fid/<?php echo $item->cn_id; ?>" class="btn btn-xs btn-success">
                         <span class="glyphicon glyphicon-tags"></span> 成员
-                    </a><!--
-                    <a href="javascript:;" class="btn btn-xs btn-default">
-                        <span class="glyphicon glyphicon-comment"></span> 评论
-                    </a>-->
+                    </a>
+                    <button type="button" class="btn btn-xs btn-info move_channel">
+                        <span class="glyphicon glyphicon-move"></span> 移动
+                    </button>
                     <button type="button" class="btn btn-xs btn-warning delete_channel">
                         <span class="glyphicon glyphicon-trash"></span> 删除
                     </button>
@@ -154,8 +165,34 @@
     </table>
     <p><?php echo $pages; ?></p>
 </div>
+<!-- 移动位置 -->
+<div id="menu_modal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">移动到目录</h4>
+            </div>
+            <div class="modal-body">
+                <div class="list-group" style="margin-bottom:0;" id="menu_list"></div>
+            </div>
+            <div class="modal-footer" style="margin-top:0;">
+                <button type="button" class="btn btn-warning pull-left" id="menu_back">
+                    <span class="glyphicon glyphicon-chevron-left"></span> 上一层目录
+                </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove"></span> 关闭
+                </button>
+                <button type="button" class="btn btn-info" id="menu_move">
+                    <span class="glyphicon glyphicon-ok"></span> 移动到目录
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 移动位置 -->
 <!-- 扩展字段 -->
-<div id="data_modal" class="modal fade" tabindex="-1" role="dialog">
+<div id="data_modal" class="modal fade" tabindex="-2" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -187,7 +224,7 @@
 </div>
 <!-- 扩展字段 -->
 <!-- 设置关键字 -->
-<div id="keyword_modal" class="modal fade" tabindex="-1" role="dialog">
+<div id="keyword_modal" class="modal fade" tabindex="-3" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
@@ -401,6 +438,79 @@ $(document).ready(function(){
             );
         }
     });
+    /*------移动到目录逻辑------*/
+    (function(){
+        var cn_id = '';
+        var menu_stack = ['0'];
+        //移动目录
+        $('#channel_list').on('click', '.move_channel', function(){
+            cn_id = $(this).parents('tr').find('td:eq(0)').text();
+            $('#menu_modal').modal('show');
+            loadMenuList();
+        });
+        //选中成员
+        $('#menu_modal').on('click', '.list-group-item', function(){
+            $('#menu_list').find('.list-group-item').removeClass('list-active');
+            $(this).addClass('list-active');
+        });
+        //双击进入子目录
+        $('#menu_list').on('dblclick', '.list-group-item', function(){
+            menu_stack.push($(this).attr('data-id'));
+            loadMenuList();
+        });
+        //返回上级目录
+        $('#menu_back').on('click', function(){
+            if (menu_stack.length > 1) {
+                menu_stack.splice(menu_stack.length-1, 1);
+                loadMenuList();
+            }
+        });
+        //移动到选中的目录中
+        $('#menu_move').on('click', function(){
+            var cn_fid = $('#menu_list').find('.list-active').attr('data-id');
+            if (cn_fid == undefined) {
+                if (confirm('您没有选中任何目录，移动到根目录？'))
+                    cn_fid = '0';
+                else
+                    return false;
+            }
+            $.post(
+                '/channel/updateField',
+                {cn_id: cn_id, field: 'cn_fid', value: cn_fid},
+                function(res){
+                    if (res.code == 1)
+                        location.reload();
+                    else
+                        alert(res.error);
+                },
+                'json'
+            );
+            $('#menu_modal').modal('hide');
+        });
+        //加载目录列表
+        function loadMenuList() {
+            var cn_fid = menu_stack[menu_stack.length-1];
+            $.post(
+                '/channel/getSimpleList',
+                {offset:0, limit:20, cn_fid: cn_fid},
+                function(res){
+                    if (res.code == 1) {
+                        var html = '';
+                        $.each(res.result, function(i, d){
+                            if (d.cn_id != cn_id)
+                                html += '<li class="list-group-item" data-id="'+d.cn_id+'">'+d.cn_name+'</li>';
+                        });
+                        if (html != '')
+                            $('#menu_list').html(html);
+                        else
+                            menu_stack.splice(menu_stack.length-1, 1);
+                        console.log(menu_stack);
+                    }
+                },
+                'json'
+            );
+        }
+    })();
     /*------设置关键字逻辑------*/
     (function(){
         var cn_id = '';

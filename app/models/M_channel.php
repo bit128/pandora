@@ -111,6 +111,79 @@ class M_channel extends \core\web\Model {
 	}
 
 	/**
+	 * [SDK]获取内容列表
+	 * ======
+	 * @param $offset		分页开始位置
+	 * @param $limit 		分页偏移量
+	 * @param $cn_fid		父内容id（单个或数组）
+	 * @param $cn_status	内容状态（单个或数组）
+	 * @param $get_summary 	以摘要方式显示详细内容（摘要字数）
+	 * @param $order_by		排序方式（默认序号）
+	 * ======
+	 * @author 洪波
+	 * @version 17.10.20
+	 */
+	public function getContentList($offset, $limit, $cn_fid, $cn_status=[2,3], $get_summary=0, $order_by=0) {
+		$criteria = new Criteria;
+		if (is_array($cn_fid)) {
+			$criteria->addIn('cn_fid', $cn_fid);
+		} else {
+			$criteria->add('cn_fid', $cn_fid);
+		}
+		if (is_array($cn_status)) {
+			$criteria->addIn('cn_status', $cn_status);
+		} else {
+			$criteria->add('cn_status', $cn_status);
+		}
+		$count = $this->getOrm()->count($criteria);
+		//分页排序
+		$criteria->offset = $offset;
+		$criteria->limit = $limit;
+		$criteria->order = ['cn_sort desc','cn_sort asc','cn_ctime desc','cn_utime desc'][$order_by];
+		//获取数据列表
+		$result = $this->getOrm()->findAll($criteria);
+		if ($get_summary > 0) {
+			foreach ($result as $k => $v) {
+				$result[$k]->cn_content = \core\tools\MbString::substr(str_replace(' ', '', strip_tags($v->cn_content)), 0, $get_summary);
+			}
+		}
+		return ['count'=>$count, 'result'=>$result];
+	}
+
+	/**
+	 * [SDK]获取内容简单列表
+	 * ======
+	 * @param $offset		分页开始位置
+	 * @param $limit 		分页偏移量
+	 * @param $cn_fid		父内容id（单个或数组）
+	 * ======
+	 * @author 洪波
+	 * @version 17.10.31
+	 */
+	public function getSimpleList($offset, $limit, $cn_fid, $order_by=0) {
+		$criteria = new Criteria;
+		$criteria->select = 'cn_id,cn_image,cn_name,cn_data,cn_ctime,cn_ctime';
+		if (is_array($cn_fid)) {
+			$criteria->addIn('cn_fid', $cn_fid);
+		} else {
+			$criteria->add('cn_fid', $cn_fid);
+		}
+		$criteria->add('cn_status', self::STATUS_OPEN);
+		//分页排序
+		$criteria->offset = $offset;
+		$criteria->limit = $limit;
+		$criteria->order = ['cn_sort desc','cn_sort asc','cn_ctime desc','cn_utime desc'][$order_by];
+		//获取数据列表
+		$count = $this->getOrm()->count($criteria);
+		$result = $this->getOrm()->findAll($criteria);
+		foreach ($result as $k => $v) {
+			if ($result[$k]->cn_data != '{}')
+				$result[$k]->cn_data = json_decode($v->cn_data);
+		}
+		return ['count'=>$count, 'result'=>$result];
+	}
+
+	/**
 	* 面包屑路径（递归上级目录路径）
 	* ======
 	* @param $cn_id 目录id
