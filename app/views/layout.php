@@ -7,7 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>1Doc后台管理系统</title>
+    <title><?php echo \core\Autumn::app()->config->get('app_name'); ?></title>
 
     <!-- Bootstrap core CSS -->
     <link href="/app/statics/home/css/bootstrap.min.css" rel="stylesheet">
@@ -68,7 +68,7 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="/home">
-            <?php echo \core\Autumn::app()->config->get('app_name'); ?> - 后台管理系统
+            <?php echo \core\Autumn::app()->config->get('app_name'); ?>
           </a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
