@@ -94,8 +94,7 @@
     <footer class="footer">
       <div class="container">
         <p class="text-muted">&copy <?php echo \core\Autumn::app()->config->get('app_name'); ?> 2013-2017 版权所有 
-          <small>[ 当前版本：<?php echo \core\Autumn::app()->config->get('version'); ?> ]</small>
-          浙ICP备16017720号-2
+          version：<?php echo \core\Autumn::app()->config->get('version'); ?>
         </p>
       </div>
     </footer>

@@ -140,7 +140,7 @@
                     </select>
                 </td>
                 <td>
-                    <a href="/home/content/id/<?php echo $item->cn_id; ?>" target="_blank" class="btn btn-xs btn-default">
+                    <a href="/home/content/id/<?php echo $item->cn_id; ?>" target="_blank" class="btn btn-xs btn-info">
                         <span class="glyphicon glyphicon-print"></span> 内容
                     </a>
                     <a href="/home/file/bid/<?php echo $item->cn_id; ?>" class="btn btn-xs btn-default">
@@ -149,13 +149,13 @@
                     <button type="button" class="btn btn-xs btn-default set_data">
                         <span class="glyphicon glyphicon-list"></span> 扩展
                     </button>
-                    <a href="/home/channel/fid/<?php echo $item->cn_id; ?>" class="btn btn-xs btn-success">
+                    <a href="/home/channel/fid/<?php echo $item->cn_id; ?>" class="btn btn-xs btn-default">
                         <span class="glyphicon glyphicon-tags"></span> 成员
                     </a>
-                    <button type="button" class="btn btn-xs btn-info move_channel">
+                    <button type="button" class="btn btn-xs btn-default move_channel">
                         <span class="glyphicon glyphicon-move"></span> 移动
                     </button>
-                    <button type="button" class="btn btn-xs btn-warning delete_channel">
+                    <button type="button" class="btn btn-xs btn-default delete_channel">
                         <span class="glyphicon glyphicon-trash"></span> 删除
                     </button>
                 </td>

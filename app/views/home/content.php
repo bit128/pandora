@@ -1,17 +1,21 @@
 <style type="text/css">
 /*------ editor ------*/
+body {
+	background-color: #eeeeee;
+}
 #note_editor {
 	margin-top: 10px;
 	font-size:16px;
-	border: 1px #ddd dashed;
-	border-radius: 8px;
 	color:#666;
-	min-height: 480px;
+	min-height: 460px;
 	height: auto;
 	width:100%;
 	padding:10px;
 	background: #fff;
 	outline:none;
+}
+#note_editor textarea {
+	border: 1px solid #eee;
 }
 .btn-orange {
 	background-color: #fa6800;
@@ -29,119 +33,110 @@
 	background-color: #fa5500;
     color: #fff;
 }
+.cbtn-list {
+	text-align: center;
+	margin-top: 16px;
+}
+.cbtn {
+	width: 40px;
+	height: 40px;
+	padding-top: 9px;
+	font-size: 16px;
+	border-radius: 50%;
+	background-color: #fff;
+	display: inline-block;
+	text-align: center;
+	color: #666;
+	box-shadow: 0 0 5px #ddd;
+	margin-right: 5px;
+	outline: none !important;
+}
+.cbtn:hover {
+	color: #fa6800;
+	box-shadow: 0 0 10px #fa6800;
+}
+.cbtn:active {
+	color: #fa6800;
+}
+.cbtn-active {
+	background-color: #fa6800;
+	color: #fff !important;
+}
+.cbtn-big {
+	width: 60px;
+	height: 60px;
+	font-size: 20px;
+	padding-top: 15px;
+}
+.btn-color {
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	display: inline-block;
+}
 </style>
 <div class="container">
 	<div class="row">
-		<div class="col-md-3">
-			<div style="padding: 20px 0 20px;margin-top:10px;" id="note_btns">
-				<div style="text-align:center;">
-					<button type="button" class="btn btn-sm btn-grew">
-						<span class="glyphicon glyphicon-floppy-disk"></span> 自动保存
-					</button>
-					<button type="button" class="btn btn-sm btn-grew" data-val="0">
-						<span class="glyphicon glyphicon-list-alt"></span> 代码模式
-					</button>
+		<div class="col-md-2">
+			<div id="note_btns">
+				<div class="cbtn-list">
+					<a href="javascript:;" class="cbtn" title="代码模式" data-val="0">
+						<span class="glyphicon glyphicon-list-alt"></span>
+					</a>
+					<a href="javascript:;" class="cbtn cbtn-big" title="保存">
+						<span class="glyphicon glyphicon-save"></span>
+					</a>
 				</div>
-				<div style="text-align:center;margin-top:20px;">
-					<span class="btn-group">
-						<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
-							字号 <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu">
-							<li><a href="javascript:;" class="size">一号</a></li>
-							<li><a href="javascript:;" class="size">二号</a></li>
-							<li><a href="javascript:;" class="size">三号</a></li>
-							<li><a href="javascript:;" class="size">四号</a></li>
-							<li><a href="javascript:;" class="size">五号</a></li>
-							<li><a href="javascript:;" class="size">六号</a></li>
-							<li><a href="javascript:;" class="size">七号</a></li>
-						</ul>
-					</span>
-					<span class="btn-group">
-						<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
-							颜色 <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu">
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#000">#000000</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#333">#333333</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#666">#666666</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#999">#999999</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#ccc">#cccccc</a></li>
-							<li><a href="javascript:;" class="color" style="color:#999;background:#fff">#ffffff</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#ff0000">#ff0000</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#ff4e00">#ff4e00</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#ff8a00">#ff8a00</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#baff00">#baff00</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#00fff6">#00fff6</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#00c0ff">#00c0ff</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#0084ff">#0084ff</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#6c00ff">#6c00ff</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#de00ff">#de00ff</a></li>
-							<li><a href="javascript:;" class="color" style="color:#fff;background:#ff008a">#ff008a</a></li>
-						</ul>
-					</span>
-					<span class="btn-group">
-						<button type="button" class="btn btn-sm btn-grew dropdown-toggle" data-toggle="dropdown">
-							背景 <span class="caret"></span>
-						</button>
-						<ul class="dropdown-menu">
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#000">#000000</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#333">#333333</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#666">#666666</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#999">#999999</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ccc">#cccccc</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#999;background:#fff">#ffffff</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff0000">#ff0000</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff4e00">#ff4e00</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff8a00">#ff8a00</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#baff00">#baff00</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#00fff6">#00fff6</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#00c0ff">#00c0ff</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#0084ff">#0084ff</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#6c00ff">#6c00ff</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#de00ff">#de00ff</a></li>
-							<li><a href="javascript:;" class="bg" style="color:#fff;background:#ff008a">#ff008a</a></li>
-						</ul>
-					</span>
+				<div class="cbtn-list">
+					<a href="javascript:;" class="cbtn" title="大标题">
+						<span class="glyphicon glyphicon-th-list"></span>
+					</a>
+					<a href="javascript:;" class="cbtn" title="中标题">
+						<span class="glyphicon glyphicon-align-justify"></span>
+					</a>
+					<a href="javascript:;" class="cbtn" title="小标题">
+						<span class="glyphicon glyphicon-list"></span>
+					</a>
 				</div>
-				<div style="text-align:center;margin-top:20px;">
-					<button type="button" class="btn btn-sm btn-grew" title="大标题">
-						<span class="glyphicon glyphicon-th-list"></span> 大标题
-					</button>
-					<button type="button" class="btn btn-sm btn-grew" title="小标题">
-						<span class="glyphicon glyphicon-list"></span> 小标题
-					</button>
+				<div class="cbtn-list">
+					<a href="javascript:;" class="cbtn" title="左对齐">
+						<span class="glyphicon glyphicon-align-left"></span>
+					</a>
+					<a href="javascript:;" class="cbtn" title="居中">
+						<span class="glyphicon glyphicon-align-center"></span>
+					</a>
+					<a href="javascript:;" class="cbtn" title="右对齐">
+						<span class="glyphicon glyphicon-align-right"></span>
+					</a>
 				</div>
-				<div style="text-align:center;margin-top:20px;">
-					<button type="button" class="btn btn-sm btn-grew" title="左对齐">
-						<span class="glyphicon glyphicon-align-left"></span> 左对齐
-					</button>
-					<button type="button" class="btn btn-sm btn-grew" title="居中">
-						<span class="glyphicon glyphicon-align-center"></span> 居中
-					</button>
-					<button type="button" class="btn btn-sm btn-grew" title="右对齐">
-						<span class="glyphicon glyphicon-align-right"></span> 右对齐
-					</button>
+				<div class="cbtn-list">
+					<a href="javascript:;" class="cbtn" title="粗体">
+						<span class="glyphicon glyphicon-bold"></span>
+					</a>
+					<a href="javascript:;" class="cbtn" title="斜体">
+						<span class="glyphicon glyphicon-italic"></span>
+					</a>
 				</div>
-				<div style="text-align:center;margin-top:20px;">
-					<button type="button" class="btn btn-sm btn-grew" title="粗体">
-						<span class="glyphicon glyphicon-bold"></span> 粗体
-					</button>
-					<button type="button" class="btn btn-sm btn-grew" title="斜体">
-						<span class="glyphicon glyphicon-italic"></span> 斜体
-					</button>
+				<div class="cbtn-list">
+					<a href="javascript:;" class="cbtn" title="插入资源" data-toggle="modal" data-target="#file_box">
+						<span class="glyphicon glyphicon-font"></span>
+					</a>
+					<a href="javascript:;" class="cbtn" title="插入表格" data-toggle="modal" data-target="#table_box">
+						<span class="glyphicon glyphicon-th"></span>
+					</a>
 				</div>
-				<div style="text-align:center;margin-top:20px;">
-					<button type="button" class="btn btn-sm btn-grew" data-toggle="modal" data-target="#file_box">
-						<span class="glyphicon glyphicon-font"></span> 插入资源
-					</button>
-					<button type="button" class="btn btn-sm btn-grew" data-toggle="modal" data-target="#table_box">
-						<span class="glyphicon glyphicon-th"></span> 插入表格
-					</button>
+				<div class="cbtn-list">
+					<a href="javascript:;" class="btn-color" data-val="666666" style="background-color:#666666;box-shadow:0 0 3px #666666;"></a>
+					<a href="javascript:;" class="btn-color" data-val="FF6666" style="background-color:#FF6666;box-shadow:0 0 3px #FF6666;"></a>
+					<a href="javascript:;" class="btn-color" data-val="0099CC" style="background-color:#0099CC;box-shadow:0 0 3px #0099CC;"></a>
+					<a href="javascript:;" class="btn-color" data-val="FFCC00" style="background-color:#FFCC00;box-shadow:0 0 3px #FFCC00;"></a>
+					<a href="javascript:;" class="btn-color" data-val="669933" style="background-color:#669933;box-shadow:0 0 3px #669933;"></a>
+					<a href="javascript:;" class="btn-color" data-val="996600" style="background-color:#996600;box-shadow:0 0 3px #996600;"></a>
+					<a href="javascript:;" class="btn-color" data-val="993399" style="background-color:#993399;box-shadow:0 0 3px #993399;"></a>
 				</div>
 			</div>
 		</div>
-		<div class="col-md-9">
+		<div class="col-md-10">
 			<div id="note_editor"></div>
 		</div>
 	</div>
@@ -233,57 +228,49 @@ $(document).ready(function(){
 		bindEvent: function(){
 			var f = this;
 			//编辑按钮事件
-			f.btns.on('click', 'button', function(){
-				var i = f.btns.find('button').index(this);
+			f.btns.on('click', 'a', function(){
+				var i = f.btns.find('a').index(this);
 				switch (i) {
-					case 0: //保存
-						f.update(f);
-						break;
-					case 1:
+					case 0: //代码模式
 						f.codeView(f, $(this));
 						break;
-					case 10: //加粗
-						document.execCommand('bold');
-						f.setTimer(f);
+					case 1: //保存
+						f.update(f);
 						break;
-					case 11: //斜体
-						document.execCommand('italic');
-						f.setTimer(f);
-						break;
-					case 5: //大标题
+					case 2: //大标题
 						f.insertTitle(f, 1);
 						break;
-					case 6: //小标题
+					case 3: //小标题
 						f.insertTitle(f, 2);
 						break;
-					case 7: //左对齐
+					case 4: //小标题
+						f.insertTitle(f, 3);
+						break;
+					case 5: //左对齐
 						document.execCommand('justifyLeft');
 						f.setTimer(f);
 						break;
-					case 8: //居中
+					case 6: //居中
 						document.execCommand('justifyCenter');
 						f.setTimer(f);
 						break;
-					case 9: //右对齐
+					case 7: //右对齐
 						document.execCommand('justifyRight');
+						f.setTimer(f);
+						break;
+					case 8: //加粗
+						document.execCommand('bold');
+						f.setTimer(f);
+						break;
+					case 9: //斜体
+						document.execCommand('italic');
 						f.setTimer(f);
 						break;
 				}
 			});
-			//设置字号
-			f.btns.on('click', '.size', function(){
-				var i = f.btns.find('.size').index(this);
-				document.execCommand('fontSize', false, i + 1);
-				f.setTimer(f);
-			});
 			//字体颜色
-			f.btns.on('click', '.color', function(){
-				document.execCommand('foreColor', false, $(this).text());
-				f.setTimer(f);
-			});
-			//背景色
-			f.btns.on('click', '.bg', function(){
-				document.execCommand('backColor', false, $(this).text());
+			f.btns.on('click', '.btn-color', function(){
+				document.execCommand('foreColor', false, '#' + $(this).attr('data-val'));
 				f.setTimer(f);
 			});
 			//编辑内容事件
@@ -293,12 +280,12 @@ $(document).ready(function(){
 		},
 		codeView: function(f, btn){
 			if(btn.attr('data-val') == '0'){
-				btn.removeClass('btn-grew').addClass("btn-orange").attr('data-val', '1');
+				btn.addClass("cbtn-active").attr('data-val', '1');
 				f.editarea[0].contentEditable = false;
 				f.editarea.html('<textarea class="form-control" rows="22">'+f.editarea.html()+'</textarea>');
 				f.btns.find('button:gt(1)').hide();
 			}else{
-				btn.removeClass('btn-ornage').addClass("btn-grew").attr('data-val', '0');
+				btn.removeClass('cbtn-active').attr('data-val', '0');
 				f.editarea[0].contentEditable = true;
 				f.editarea.html(f.editarea.find('textarea').val());
 				f.btns.find('button:gt(1)').show();
@@ -308,39 +295,32 @@ $(document).ready(function(){
 			this.cn_id = 0;
 			this.editarea.html('');
 			this.editarea.hide();
-		},/*
-		getPosition: function(){
-			var position = -1;
-			var obj = document.getElementById('note_editor');
-
-			if(window.getSelection()){
-				position = window.getSelection().focusOffset;
-			}else{
-				var range = document.selection.createRange();
-				range.moveStart('character', -obj.value.length);
-				position = range.text.length;
-			}
-			return position;
-		},*/
+		},
 		insertTitle: function(f, types){
 			var style,title;
-			if(types == 1){
-				style = 'font-size:28px;color:#333;';
-				title = '大号模版标题';
-			}else{
-				style = 'font-size:20px;color:#33ccff;';
-				title = '小号模版标题';
+			switch (types) {
+				case 1:
+					style = 'font-size:30px;color:#333;';
+					title = '大号模版标题';
+					break;
+				case 2:
+					style = 'font-size:26px;color:#666;';
+					title = '中号模版标题';
+					break;
+				case 3:
+					style = 'font-size:20px;color:#996600;';
+					title = '小号模版标题';
+					break;
 			}
 			document.execCommand('insertHTML', false, '<div style="'+style+'">'+title+'</div><br>');
 		},
 		setTimer: function(f){
 			if(f.timer == undefined && f.cn_id != 0) {
 				var limit = f.savetime;
-				var btn = f.btns.find('button:eq(0)');
-				btn.removeClass('btn-grew').addClass('btn-orange');
+				var btn = f.btns.find('a:eq(1)');
 				f.timer = setInterval(function(){
 					if(--limit > 0) {
-						btn.html('<span class="glyphicon glyphicon-floppy-disk"></span> 自动保存('+limit+'s)');
+						btn.html('<span style="color:#fa6800">'+limit+'s</span>');
 					} else {
 						f.update(f);
 					}
@@ -364,9 +344,8 @@ $(document).ready(function(){
 			}, 'json');
 		},
 		update: function(f){
-			var btn = f.btns.find('button:eq(0)');
-			btn.html('<span class="glyphicon glyphicon-floppy-disk"></span> 自动保存');
-			btn.removeClass('btn-orange').addClass('btn-grew');
+			var btn = f.btns.find('a:eq(1)');
+			btn.html('<span class="glyphicon glyphicon-save"></span>');
 			clearInterval(f.timer);
 			f.timer = undefined;
 			var ta = f.editarea.find('textarea');
@@ -436,7 +415,7 @@ $(document).ready(function(){
 			html = '';
 			ths = '';
 			tds = '';
-			while(cols){
+			while (cols) {
 				ths += '<th></th>';
 				tds += '<td></td>';
 				--cols;
@@ -445,7 +424,7 @@ $(document).ready(function(){
 				html += '<thead style="background:#eee;"><tr>' + ths + '</tr></thead>';	
 			}
 			html += '<tbody>';
-			while(rows){
+			while (rows) {
 				html += '<tr>' + tds + '</tr>';
 				--rows;
 			}
@@ -453,7 +432,7 @@ $(document).ready(function(){
 			$('#tab_rows').val('');
 			$('#tab_cols').val('');
 			$('#table_box').modal('hide');
-		}else{
+		} else {
 			alert('行数和列数请填写正整数');
 		}
 	});
