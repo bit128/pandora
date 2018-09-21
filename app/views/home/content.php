@@ -282,7 +282,7 @@ $(document).ready(function(){
 			if(btn.attr('data-val') == '0'){
 				btn.addClass("cbtn-active").attr('data-val', '1');
 				f.editarea[0].contentEditable = false;
-				f.editarea.html('<textarea class="form-control" rows="22">'+f.editarea.html()+'</textarea>');
+				f.editarea.html('<textarea class="form-control" rows="22">'+f.codeFilter(f.editarea.html())+'</textarea>');
 				f.btns.find('button:gt(1)').hide();
 			}else{
 				btn.removeClass('cbtn-active').attr('data-val', '0');
@@ -290,6 +290,9 @@ $(document).ready(function(){
 				f.editarea.html(f.editarea.find('textarea').val());
 				f.btns.find('button:gt(1)').show();
 			}
+		},
+		codeFilter: function(content){
+			return content.replace(/\<div\>\<br\>\<\/div\>/g, '<br>');
 		},
 		refresh: function(){
 			this.cn_id = 0;
@@ -350,9 +353,9 @@ $(document).ready(function(){
 			f.timer = undefined;
 			var ta = f.editarea.find('textarea');
 			if(ta.val()){
-				$.post('/channel/updateField', {cn_id: f.cn_id, field: 'cn_content', value: ta.val()});
+				$.post('/channel/updateField', {cn_id: f.cn_id, field: 'cn_content', value: f.codeFilter(ta.val())});
 			}else{
-				$.post('/channel/updateField', {cn_id: f.cn_id, field: 'cn_content', value: f.editarea.html()});
+				$.post('/channel/updateField', {cn_id: f.cn_id, field: 'cn_content', value: f.codeFilter(f.editarea.html())});
 			}
 		}
 	};
