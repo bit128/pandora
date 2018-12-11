@@ -7,7 +7,7 @@
 */
 return [
 	'app_name' => 'Pandora 网媒管理系统',
-	'version' => '2.2',
+	'version' => '2.3',
 	//开启session
 	'session_start' => true,
 	//业务模型载入路径

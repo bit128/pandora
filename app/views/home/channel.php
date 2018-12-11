@@ -66,7 +66,7 @@
                 <a href="<?php echo $s_uri,'/s/',0; ?>" class="btn btn-sm <?php echo $status == 0 ? 'btn-info' : 'btn-default'; ?>">全部</a>
                 <a href="<?php echo $s_uri,'/s/',1; ?>" class="btn btn-sm <?php echo $status == 1 ? 'btn-danger' : 'btn-default'; ?>">隐藏</a>
                 <a href="<?php echo $s_uri,'/s/',2; ?>" class="btn btn-sm <?php echo $status == 2 ? 'btn-success' : 'btn-default'; ?>">公开</a>
-                <a href="<?php echo $s_uri,'/s/',3; ?>" class="btn btn-sm <?php echo $status == 3 ? 'btn-warning' : 'btn-default'; ?>">热门</a>
+                <a href="<?php echo $s_uri,'/s/',3; ?>" class="btn btn-sm <?php echo $status == 3 ? 'btn-warning' : 'btn-default'; ?>">付费</a>
             </span>
             <a href="<?php echo \core\Autumn::app()->route->reUrl(['o'=>$order==0?1:0]);?>" class="btn btn-sm btn-default">
                 <?php if ($order == 0){ ?>    
@@ -103,7 +103,12 @@
         <tbody id="channel_list">
             <?php foreach ($result as $item) { ?>
             <tr>
-                <td><small><?php echo $item->cn_id; ?></small></td>
+                <td style="text-align:center;">
+                    <p><small><?php echo $item->cn_id; ?></small></p>
+                    <a href="/home/content/id/<?php echo $item->cn_id; ?>" target="_blank" class="btn btn-xs btn-info btn-block">
+                        <span class="glyphicon glyphicon-file"></span> 内容
+                    </a>
+                </td>
                 <td>
                     <a href="/home/file/avatar/channel/bid/<?php echo $item->cn_id; ?>">
                     <?php if($item->cn_image == '') {
@@ -130,7 +135,7 @@
                 <td><a href="javascript:;" class="set_text" data-field="cn_sort"><?php echo $item->cn_sort; ?></a></td>
                 <td>
                     <select class="set_status">
-                    <?php foreach (['隐藏','公开','热门'] as $k => $v) {
+                    <?php foreach (['隐藏','公开','付费'] as $k => $v) {
                         $tk = $k + 1;
                         if ($tk != $item->cn_status)
                             echo '<option value="',$tk,'">',$v,'</option>';
@@ -140,23 +145,20 @@
                     </select>
                 </td>
                 <td>
-                    <a href="/home/content/id/<?php echo $item->cn_id; ?>" target="_blank" class="btn btn-xs btn-info">
-                        <span class="glyphicon glyphicon-print"></span> 内容
-                    </a>
                     <a href="/home/file/bid/<?php echo $item->cn_id; ?>" class="btn btn-xs btn-default">
-                        <span class="glyphicon glyphicon-file"></span> 资源
-                    </a>
-                    <button type="button" class="btn btn-xs btn-default set_data">
-                        <span class="glyphicon glyphicon-list"></span> 扩展
-                    </button>
-                    <a href="/home/channel/fid/<?php echo $item->cn_id; ?>" class="btn btn-xs btn-default">
-                        <span class="glyphicon glyphicon-tags"></span> 成员
+                        <span class="glyphicon glyphicon-inbox"></span> 资源
                     </a>
                     <button type="button" class="btn btn-xs btn-default move_channel">
                         <span class="glyphicon glyphicon-move"></span> 移动
                     </button>
                     <button type="button" class="btn btn-xs btn-default delete_channel">
                         <span class="glyphicon glyphicon-trash"></span> 删除
+                    </button>
+                    <a href="/home/channel/fid/<?php echo $item->cn_id; ?>" style="width:106px;" class="btn btn-xs btn-success">
+                        <span class="glyphicon glyphicon-tags"></span> 成员
+                    </a>
+                    <button type="button" class="btn btn-xs btn-default set_data">
+                        <span class="glyphicon glyphicon-list"></span> 扩展
                     </button>
                 </td>
             </tr>
@@ -373,7 +375,7 @@ $(document).ready(function(){
     });
     //设置名称/排序
     $('#channel_list').on('click', '.set_text', function(){
-        var cn_id = $(this).parents('tr').find('td:eq(0)').text();
+        var cn_id = $(this).parents('tr').find('td:eq(0) small').text();
         var td = $(this).parent();
         var value = $(this).text();
         var field = $(this).attr('data-field');
@@ -403,7 +405,7 @@ $(document).ready(function(){
     });
     //设置状态
     $('#channel_list').on('change', '.set_status', function(){
-        var cn_id = $(this).parents('tr').find('td:eq(0)').text();
+        var cn_id = $(this).parents('tr').find('td:eq(0) small').text();
         $.post(
             '/channel/updateField',
             {cn_id: cn_id, field: 'cn_status', value: $(this).val()},
@@ -418,13 +420,13 @@ $(document).ready(function(){
     });
     //扩展字段
     $('#channel_list').on('click', '.set_data', function(){
-        var cn_id = $(this).parents('tr').find('td:eq(0)').text();
+        var cn_id = $(this).parents('tr').find('td:eq(0) small').text();
         extensionData.loadData(cn_id);
     });
     //删除栏目
     $('#channel_list').on('click', '.delete_channel', function(){
         if (confirm('确定要删除该栏目以及全部下级栏目和内容吗？操作不可恢复！')) {
-            var cn_id = $(this).parents('tr').find('td:eq(0)').text();
+            var cn_id = $(this).parents('tr').find('td:eq(0) small').text();
             $.post(
                 '/channel/deleteAll',
                 {cn_id: cn_id},
@@ -444,7 +446,7 @@ $(document).ready(function(){
         var menu_stack = ['0'];
         //移动目录
         $('#channel_list').on('click', '.move_channel', function(){
-            cn_id = $(this).parents('tr').find('td:eq(0)').text();
+            cn_id = $(this).parents('tr').find('td:eq(0) small').text();
             $('#menu_modal').modal('show');
             loadMenuList();
         });
@@ -516,7 +518,7 @@ $(document).ready(function(){
         var cn_id = '';
         //显示设置关键字框
         $('#channel_list').on('click', '.set_index', function(){
-            cn_id = $(this).parents('tr').find('td:eq(0)').text();
+            cn_id = $(this).parents('tr').find('td:eq(0) small').text();
             var sk = $.trim($(this).text());
             if (sk == '设置关键词')
                 sk = '';
