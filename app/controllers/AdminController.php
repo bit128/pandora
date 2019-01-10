@@ -104,7 +104,7 @@ class AdminController extends \core\web\Controller {
 							Autumn::app()->response->setResult(Response::RES_FAIL);
 						}
 					} else {
-						Autumn::app()->response->setResult(Response::RES_NAMEDF);
+						Autumn::app()->response->setResult(Response::RES_FAIL, '', '用户重名');
 					}
 				} else {
 					Autumn::app()->response->setResult(Response::RES_PARAMF, '', '需要填写管理员账号');
