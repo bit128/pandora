@@ -11,6 +11,13 @@ use \core\http\Response;
 use app\models\M_admin;
 
 class AdminController extends \core\web\Controller {
+
+	private function checkLogin() {
+		if(! Autumn::app()->request->getSession('am_account')) {
+			header("Location:/admin/loginPage");
+		}
+	}
+
 	/**
 	* 管理员页面
 	* ======
@@ -18,6 +25,7 @@ class AdminController extends \core\web\Controller {
 	* @version 16.07.29
 	*/
 	public function actionIndex() {
+		$this->checkLogin();
 		$page = Autumn::app()->request->getQuery('page', 1);
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
