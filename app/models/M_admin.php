@@ -16,9 +16,6 @@ class M_admin extends \core\web\Model {
 	const ROLE_ADMIN	= 1; 	//权限 - 管理员
 	const ROLE_USER		= 2; 	//权限 - 用户
 	const ROLE_CONTENT	= 4; 	//权限 - 内容
-	const ROLE_PRODUCT	= 8;	//权限 - 商品
-	const ROLE_CUSTOM	= 16;	//权限 - 客服
-	const ROLE_ORDER	= 32;	//权限 - 订单
 	const ROLE_SUPER	= 4096;	//权限 - 超级
 
 	/**
@@ -36,9 +33,6 @@ class M_admin extends \core\web\Model {
 			1 	=> '管理员',
 			2 	=> '用户',
 			4 	=> '内容',
-			//8 	=> '商品',
-			//16 	=> '客服',
-			//32 	=> '订单',
 			4096=> '超级'
 			);
 		if($checkbox) {

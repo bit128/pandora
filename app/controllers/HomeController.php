@@ -13,7 +13,7 @@ class HomeController extends \core\web\Controller {
 
 	public function init() {
 		if(! Autumn::app()->request->getSession('am_account')) {
-			header("Location:/admin/loginPage");
+			$this->redirect('/admin/loginPage');
 		}
 	}
 
@@ -24,7 +24,7 @@ class HomeController extends \core\web\Controller {
 	* @version 16.07.29
 	*/
 	public function actionIndex() {
-		Autumn::app()->view->render('index');
+		$this->renderView('index');
 	}
 
 	/**
@@ -35,9 +35,9 @@ class HomeController extends \core\web\Controller {
 	*/
 	public function actionUser() {
 		$m_user = new \app\models\M_user;
-		$page = Autumn::app()->request->getQuery('page', 1);
-		$status = Autumn::app()->request->getQuery('s', 1);
-		$keyword = Autumn::app()->request->getQuery('k');
+		$page = $this->getQuery('page', 1);
+		$status = $this->getQuery('s', 1);
+		$keyword = $this->getQuery('k');
 		$limit = 10;
 		$offset = ($page - 1) * $limit;
 		$url = '/home/user/s/'.$status;
@@ -60,7 +60,7 @@ class HomeController extends \core\web\Controller {
 			'user_list' => $result['result'],
 			'pages' => $pages->build()
 			);
-		Autumn::app()->view->render('user', $data);
+		$this->renderView('user', $data);
 	}
 
 	/**
@@ -70,7 +70,7 @@ class HomeController extends \core\web\Controller {
 	* @version 16.08.02
 	*/
 	public function actionUserDetail() {
-		$user_id = Autumn::app()->request->getQuery('id');
+		$user_id = $this->getQuery('id');
 		if(strlen($user_id) == 13) {
 			$m_user = new \app\models\M_user;
 			$user = $m_user->get($user_id);
@@ -78,7 +78,7 @@ class HomeController extends \core\web\Controller {
 				$data = array(
 					'user' => $user
 					);
-				Autumn::app()->view->render('user_detail', $data);
+				$this->renderView('user_detail', $data);
 			}
 		}
 	}
@@ -90,11 +90,11 @@ class HomeController extends \core\web\Controller {
 	* @version 17.09.15
 	*/
 	public function actionChannel() {
-		$fid = Autumn::app()->request->getQuery('fid', '0');
-		$status = (int) Autumn::app()->request->getQuery('s', 0);
-		$order = (int) Autumn::app()->request->getQuery('o', 0);
-		$keyword = Autumn::app()->request->getQuery('k', '');
-		$page = Autumn::app()->request->getQuery('page', 1);
+		$fid = $this->getQuery('fid', '0');
+		$status = (int) $this->getQuery('s', 0);
+		$order = (int) $this->getQuery('o', 0);
+		$keyword = $this->getQuery('k', '');
+		$page = $this->getQuery('page', 1);
 		//查询条件
 		$criteria = new Criteria;
 		$criteria->add('cn_fid', $fid);
@@ -121,7 +121,7 @@ class HomeController extends \core\web\Controller {
 			'breadcrumb' => $this->model('m_channel')->breadcrumb($fid),
 			'pages' => $pages->build()
 		];
-		Autumn::app()->view->render('channel', $data);
+		$this->renderView('channel', $data);
 	}
 
 	/**
@@ -131,7 +131,7 @@ class HomeController extends \core\web\Controller {
 	* @version 16.08.01
 	*/
 	public function actionContent() {
-		$cn_id = Autumn::app()->request->getParam('id');
+		$cn_id = $this->getParam('id');
 		if(strlen($cn_id) == 13) {
 			//获取附件列表
 			$m_file = new \app\models\M_file;
@@ -144,7 +144,7 @@ class HomeController extends \core\web\Controller {
 				'cn_id' => $cn_id,
 				'file_list' => $file_list
 				);
-			Autumn::app()->view->render('content', $data);
+			$this->renderView('content', $data);
 		}
 	}
 
@@ -155,9 +155,9 @@ class HomeController extends \core\web\Controller {
 	* @version 16.09.23
 	*/
 	public function actionKeyword() {
-		$keyword = Autumn::app()->request->getQuery('k');
-		$sort = Autumn::app()->request->getQuery('s', 0);
-		$page = Autumn::app()->request->getQuery('page', 1);
+		$keyword = $this->getQuery('k');
+		$sort = $this->getQuery('s', 0);
+		$page = $this->getQuery('page', 1);
 		//查询数据列表
 		$criteria = new Criteria;
 		$criteria->limit = 10;
@@ -177,7 +177,7 @@ class HomeController extends \core\web\Controller {
 			'result' => $result['result'],
 			'pages' => $pages->build()
 			);
-		Autumn::app()->view->render('keyword', $data);
+		$this->renderView('keyword', $data);
 	}
 
 	/**
@@ -187,10 +187,10 @@ class HomeController extends \core\web\Controller {
 	* @version 16.08.04
 	*/
 	public function actionFile() {
-		$file_bid = Autumn::app()->request->getQuery('bid');
-		$avatar = Autumn::app()->request->getQuery('avatar');
-		$keyword = Autumn::app()->request->getQuery('k');
-		$page = Autumn::app()->request->getQuery('page', 1);
+		$file_bid = $this->getQuery('bid');
+		$avatar = $this->getQuery('avatar');
+		$keyword = $this->getQuery('k');
+		$page = $this->getQuery('page', 1);
 		$page_uri = '/home/file';
 		if ($avatar) {
 			$page_uri .= '/avatar/' . $avatar;
@@ -216,6 +216,6 @@ class HomeController extends \core\web\Controller {
 			'result' => $result,
 			'pages' => $pages->build()
 			);
-		Autumn::app()->view->render('file', $data);
+		$this->renderView('file', $data);
 	}
 }

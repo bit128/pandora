@@ -7,12 +7,34 @@
 */
 return [
 	'app_name' => 'Pandora 网媒管理系统',
-	'version' => '2.3',
+	'version' => '2.4',
+	'debug' => true,
 	//开启session
 	'session_start' => true,
 	//业务模型载入路径
 	'service_path' => 'app/models/',
+	//响应码配置路径
+	'response_code' => 'config/response.php',
+	//IP地址防火墙
+	'ip_filter' => [
+		//是否开启IP过滤（默认关闭）
+		'enabled' => false,
+		//IP配置表
+		'ip_list' => 'config/ip.php',
+	],
 	'module' => [
+		//API测试用例
+		/*
+		'test' => [
+			'class' => 'core\tools\TestApi',
+			'config' => 'config/api.php'
+		],//*/
+		//系统日志
+		'log' => [
+			'class' => 'core\Log',
+			'path' => 'app/runtimes/',
+			'prefix' => date('Ymd')
+		],
 		//路由器设置
 		'route' => [
 			'class' => 'core\web\Route',
@@ -41,7 +63,7 @@ return [
 			'class' => 'core\db\Mysqli',
 			'host' => '127.0.0.1',
 			'user' => 'root',
-			'password' => '',
+			'password' => 'hong_1987',
 			'dbname' => 'pandora'
 		]
 	]

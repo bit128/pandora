@@ -3,7 +3,7 @@
 * 控制器
 * ======
 * @author 洪波
-* @version 16.02.25
+* @version 19.05.21
 */
 namespace core\web;
 use core\Autumn;
@@ -24,6 +24,77 @@ class Controller {
 	public function __construct() {
 		//初始化控制器
 		$this->init();
+	}
+
+	/**
+	* 控制器初始化方法
+	* 子类重写用来替代构造方法
+	* ======
+	* @author 洪波
+	* @version 16.03.09
+	*/
+	public function init(){}
+
+	/**
+	 * 判断当前是否是POST请求
+	 * ======
+	 * @author 洪波
+	 * @version 19.05.21
+	 */
+	public function isPost() {
+		return Autumn::app()->request->isPost();
+	}
+
+	/**
+	* 获取get请求参数
+	* ======
+	* @param $key 		参数名称
+	* @param $default 	默认值
+	* ======
+	* @author 洪波
+	* @version 19.11.22
+	*/
+	public function getQuery($key, $default = '') {
+		return Autumn::app()->request->getQuery($key, $default);
+	}
+
+	/**
+	* 获取post请求参数
+	* ======
+	* @param $key 		参数名称
+	* @param $default 	默认值
+	* ======
+	* @author 洪波
+	* @version 19.11.22
+	*/
+	public function getPost($key, $default = '') {
+		return Autumn::app()->request->getPost($key, $default);
+	}
+
+	/**
+	* 获取请求参数
+	* ======
+	* @param $key 		名称
+	* @param $default 	默认值
+	* ======
+	* @author 洪波
+	* @version 19.05.21
+	*/
+	public function getParam($key, $default = '') {
+		return Autumn::app()->request->getParam($key, $default);
+	}
+
+	/**
+	* 设置请求参数
+	* ======
+	* @param $key 		名称
+	* @param $value 	值
+	* ======
+	* @author 洪波
+	* @version 19.05.21
+	*/
+	public function setParam($key, $value) {
+		Autumn::app()->request->setParam($key, $value);
 	}
 
 	/**
@@ -51,34 +122,54 @@ class Controller {
 	}
 
 	/**
-	* [新版不建议使用]自动载入业务模型
-	* ======
-	* @author 洪波
-	* @version 17.04.13
-	*/
-	public function __get($model_name) {
-		if(isset($this->service_instance[$model_name])) {
-			return $this->service_instance[$model_name];
-		} else {
-			$service = Autumn::app()->config->get('service_path') . ucfirst($model_name);
-			$service_class = str_replace('/', '\\', $service);
-			if (is_file('./' . $service . '.php')) {
-				$this->service_instance[$model_name] = new $service_class;
-				return $this->service_instance[$model_name];
-			} else {
-				Autumn::app()->exception->throws('业务模型：' . $service_class . ' 加载失败，请确认类路径是否正确');
-			}
-		}
+	 * 渲染视图
+	 * ======
+	 * @author 洪波
+	 * @version 19.05.12
+	 */
+	public function renderView($view, $data = []) {
+		Autumn::app()->view->render($view, $data);
 	}
 
 	/**
-	* 控制器初始化方法
-	* 子类重写用来替代构造方法
-	* ======
-	* @author 洪波
-	* @version 16.03.09
-	*/
-	public function init(){}
+	 * 响应成功结果集
+	 * ======
+	 * @author 洪波
+	 * @version 19.05.21
+	 */
+	public function respSuccess($result = null, array $extras = []) {
+		return Autumn::app()->response->success($result, $extras);
+	}
+
+	/**
+	 * 响应消极结果集
+	 * ======
+	 * @author 洪波
+	 * @version 19.05.21
+	 */
+	public function respError($code, $error = null) {
+		return Autumn::app()->response->fail($code, $error);
+	}
+
+	/**
+	 * 响应json格式结果
+	 * ======
+	 * @author 洪波
+	 * @version 19.11.21
+	 */
+	public function respJson($output = true) {
+		Autumn::app()->response->json($output);
+	}
+
+	/**
+	 * 响应json格式结果
+	 * ======
+	 * @author 洪波
+	 * @version 19.11.21
+	 */
+	public function respXml($output = true) {
+		Autumn::app()->response->xml($output);
+	}
 
 	/**
 	* 默认404页面action

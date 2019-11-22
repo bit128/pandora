@@ -4,7 +4,7 @@
 			<legend>用户照片</legend>
 			<label>用户头像：</label>
 			<?php if ($user->user_avatar == '') { ?>
-			<img src="/app/statics/files/images/default.jpg" class="img-responsive" id="user_avatar">
+			<img src="/app/statics/files/default.jpg" class="img-responsive" id="user_avatar">
 			<?php } else { ?>
 			<img src="/nfs/image<?php echo $user->user_avatar; ?>" class="img-responsive" id="user_avatar">
 			<?php } ?>

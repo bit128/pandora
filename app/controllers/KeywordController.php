@@ -6,9 +6,7 @@
 * @version 16.09.23
 */
 namespace app\controllers;
-use core\Autumn;
 use core\db\Criteria;
-use core\http\Response;
 use app\models\M_admin;
 
 class KeywordController extends \core\web\Controller {
@@ -19,22 +17,22 @@ class KeywordController extends \core\web\Controller {
     * @version 17.09.23
     */
     public function actionAdd() {
-        if (Autumn::app()->request->isPost()) {
+        if ($this->isPost()) {
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
 				$data = [
-                    'kw_name' => Autumn::app()->request->getPost('kw_name'),
+                    'kw_name' => $this->getPost('kw_name'),
 					'kw_time' => time()
 				];
 				$this->model('m_keyword')->loadData($data);
 				if ($this->model('m_keyword')->save()) {
-					Autumn::app()->response->setResult(Response::RES_OK);
+					$this->respSuccess();
 				} else {
-					Autumn::app()->response->setResult(Response::RES_FAIL);
+					$this->respError(2);
 				}
 			} else {
-				Autumn::app()->response->setResult(Response::RES_REFUSE);
+				$this->respError(105);
 			}
-			Autumn::app()->response->json();
+			$this->respJson();
 		}
 	}
 	
@@ -45,14 +43,14 @@ class KeywordController extends \core\web\Controller {
 	* @version 17.09.24
 	*/
 	public function actionGetList() {
-		if (Autumn::app()->request->isPost()) {
+		if ($this->isPost()) {
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
-				$sort = Autumn::app()->request->getPost('sort', 0);
-				$keyword = Autumn::app()->request->getPost('keyword', '');
+				$sort = $this->getPost('sort', 0);
+				$keyword = $this->getPost('keyword', '');
 				//查询条件
 				$criteria = new Criteria;
-				$criteria->offset = Autumn::app()->request->getPost('offset', 0);
-				$criteria->limit = Autumn::app()->request->getPost('limit', 5);
+				$criteria->offset = $this->getPost('offset', 0);
+				$criteria->limit = $this->getPost('limit', 5);
 				if ($keyword != '') {
 					$criteria->addCondition("kw_name like '%{$keyword}%'");
 				}
@@ -61,11 +59,11 @@ class KeywordController extends \core\web\Controller {
 					'kw_search desc',
 					'kw_use desc'
 				][$sort];
-				Autumn::app()->response->setResult($this->model('m_keyword')->getList($criteria));
+				$this->respSuccess($this->model('m_keyword')->getList($criteria));
 			} else {
-				Autumn::app()->response->setResult(Response::RES_REFUSE);
+				$this->respError(105);
 			}
-			Autumn::app()->response->json();
+			$this->respJson();
 		}
 	}
 
@@ -76,17 +74,17 @@ class KeywordController extends \core\web\Controller {
     * @version 17.09.23
     */
     public function actionDelete() {
-        if (Autumn::app()->request->isPost()) {
+        if ($this->isPost()) {
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
-				if ($this->model('m_keyword')->delete(Autumn::app()->request->getPost('kw_id'))) {
-					Autumn::app()->response->setResult(Response::RES_OK);
+				if ($this->model('m_keyword')->delete($this->getPost('kw_id'))) {
+					$this->respSuccess();
 				} else {
-					Autumn::app()->response->setResult(Response::RES_FAIL);
+					$this->respError(2);
 				}
 			} else {
-				Autumn::app()->response->setResult(Response::RES_REFUSE);
+				$this->respError(105);
 			}
-			Autumn::app()->response->json();
+			$this->respJson();
 		}
     }
 }

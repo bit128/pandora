@@ -9,10 +9,10 @@ namespace core;
 
 class Autumn {
 	
-	const FRAMEWORK_VERSION = '1.8.7';
+	const FRAMEWORK_VERSION = '1.9.3';
 
 	//Autumn实例
-	private static $_instance = NULL;
+	private static $_instance = null;
 	
 	//核心对象实例栈
 	private $core_instance = [];
@@ -90,9 +90,14 @@ class Autumn {
 	* 运行application
 	* ======
 	* @author 洪波
-	* @version 16.03.31
+	* @version 19.11.21
 	*/
 	public function run() {
+		if (Autumn::app()->config->get('ip_filter.enabled')) {
+			if (\in_array(Autumn::app()->request->getIp(), require_once(Autumn::app()->config->get('ip_filter.ip_list')))) {
+				Autumn::app()->exception->throws('服务器繁忙，请稍后重试~');
+			}
+		}
 		if(Autumn::app()->config->get('session_start')) {
 			session_start();
 		}

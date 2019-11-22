@@ -6,9 +6,7 @@
 * @version 17.03.03
 */
 namespace app\controllers;
-use core\Autumn;
 use core\db\Criteria;
-use core\http\Response;
 use app\models\M_file;
 use app\models\M_admin;
 
@@ -20,27 +18,27 @@ class FileController extends \core\web\Controller {
 	* @version 17.03.09
 	*/
 	public function actionSetAvatar() {
-		if (Autumn::app()->request->isPostRequest()) {
+		if ($this->isPost()) {
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
-				$file_bid = Autumn::app()->request->getPost('file_bid');
-				$image = Autumn::app()->request->getPost('image');
-				$mod = Autumn::app()->request->getPost('mod');
+				$file_bid = $this->getPost('file_bid');
+				$image = $this->getPost('image');
+				$mod = $this->getPost('mod');
 
 				$mod_class = '\app\models\M_' . $mod;
 				if (class_exists($mod_class)) {
 					$class = new $mod_class;
 					if ($class->setAvatar($file_bid, $image)) {
-						Autumn::app()->response->setResult(Response::RES_OK);
+						$this->respSuccess();
 					} else {
-						Autumn::app()->response->setResult(Response::RES_FAIL);
+						$this->respError(2);
 					}
 				} else {
-					Autumn::app()->response->setResult(Response::RES_PARAMF, '', '实体对象不存在，无法设置');
+					$this->respError(106);
 				}
 			} else {
-				Autumn::app()->response->setResult(Response::RES_REFUSE);
+				$this->respError(105);
 			}
-			Autumn::app()->response->json();
+			$this->respJson();
 		}
 	}
 	
@@ -51,26 +49,26 @@ class FileController extends \core\web\Controller {
 	* @version 17.03.03
 	*/
 	public function actionAdd() {
-		if (Autumn::app()->request->isPostRequest()) {
+		if ($this->isPost()) {
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
 				$data = [
-					'file_bid' => Autumn::app()->request->getPost('file_bid'),
-					'file_path' => Autumn::app()->request->getPost('file_path'),
-					'file_type' => Autumn::app()->request->getPost('file_type'),
-					'file_size' => Autumn::app()->request->getPost('file_size'),
+					'file_bid' => $this->getPost('file_bid'),
+					'file_path' => $this->getPost('file_path'),
+					'file_type' => $this->getPost('file_type'),
+					'file_size' => $this->getPost('file_size'),
 					'file_time' => time(),
 					'file_status' => M_file::STATUS_OPEN
 				];
 				$this->model('m_file')->loadData($data);
 				if ($this->model('m_file')->save()) {
-					Autumn::app()->response->setResult(Response::RES_OK);
+					$this->respSuccess();
 				} else {
-					Autumn::app()->response->setResult(Response::RES_FAIL);
+					$this->respError(2);
 				}
 			} else {
-				Autumn::app()->response->setResult(Response::RES_REFUSE);
+				$this->respError(105);
 			}
-			Autumn::app()->response->json();
+			$this->respJson();
 		}
 	}
 
@@ -81,20 +79,20 @@ class FileController extends \core\web\Controller {
 	* @version 17.03.03
 	*/
 	public function actionSetInfo() {
-		if (Autumn::app()->request->isPostRequest()) {
+		if ($this->isPost()) {
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
-				$file_id = Autumn::app()->request->getPost('file_id');
-				$field = Autumn::app()->request->getPost('field');
-				$value = Autumn::app()->request->getPost('value');
+				$file_id = $this->getPost('file_id');
+				$field = $this->getPost('field');
+				$value = $this->getPost('value');
 				if ($this->model('m_file')->update($file_id, [$field => $value])) {
-					Autumn::app()->response->setResult(Response::RES_OK);
+					$this->respSuccess();
 				} else {
-					Autumn::app()->response->setResult(Response::RES_NOCHAN);
+					$this->respError(102);
 				}
 			} else {
-				Autumn::app()->response->setResult(Response::RES_REFUSE);
+				$this->respError(105);
 			}
-			Autumn::app()->response->json();
+			$this->respJson();
 		}
 	}
 
@@ -105,21 +103,21 @@ class FileController extends \core\web\Controller {
 	* @version 17.03.03
 	*/
 	public function actionDelete() {
-		if (Autumn::app()->request->isPostRequest()) {
+		if ($this->isPost()) {
 			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
-				$file_id = Autumn::app()->request->getPost('file_id');
+				$file_id = $this->getPost('file_id');
 				$file_obj = $this->model('m_file')->get($file_id);
 				if ($file_obj) {
 					@unlink('.' . $file_obj->file_path);
 					$this->m_file->delete($file_id);
-					Autumn::app()->response->setResult(Response::RES_OK);
+					$this->respSuccess();
 				} else {
-					Autumn::app()->response->setResult(Response::RES_NOTHAS);
+					$this->respError(106);
 				}
 			} else {
-				Autumn::app()->response->setResult(Response::RES_REFUSE);
+				$this->respError(105);
 			}
-			Autumn::app()->response->json();
+			$this->respJson();
 		}
 	}
 }

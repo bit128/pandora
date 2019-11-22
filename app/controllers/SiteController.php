@@ -6,7 +6,6 @@
 * @version 16.09.21
 */
 namespace app\controllers;
-use core\Autumn;
 
 class SiteController extends \core\web\Controller {
 
@@ -20,6 +19,6 @@ class SiteController extends \core\web\Controller {
 	 * 站点首页面
 	 */
 	public function actionIndex() {
-		echo 'Pandora ',Autumn::app()->config->get('version');
+		echo 'Pandora ', \core\Autumn::app()->config->get('version');
 	}
 }

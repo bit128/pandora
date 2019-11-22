@@ -9,6 +9,7 @@ namespace core\http;
 use core\Autumn;
 
 class Request {
+	
 	//cookie生存时间
 	private $cookie_limit = 7200;
 	//类静态实例
@@ -100,6 +101,9 @@ class Request {
 
 	/**
 	* 获取请求参数
+	* ======
+	* @param $key 		参数名称
+	* @param $default 	默认值
 	* ======
 	* @author 洪波
 	* @version 16.02.25
