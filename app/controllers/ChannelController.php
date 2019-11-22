@@ -65,8 +65,8 @@ class ChannelController extends \core\web\Controller {
 			$criteria->limit = $this->getPost('limit', 20);
 			$criteria->add('cn_fid', $this->getPost('cn_fid', '0'));
 			$criteria->order = 'cn_sort asc';
-			$this->respSuccess($this->m_channel->getOrm()->findAll($criteria));
-			$this->respJson();
+			$result = $this->m_channel->getOrm()->findAll($criteria);
+			$this->respSuccess($result)->json();
 		}
 	}
 
