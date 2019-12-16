@@ -7,7 +7,7 @@
 */
 return [
 	'app_name' => 'Pandora 网媒管理系统',
-	'version' => '2.5',
+	'version' => '3.0 beta',
 	'debug' => true,
 	//开启session
 	'session_start' => true,
@@ -47,7 +47,9 @@ return [
 			'action' => 'index',
 			//自定义路由规则
 			'route_alias' => [
-				//'hello' => 'site/test'
+				'm' => 'mobile/render',
+				'getConfig' => 'mobile/getConfig',
+				'getFile' => 'mobile/getFile'
 			]
 		],
 		//视图设置
