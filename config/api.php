@@ -8,7 +8,7 @@
 return [
     'version' => 1,
     //测试地址主域
-    'domain' => 'http://au.cc/',
+    'domain' => 'http://p.cc/',
     //额外传输参数，在POST方法中有效
     'extra' => [
         'uid' => '',
@@ -18,17 +18,13 @@ return [
     'list' => [
         0 => [
             //名称 - 可空
-            'name' => '测试post请求',
-            //api地址 - 不可空
-            'path' => 'site/testPost',
-            //POST | GET - 可空，默认GET
+            'name' => '获取栏目列表',
+            'path' => 'channel/getSimpleList',
             'method' => 'post',
-            //请求参数 - 可空
-            'data' => ['username' => 'hongbo']
+            'data' => [
+                'offset' => 0,
+                'limit' => 1
+            ]
         ],
-        1 => [
-            //api地址 - 不可空
-            'path' => 'site/testBug'
-        ]
     ]
 ];

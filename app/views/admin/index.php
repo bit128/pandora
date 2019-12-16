@@ -30,7 +30,7 @@
 								<option <?php if($v->am_group == '财务') echo 'selected'; ?>>财务</option>
 							</select>
 						</td>
-						<td><?php echo \app\models\M_admin::printRole($v->am_role); ?></td>
+						<td><?php echo \app\models\T_admin::printRole($v->am_role); ?></td>
 						<td>
 							<button type="button" class="btn btn-info btn-xs cp_box">重置</button>
 							<?php if($v->am_status == 1) { ?>
@@ -81,7 +81,7 @@
 						</div>
 						<p>
 							<label>权限：</label><br>
-							<span id="form_role"><?php echo \app\models\M_admin::printRole(); ?></span>
+							<span id="form_role"><?php echo \app\models\T_admin::printRole(); ?></span>
 						</p>
 						<p>&nbsp;</p>
 						<p>

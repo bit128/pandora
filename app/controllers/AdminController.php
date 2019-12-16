@@ -7,7 +7,7 @@
 */
 namespace app\controllers;
 use core\Autumn;
-use app\models\M_admin;
+use app\models\T_admin;
 
 class AdminController extends \core\web\Controller {
 
@@ -31,7 +31,7 @@ class AdminController extends \core\web\Controller {
 		$criteria = new \core\db\Criteria;
 		$criteria->offset = $offset;
 		$criteria->limit = $limit;
-		$result = $this->model('m_admin')->getList($criteria);
+		$result = $this->model('t_admin')->getList($criteria);
 		//分页
 		$url = '/home/admin';
 		$pages = new \core\tools\Pagination($result['count'], $limit, $page, $url);
@@ -63,7 +63,7 @@ class AdminController extends \core\web\Controller {
 		if($this->isPost()) {
 			$account = $this->getPost('account');
 			$password = md5($this->getPost('password'));
-			if($this->model('m_admin')->login($account, $password)) {
+			if($this->model('t_admin')->login($account, $password)) {
 				$this->redirect('/home');
 			} else {
 				echo 'login fail.';
@@ -90,10 +90,10 @@ class AdminController extends \core\web\Controller {
 	*/
 	public function actionAdd() {
 		if($this->isPost()) {
-			if(M_admin::checkRole(M_admin::ROLE_ADMIN)) {
+			if(T_admin::checkRole(T_admin::ROLE_ADMIN)) {
 				$am_account = $this->getPost('am_account');
 				if(trim($am_account) != '') {
-					if (! $this->model('m_admin')->get($am_account)) {
+					if (! $this->model('t_admin')->get($am_account)) {
 						$data = array(
 							'am_account' => $am_account,
 							'am_password' => md5(trim($this->getPost('am_password'))),
@@ -103,8 +103,8 @@ class AdminController extends \core\web\Controller {
 							'am_time' => time(),
 							'am_ip' => $this->getIp()
 							);
-						$this->model('m_admin')->loadData($data);
-						if($this->model('m_admin')->save()) {
+						$this->model('t_admin')->loadData($data);
+						if($this->model('t_admin')->save()) {
 							$this->respSuccess();
 						} else {
 							$this->respError(2);
@@ -130,7 +130,7 @@ class AdminController extends \core\web\Controller {
 	*/
 	public function actionUpdate() {
 		if($this->isPost()) {
-			if(M_admin::checkRole(M_admin::ROLE_ADMIN)) {
+			if(T_admin::checkRole(T_admin::ROLE_ADMIN)) {
 				$account = $this->getPost('account');
 				$field = $this->getPost('field');
 				$data = [];
@@ -139,7 +139,7 @@ class AdminController extends \core\web\Controller {
 				} else {
 					$data[$field] = $this->getPost('value');
 				}
-				if($this->model('m_admin')->update($account, $data)) {
+				if($this->model('t_admin')->update($account, $data)) {
 					$this->respSuccess();
 				} else {
 					$this->respError(106);
@@ -158,12 +158,12 @@ class AdminController extends \core\web\Controller {
 	* @version 16.12.18
 	*/
 	public function actionGetAccountList() {
-		if(M_admin::checkRole(M_admin::ROLE_ADMIN + M_admin::ROLE_CONTENT)) {
+		if(T_admin::checkRole(T_admin::ROLE_ADMIN + T_admin::ROLE_CONTENT)) {
 			$criteria = new \core\db\Criteria;
 			$criteria->select = 'am_account,am_name';
 			$criteria->offset = 0;
 			$criteria->limit = 99;
-			$admin_list = $this->model('m_admin')->getList($criteria);
+			$admin_list = $this->model('t_admin')->getList($criteria);
 			$this->respSuccess($admin_list['result']);
 		} else {
 			$this->respError(105);
@@ -179,11 +179,11 @@ class AdminController extends \core\web\Controller {
 	*/
 	public function actionChangeRole() {
 		if($this->isPost()) {
-			if(M_admin::checkRole(M_admin::ROLE_ADMIN)) {
+			if(T_admin::checkRole(T_admin::ROLE_ADMIN)) {
 				$account = $this->getPost('am_account');
 				$role = $this->getPost('role');
 				$op = $this->getPost('op');
-				if($this->model('m_admin')->changeRole($account, $role, $op)) {
+				if($this->model('t_admin')->changeRole($account, $role, $op)) {
 					A::res()->setResult(Response::RES_OK);
 					$this->respSuccess();
 				} else {
@@ -204,9 +204,9 @@ class AdminController extends \core\web\Controller {
 	*/
 	public function actionDelete() {
 		if($this->isPost()) {
-			if(M_admin::checkRole(M_admin::ROLE_SUPER)) {
+			if(T_admin::checkRole(T_admin::ROLE_SUPER)) {
 				$account = $this->getPost('account');
-				if($this->model('m_admin')->delete($account)) {
+				if($this->model('t_admin')->delete($account)) {
 					$this->respSuccess();
 				} else {
 					$this->respError(2);

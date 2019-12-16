@@ -8,9 +8,7 @@
 namespace app\models;
 use core\db\Criteria;
 
-class M_file extends \core\web\Model {
-    
-    public $table_name = 't_file';
+class T_file extends \core\web\Model {
 
     const STATUS_DELETE = 0;
     const STATUS_NORMAL = 1;

@@ -22,7 +22,7 @@
 <div class="container">
 	<div class="alert alert-success">
 		<small>
-			<strong>拥有权限：</strong><?php echo \app\models\M_admin::printRole(\core\Autumn::app()->request->getSession('am_role'), false); ?> |
+			<strong>拥有权限：</strong><?php echo \app\models\T_admin::printRole(\core\Autumn::app()->request->getSession('am_role'), false); ?> |
 			<strong>最后登录时间：</strong><?php echo \core\Autumn::app()->request->getSession('am_time'); ?> |
 			<strong>最后登录地址：</strong><?php echo \core\Autumn::app()->request->getSession('am_ip'); ?><br>
 			<strong>服务器时间：</strong>(北京) <?php echo date('Y-m-d H:i:s'); ?> |

@@ -8,9 +8,7 @@
 namespace app\models;
 use core\db\Criteria;
 
-class M_index extends \core\web\Model {
-    
-    public $table_name = 't_index';
+class T_index extends \core\web\Model {
 
     /**
     * 删除栏目内容索引

@@ -9,9 +9,7 @@ namespace app\models;
 use core\Autumn;
 use core\db\Criteria;
 
-class M_admin extends \core\web\Model {
-	
-	public $table_name = 't_admin';
+class T_admin extends \core\web\Model {
 
 	const ROLE_ADMIN	= 1; 	//权限 - 管理员
 	const ROLE_USER		= 2; 	//权限 - 用户

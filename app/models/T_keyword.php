@@ -8,9 +8,7 @@
 namespace app\models;
 use core\db\Criteria;
 
-class M_keyword extends \core\web\Model {
-
-    public $table_name = 't_keyword';
+class T_keyword extends \core\web\Model {
 
     /**
     * 使用计数

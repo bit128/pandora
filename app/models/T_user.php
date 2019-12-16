@@ -9,9 +9,7 @@ namespace app\models;
 use core\Autumn;
 use core\db\Criteria;
 
-class M_user extends \core\web\Model {
-
-	public $table_name = 't_user';
+class T_user extends \core\web\Model {
 	
 	const DEVICE_DEFAULT 	= 0; 		//登录设备 - 未知
 	const DEVICE_WEB		= 1;		//登录设备 - 网站

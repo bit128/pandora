@@ -7,7 +7,7 @@
 */
 return [
 	'app_name' => 'Pandora 网媒管理系统',
-	'version' => '2.4',
+	'version' => '2.5',
 	'debug' => true,
 	//开启session
 	'session_start' => true,
@@ -24,7 +24,7 @@ return [
 	],
 	'module' => [
 		//API测试用例
-		/*
+		//*
 		'test' => [
 			'class' => 'core\tools\TestApi',
 			'config' => 'config/api.php'

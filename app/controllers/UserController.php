@@ -7,8 +7,8 @@
 */
 namespace app\controllers;
 use core\Autumn;
-use app\models\M_user;
-use app\models\M_admin;
+use app\models\T_user;
+use app\models\T_admin;
 
 class UserController extends \core\web\Controller {
 
@@ -27,7 +27,7 @@ class UserController extends \core\web\Controller {
 			'user_ip' => $this->getPost('user_ip')
 			);
 		//ip地址判定
-		if(isset($info['user_device']) && $info['user_device'] != M_user::DEVICE_WEB) {
+		if(isset($info['user_device']) && $info['user_device'] != T_user::DEVICE_WEB) {
 			$info['user_ip'] = $_SERVER['REMOTE_ADDR'];
 		}
 		return $info;
@@ -41,7 +41,7 @@ class UserController extends \core\web\Controller {
 	*/
 	public function actionExist() {
 		if($account = $this->getParam('account')) {
-			$this->respSuccess($this->m_user->exist($account));
+			$this->respSuccess($this->model('t_user')->exist($account));
 			$this->respJson();
 		}
 	}
@@ -62,17 +62,17 @@ class UserController extends \core\web\Controller {
 			$info['user_gender'] = $this->getPost('user_gender', 0);
 			$info['user_avatar'] = $this->getPost('user_avatar');
 			//检查重名
-			if(! $this->model('m_user')->exist($user_phone)) {
+			if(! $this->model('t_user')->exist($user_phone)) {
 				$token_info = $info;
 				$info['user_phone'] = $user_phone;
 				$info['user_password'] = md5($user_password);
 				$info['user_ctime'] = time();
 				$info['user_ltime'] = $info['user_ctime'];
-				$info['user_status'] = M_user::STATUS_NORMAL;
+				$info['user_status'] = T_user::STATUS_NORMAL;
 				//写入数据库
-				$this->model('m_user')->loadData($info);
-				if($this->model('m_user')->save()) {
-					$user_id = $this->model('m_user')->user_id;
+				$this->model('t_user')->loadData($info);
+				if($this->model('t_user')->save()) {
+					$user_id = $this->model('t_user')->user_id;
 					//构建令牌
 					$this->respSuccess($token);
 				} else {
@@ -97,14 +97,14 @@ class UserController extends \core\web\Controller {
 			$user_phone = $this->getPost('user_phone');
 			$user_password = $this->getPost('user_password');
 			//查询用户信息
-			$user = $this->model('m_user')->login($user_phone, md5($user_password));
+			$user = $this->model('t_user')->login($user_phone, md5($user_password));
 			if($user) {
-				if ($user->user_status > M_user::STATUS_LOCK) {
+				if ($user->user_status > T_user::STATUS_LOCK) {
 					$info['user_ltime'] = time();
 					$info['user_count'] = ++ $user->user_count;
 					//更新登录信息
 					$user_id = $user->user_id;
-					$this->model('m_user')->update($user_id, $info);
+					$this->model('t_user')->update($user_id, $info);
 					//构建令牌
 					$this->respSuccess($token);
 				} else {
@@ -126,9 +126,9 @@ class UserController extends \core\web\Controller {
 	public function actionLogout() {
 		$user_id = $this->getPost('user_id');
 		$token = $this->getPost('token');
-		if($this->model('m_user')->checkToken($user_id, $token)) {
+		if($this->model('t_user')->checkToken($user_id, $token)) {
 			//清空device_id
-			$this->model('m_user')->update($user_id, [
+			$this->model('t_user')->update($user_id, [
 				'user_devid' => ''
 			]);
 			$this->respSuccess();
@@ -149,10 +149,10 @@ class UserController extends \core\web\Controller {
 		$user_id = $this->getParam('user_id');
 		$token = $this->getParam('token');
 		if(strlen($user_id) == 13) {
-			$user = $this->model('m_user')->get($user_id);
+			$user = $this->model('t_user')->get($user_id);
 			if($user) {
 				unset($user->user_password);
-				if(! $this->model('m_user')->checkToken($user_id, $token)) {
+				if(! $this->model('t_user')->checkToken($user_id, $token)) {
 					unset($user->user_phone, $user->user_email, $user->user_devid, $user->user_note, $user->user_ip);
 				}
 				$this->respSuccess($user->toArray());
@@ -173,17 +173,17 @@ class UserController extends \core\web\Controller {
 	*/
 	public function actionSetInfo() {
 		if($this->isPost()) {
-			if(M_admin::checkRole(M_admin::ROLE_USER)) {
+			if(T_admin::checkRole(T_admin::ROLE_USER)) {
 				$user_id = $this->getPost('user_id');
 				$field = $this->getPost('field');
 				$value = $this->getPost('value');
-				if(($field == 'user_phone' || $field == 'user_email') && $this->m_user->exist($value)) {
+				if(($field == 'user_phone' || $field == 'user_email') && $this->model('t_user')->exist($value)) {
 					$this->respError(2, '用户重名');
 				} else {
 					$data = [
 						$field => $field != 'user_password' ? $value : md5($value)
 					];
-					if($this->model('m_user')->update($user_id, $data)) {
+					if($this->model('t_user')->update($user_id, $data)) {
 						Autumn::app()->response->setResult(Response::RES_OK);
 						$this->respSuccess();
 					} else {
@@ -207,11 +207,11 @@ class UserController extends \core\web\Controller {
 		if ($this->isPost()) {
 			$user_id = $this->getPost('user_id');
 			$token = $this->getPost('token');
-			if ($this->model('m_user')->checkToken($user_id, $token)) {
+			if ($this->model('t_user')->checkToken($user_id, $token)) {
 				$data = array(
 					$field => $this->getPost($field)
 				);
-				if ($this->model('m_user')->update($user_id, $data)) {
+				if ($this->model('t_user')->update($user_id, $data)) {
 					$this->respSuccess();
 				} else {
 					$this->respError(102);
@@ -273,13 +273,13 @@ class UserController extends \core\web\Controller {
 		if ($this->isPost()) {
 			$user_id = $this->getPost('user_id');
 			$token = $this->getPost('token');
-			if ($this->model('m_user')->checkToken($user_id, $token)) {
+			if ($this->model('t_user')->checkToken($user_id, $token)) {
 				$old_password = md5($this->getPost('old_password'));
 				$new_password = md5($this->getPost('new_password'));
-				$user = $this->model('m_user')->get($user_id);
+				$user = $this->model('t_user')->get($user_id);
 				if ($user->user_password == $old_password) {
 					$data = array('user_password' => $new_password);
-					$this->model('m_user')->update($user_id, $data);
+					$this->model('t_user')->update($user_id, $data);
 					Autumn::app()->response->setResult(Response::RES_OK);
 					$this->respSuccess();
 				} else {

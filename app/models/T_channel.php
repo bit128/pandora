@@ -8,9 +8,7 @@
 namespace app\models;
 use core\db\Criteria;
 
-class M_channel extends \core\web\Model {
-	
-	public $table_name = 't_channel';
+class T_channel extends \core\web\Model {
 
 	const STATUS_HIDE	= 1; //状态 - 隐藏
 	const STATUS_OPEN	= 2; //状态 - 开放

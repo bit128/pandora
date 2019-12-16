@@ -93,7 +93,7 @@
 
     <footer class="footer">
       <div class="container">
-        <p class="text-muted">&copy <?php echo \core\Autumn::app()->config->get('app_name'); ?> 2013-2017 版权所有 
+        <p class="text-muted">&copy <?php echo \core\Autumn::app()->config->get('app_name'); ?> 2013-2019 版权所有 
           version：<?php echo \core\Autumn::app()->config->get('version'); ?>
         </p>
       </div>

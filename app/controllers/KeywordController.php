@@ -7,7 +7,7 @@
 */
 namespace app\controllers;
 use core\db\Criteria;
-use app\models\M_admin;
+use app\models\T_admin;
 
 class KeywordController extends \core\web\Controller {
     /**
@@ -18,13 +18,13 @@ class KeywordController extends \core\web\Controller {
     */
     public function actionAdd() {
         if ($this->isPost()) {
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
+			if(T_admin::checkRole(T_admin::ROLE_CONTENT)) {
 				$data = [
                     'kw_name' => $this->getPost('kw_name'),
 					'kw_time' => time()
 				];
-				$this->model('m_keyword')->loadData($data);
-				if ($this->model('m_keyword')->save()) {
+				$this->model('t_keyword')->loadData($data);
+				if ($this->model('t_keyword')->save()) {
 					$this->respSuccess();
 				} else {
 					$this->respError(2);
@@ -44,7 +44,7 @@ class KeywordController extends \core\web\Controller {
 	*/
 	public function actionGetList() {
 		if ($this->isPost()) {
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
+			if(T_admin::checkRole(T_admin::ROLE_CONTENT)) {
 				$sort = $this->getPost('sort', 0);
 				$keyword = $this->getPost('keyword', '');
 				//查询条件
@@ -59,7 +59,7 @@ class KeywordController extends \core\web\Controller {
 					'kw_search desc',
 					'kw_use desc'
 				][$sort];
-				$this->respSuccess($this->model('m_keyword')->getList($criteria));
+				$this->respSuccess($this->model('t_keyword')->getList($criteria));
 			} else {
 				$this->respError(105);
 			}
@@ -75,8 +75,8 @@ class KeywordController extends \core\web\Controller {
     */
     public function actionDelete() {
         if ($this->isPost()) {
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
-				if ($this->model('m_keyword')->delete($this->getPost('kw_id'))) {
+			if(T_admin::checkRole(T_admin::ROLE_CONTENT)) {
+				if ($this->model('t_keyword')->delete($this->getPost('kw_id'))) {
 					$this->respSuccess();
 				} else {
 					$this->respError(2);

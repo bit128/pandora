@@ -7,9 +7,9 @@
 */
 namespace app\controllers;
 use core\db\Criteria;
-use app\models\M_channel;
-use app\models\M_index;
-use app\models\M_admin;
+use app\models\T_channel;
+use app\models\T_index;
+use app\models\T_admin;
 
 class ChannelController extends \core\web\Controller {
 	/**
@@ -20,27 +20,27 @@ class ChannelController extends \core\web\Controller {
 	*/
 	public function actionAdd() {
 		if($this->isPost()) {
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
+			if(T_admin::checkRole(T_admin::ROLE_CONTENT)) {
 				$cn_fid = $this->getPost('cn_fid', '0');
-				$m_channel = new M_channel;
+				$t_channel = new T_channel;
 				$data = [
 					'cn_fid' => $cn_fid,
 					'cn_name' => '新建栏目',
 					'cn_data' => '{}',
-					'cn_sort' => $m_channel->maxSort($cn_fid),
+					'cn_sort' => $t_channel->maxSort($cn_fid),
 					'cn_ctime' => time(),
-					'cn_status' => M_channel::STATUS_HIDE
+					'cn_status' => T_channel::STATUS_HIDE
 				];
-				$m_channel->loadData($data);
+				$t_channel->loadData($data);
 				//复制扩展内容
 				if ($cn_fid != '0') {
-					$parent = $this->model('m_channel')->get($cn_fid);
+					$parent = $this->model('t_channel')->get($cn_fid);
 					if ($parent) {
-						$m_channel->setAttribute('cn_data', $parent->cn_data);
+						$t_channel->setAttribute('cn_data', $parent->cn_data);
 					}
 				}
-				if($m_channel->save()) {
-					$this->respSuccess($m_channel->cn_id);
+				if($t_channel->save()) {
+					$this->respSuccess($t_channel->cn_id);
 				} else {
 					$this->respError(2);
 				}
@@ -65,7 +65,7 @@ class ChannelController extends \core\web\Controller {
 			$criteria->limit = $this->getPost('limit', 20);
 			$criteria->add('cn_fid', $this->getPost('cn_fid', '0'));
 			$criteria->order = 'cn_sort asc';
-			$result = $this->m_channel->getOrm()->findAll($criteria);
+			$result = $this->model('t_channel')->getOrm()->findAll($criteria);
 			$this->respSuccess($result)->json();
 		}
 	}
@@ -78,7 +78,7 @@ class ChannelController extends \core\web\Controller {
 	*/
 	public function actionGet() {
 		if($cn_id = $this->getParam('id')) {
-			if($channel = $this->model('m_channel')->get($cn_id)) {
+			if($channel = $this->model('t_channel')->get($cn_id)) {
 				$this->respSuccess($channel->toArray());
 			} else {
 				$this->respError(106);
@@ -97,7 +97,7 @@ class ChannelController extends \core\web\Controller {
 	*/
 	public function actionGetData() {
 		if($cn_id = $this->getParam('id')) {
-			$data = $this->model('m_channel')->getData($cn_id);
+			$data = $this->model('t_channel')->getData($cn_id);
 			if($data !== false) {
 				$this->respSuccess($data);
 			} else {
@@ -117,7 +117,7 @@ class ChannelController extends \core\web\Controller {
 	*/
 	public function actionGetContent() {
 		if($cn_id = $this->getParam('id')) {
-			$content = $this->model('m_channel')->getContent($cn_id);
+			$content = $this->model('t_channel')->getContent($cn_id);
 			if($content !== false) {
 				$this->respSuccess($content);
 			} else {
@@ -137,11 +137,11 @@ class ChannelController extends \core\web\Controller {
 	*/
 	public function actionUpdateField() {
 		if($this->isPost()) {
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
+			if(T_admin::checkRole(T_admin::ROLE_CONTENT)) {
 				$cn_id = $this->getPost('cn_id');
 				$field = $this->getPost('field');
 				$value = $this->getPost('value');
-				if($this->model('m_channel')->update($cn_id, [
+				if($this->model('t_channel')->update($cn_id, [
 					$field => $value,
 					'cn_utime' => time()
 				])) {
@@ -164,27 +164,27 @@ class ChannelController extends \core\web\Controller {
 	*/
 	public function actionSetKeyword() {
 		if($this->isPost()) {
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
+			if(T_admin::checkRole(T_admin::ROLE_CONTENT)) {
 				$cn_id = $this->getPost('cn_id');
 				$keyword = trim($this->getPost('keyword'));
 				//变更栏目内容关键字字段
-				$this->model('m_channel')->update($cn_id, [
+				$this->model('t_channel')->update($cn_id, [
 					'cn_keyword' => $keyword,
 					'cn_utime' => time()
 				]);
 				//删除旧索引
-				$this->model('m_index')->deleteByChannel($cn_id);
+				$this->model('t_index')->deleteByChannel($cn_id);
 				//批量建立索引
 				if ($keyword != '') {
 					foreach (explode(' ', $keyword) as $kw_name) {
 						if ($kw_name != '') {
 							//使用计数
-							$this->model('m_keyword')->useCount($kw_name);
+							$this->model('t_keyword')->useCount($kw_name);
 							//建立索引
-							$m_index = new M_index;
-							$m_index->id_keyword = $kw_name;
-							$m_index->id_channel = $cn_id;
-							$m_index->save();
+							$t_index = new T_index;
+							$t_index->id_keyword = $kw_name;
+							$t_index->id_channel = $cn_id;
+							$t_index->save();
 						}
 					}
 				}
@@ -204,9 +204,9 @@ class ChannelController extends \core\web\Controller {
 	*/
 	public function actionDeleteAll() {
 		if($this->isPost()) {
-			if(M_admin::checkRole(M_admin::ROLE_CONTENT)) {
+			if(T_admin::checkRole(T_admin::ROLE_CONTENT)) {
 				$cn_id = $this->getPost('cn_id');
-				$this->model('m_channel')->recursionDelete($cn_id);
+				$this->model('t_channel')->recursionDelete($cn_id);
 				$this->respSuccess();
 			} else {
 				$this->respError(105);

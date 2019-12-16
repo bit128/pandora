@@ -34,7 +34,7 @@ class HomeController extends \core\web\Controller {
 	* @version 16.08.02
 	*/
 	public function actionUser() {
-		$m_user = new \app\models\M_user;
+		$t_user = new \app\models\T_user;
 		$page = $this->getQuery('page', 1);
 		$status = $this->getQuery('s', 1);
 		$keyword = $this->getQuery('k');
@@ -49,7 +49,7 @@ class HomeController extends \core\web\Controller {
 			$criteria->addCondition("user_phone='{$keyword}' OR user_email='{$keyword}' OR user_name like '%{$keyword}%'");
 			$url .= '/k/' . $keyword;
 		}
-		$result = $m_user->getList($criteria);
+		$result = $t_user->getList($criteria);
 		//分页
 		$pages = new \core\tools\Pagination($result['count'], $limit, $page, $url);
 
@@ -72,8 +72,8 @@ class HomeController extends \core\web\Controller {
 	public function actionUserDetail() {
 		$user_id = $this->getQuery('id');
 		if(strlen($user_id) == 13) {
-			$m_user = new \app\models\M_user;
-			$user = $m_user->get($user_id);
+			$t_user = new \app\models\T_user;
+			$user = $t_user->get($user_id);
 			if($user) {
 				$data = array(
 					'user' => $user
@@ -108,7 +108,7 @@ class HomeController extends \core\web\Controller {
 		$criteria->offset = ($page - 1) * $criteria->limit;
 		$criteria->order = ['cn_sort desc','cn_sort asc'][$order];
 		//获取栏目列表
-		$result = $this->model('m_channel')->getList($criteria);
+		$result = $this->model('t_channel')->getList($criteria);
 		//分页
 		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page,
 			Autumn::app()->route->reUrl(['page'=>null]));
@@ -118,7 +118,7 @@ class HomeController extends \core\web\Controller {
 			'order' => $order,
 			'keyword' => $keyword,
 			'result' => $result['result'],
-			'breadcrumb' => $this->model('m_channel')->breadcrumb($fid),
+			'breadcrumb' => $this->model('t_channel')->breadcrumb($fid),
 			'pages' => $pages->build()
 		];
 		$this->renderView('channel', $data);
@@ -134,12 +134,12 @@ class HomeController extends \core\web\Controller {
 		$cn_id = $this->getParam('id');
 		if(strlen($cn_id) == 13) {
 			//获取附件列表
-			$m_file = new \app\models\M_file;
+			$t_file = new \app\models\T_file;
 			$criteria = new Criteria;
 			$criteria->add('file_bid', $cn_id);
 			$criteria->offset = 0;
 			$criteria->limit = 99;
-			$file_list = $m_file->getList($criteria);
+			$file_list = $t_file->getList($criteria);
 			$data = array(
 				'cn_id' => $cn_id,
 				'file_list' => $file_list
@@ -167,7 +167,7 @@ class HomeController extends \core\web\Controller {
 			$criteria->addCondition("kw_name like '%{$keyword}%'");
 		};
 		
-		$result = $this->model('m_keyword')->getList($criteria);
+		$result = $this->model('t_keyword')->getList($criteria);
 		//分页
 		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page,
 			Autumn::app()->route->reUrl(['page'=>null]));
@@ -195,7 +195,7 @@ class HomeController extends \core\web\Controller {
 		if ($avatar) {
 			$page_uri .= '/avatar/' . $avatar;
 		}
-		$m_file= new \app\models\M_file;
+		$t_file= new \app\models\T_file;
 		$criteria = new Criteria;
 		if ($file_bid != '') {
 			$criteria->add('file_bid', $file_bid);
@@ -206,7 +206,7 @@ class HomeController extends \core\web\Controller {
 		$criteria->order = 'file_time desc';
 		$criteria->limit = 10;
 		$criteria->offset = ($page - 1) * $criteria->limit;
-		$result = $m_file->getList($criteria);
+		$result = $t_file->getList($criteria);
 		$pages = new \core\tools\Pagination($result['count'], $criteria->limit, $page,
 			Autumn::app()->route->reUrl(['page'=>null]));
 		$data = array(
