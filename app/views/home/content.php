@@ -171,7 +171,7 @@ body {
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-grew" data-dismiss="modal">关闭</button>
-				<a type="button" href="/home/file/bid/<?php echo $cn_id; ?>" class="btn btn-orange">管理资源附件</a>
+				<a type="button" href="/home/file/bid/<?php echo $id; ?>" class="btn btn-orange">管理资源附件</a>
 			</div>
 		</div>
 	</div>
@@ -209,7 +209,8 @@ body {
 <script type="text/javascript" src="/app/statics/home/js/main.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-	var cn_id = '<?php echo $cn_id; ?>';
+	var cn_id = '<?php echo $id; ?>';
+	var cn_md = '<?php echo $model; ?>'
 	/*------ 笔记类 ------*/
 	var Note = function(editarea, btns){
 		//编辑区域dom
@@ -218,6 +219,7 @@ $(document).ready(function(){
 		this.btns = btns;
 
 		this.cn_id = 0;
+		this.cn_md = '';
 		this.savetime = 60;
 		this.timer;
 
@@ -330,14 +332,17 @@ $(document).ready(function(){
 				}, 1000);
 			}
 		},
-		open: function(cn_id){
+		open: function(cn_id, cn_md){
 			var f = this;
-			if(cn_id == f.cn_id)
+			if(cn_id == f.cn_id) {
 				return;
+			}
 			f.editarea.show();
-			if(cn_id != undefined)
+			if(cn_id != undefined) {
 				f.cn_id = cn_id;
-			$.get('/channel/getContent/id/'+f.cn_id, function(data){
+				f.cn_md = cn_md;
+			}
+			$.get('/channel/getHtml/id/'+f.cn_id+'/model/'+f.cn_md, function(data){
 				if(data.code == 1){
 					f.editarea[0].contentEditable = true;
 					f.editarea.html(data.result);
@@ -352,11 +357,13 @@ $(document).ready(function(){
 			clearInterval(f.timer);
 			f.timer = undefined;
 			var ta = f.editarea.find('textarea');
+			var content = '';
 			if(ta.val()){
-				$.post('/channel/updateField', {cn_id: f.cn_id, field: 'cn_content', value: f.codeFilter(ta.val())});
+				content = f.codeFilter(ta.val());
 			}else{
-				$.post('/channel/updateField', {cn_id: f.cn_id, field: 'cn_content', value: f.codeFilter(f.editarea.html())});
+				content = f.codeFilter(f.editarea.html());
 			}
+			$.post('/channel/setHtml', {id: f.cn_id, model: f.cn_md, content: content});
 		}
 	};
 	/*------ 滚动目录类 ------*/
@@ -399,7 +406,7 @@ $(document).ready(function(){
 	new ScrollMenu($('#note_btns'));
 	//笔记编辑器
 	var note = new Note($('#note_editor'), $('#note_btns'));
-	note.open(cn_id);
+	note.open(cn_id, cn_md);
 	//插入附件
 	$('#file_list').on('click', 'button', function(){
 		var types = $(this).attr('data-val');

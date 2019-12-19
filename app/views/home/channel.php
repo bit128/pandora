@@ -12,6 +12,10 @@
         padding:4px 10px 4px;
         border:0;
     }
+    .channel-id {
+        font-size: 12px;
+        color: #999;
+    }
     .channel-title {
         margin-bottom:5px;
     }
@@ -19,6 +23,7 @@
         color: #369;
         font-weight:bold;
         font-size:15px;
+        text-decoration: underline;
     }
     .channel-index {
         font-size:12px;
@@ -34,6 +39,11 @@
     .list-active {
         color:#31708f;
         background-color:#d9edf7;
+    }
+    .set_name {
+        margin-left: 10px;
+        font-size: 80% !important;
+        color: #666 !important;
     }
 </style>
 <div class="container">
@@ -88,12 +98,11 @@
 		</div>
 	</div>
     <p>&nbsp;</p>
-	<table class="table table-bordered">
+	<table class="table">
 		<thead>
 			<tr>
-				<th style="width:100px;">ID</th>
 				<th style="width:100px;">封面</th>
-				<th style="text-align:center;">名称</th>
+				<th>标题</th>
 				<th style="width:160px;">时间</th>
 				<th style="width:60px;">排序</th>
                 <th style="width:80px;">状态</th>
@@ -102,35 +111,35 @@
 		</thead>
         <tbody id="channel_list">
             <?php foreach ($result as $item) { ?>
-            <tr>
-                <td style="text-align:center;">
-                    <p><small><?php echo $item->cn_id; ?></small></p>
-                    <a href="/home/content/id/<?php echo $item->cn_id; ?>" target="_blank" class="btn btn-xs btn-info btn-block">
-                        <span class="glyphicon glyphicon-file"></span> 内容
-                    </a>
-                </td>
+            <tr data-id="<?php echo $item->cn_id; ?>">
                 <td>
                     <a href="/home/file/avatar/channel/bid/<?php echo $item->cn_id; ?>">
                     <?php if($item->cn_image == '') {
 						echo '<img src="/app/statics/files/default.jpg" class="img-responsive" style="max-width:80px;">';
 					}else{
-						echo '<img src="/nfs/image',$item->cn_image,'" class="img-responsive" style="max-width:80px;">';
+						echo '<img src="',CDN_HOST,$item->cn_image,'" class="img-responsive" style="max-width:80px;">';
 					} ?>
                     </a>
                 </td>
                 <td>
+                    <div class="channel-id">
+                        编号：<b><?php echo $item->cn_id; ?></b>
+                    </div>
                     <div class="channel-title">
-                        <a href="javascript:;" class="set_text" data-field="cn_name"><?php echo $item->cn_name; ?></a>
+                        <a href="/home/channel/fid/<?php echo $item->cn_id; ?>"><?php echo $item->cn_name; ?></a>
+                        <a href="javascript:;" class="set_name" data-field="cn_name">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </a>
                     </div>
                     <div class="channel-index">
-                        <a href="javascript:;" class="set_index">
-                            <?php echo $item->cn_keyword != '' ? $item->cn_keyword : '设置关键词'; ?>
+                        <a href="javascript:;" class="set_text" data-field="cn_keyword">
+                            <?php echo $item->cn_keyword != '' ? $item->cn_keyword : '未设置'; ?>
                         </a>
                     </div>
                 </td>
                 <td>
-                    <small class="text-success"><?php echo '创建：', date('Y-m-d H:i',$item->cn_ctime); ?></small><br>
-                    <small class="text-warning"><?php if($item->cn_utime) echo '更新：', date('Y-m-d H:i',$item->cn_utime); ?></small><br>
+                    <small><?php echo '<b>创建：</b>', date('Y-m-d H:i',$item->cn_ctime); ?></small><br>
+                    <small><?php if($item->cn_utime) echo '<b>更新：</b>', date('Y-m-d H:i',$item->cn_utime); ?></small><br>
                 </td>
                 <td><a href="javascript:;" class="set_text" data-field="cn_sort"><?php echo $item->cn_sort; ?></a></td>
                 <td>
@@ -151,14 +160,14 @@
                     <button type="button" class="btn btn-xs btn-default move_channel">
                         <span class="glyphicon glyphicon-move"></span> 移动
                     </button>
-                    <button type="button" class="btn btn-xs btn-default delete_channel">
-                        <span class="glyphicon glyphicon-trash"></span> 删除
-                    </button>
-                    <a href="/home/channel/fid/<?php echo $item->cn_id; ?>" style="width:106px;" class="btn btn-xs btn-success">
-                        <span class="glyphicon glyphicon-tags"></span> 成员
-                    </a>
                     <button type="button" class="btn btn-xs btn-default set_data">
                         <span class="glyphicon glyphicon-list"></span> 扩展
+                    </button>
+                    <a href="/home/content/id/<?php echo $item->cn_id; ?>" target="_blank" style="width:106px;" class="btn btn-xs btn-success">
+                        <span class="glyphicon glyphicon-edit"></span> 编辑内容
+                    </a>
+                    <button type="button" class="btn btn-xs btn-warning delete_channel">
+                        <span class="glyphicon glyphicon-trash"></span> 删除
                     </button>
                 </td>
             </tr>
@@ -225,40 +234,6 @@
     </div>
 </div>
 <!-- 扩展字段 -->
-<!-- 设置关键字 -->
-<div id="keyword_modal" class="modal fade" tabindex="-3" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <legend>选择关键字</legend>
-                        <p>
-                            <input id="search_keyword" type="text" class="form-control input-sm" placeholder="搜索关键词...">
-                        </p>
-                        <div id="keyword_search_list"></div>
-                        <div id="keyword_hot_list"></div>
-                    </div>
-                    <div class="col-md-6">
-                        <legend>已选关键字</legend>
-                        <p>
-                            <textarea class="form-control" id="select_keyword"></textarea>
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">
-                    <span class="glyphicon glyphicon-remove"></span> 关闭
-                </button>
-                <button type="button" class="btn btn-info" id="save_keyword">
-                <span class="glyphicon glyphicon-save"></span> 保存关键词
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- 设置关键字 -->
 <script type="text/javascript">
 $(document).ready(function(){
     const cn_fid = '<?php echo $cn_fid; ?>';
@@ -373,14 +348,37 @@ $(document).ready(function(){
             );
         }
     });
-    //设置名称/排序
+    //设置名称
+    $('#channel_list').on('click', '.set_name', function(){
+        var cn_id = $(this).parents('tr').attr('data-id');
+        var p = $(this).parent();
+        var value = p.find('a:eq(0)').text().trim();
+        var input = p.html('<input type="text" class="form-control input-sm" value="'+value+'">').find('input');
+        input.focus();
+        input.one('blur', function(){
+            value = $(this).val();
+            $.post(
+                '/channel/updateField',
+                {cn_id: cn_id, field: 'cn_name', value: value},
+                function(res){
+                    if (res.code != 1)
+                        alert(res.error);
+                },
+                'json'
+            );
+            p.html('<a href="/home/channel/fid/'+cn_id+'">'+value+'</a>'
+                + ' <a href="javascript:;" class="set_name" data-field="cn_name">'
+                + '<span class="glyphicon glyphicon-pencil"></span></a>');
+        });
+    });
+    //设置关键词/排序
     $('#channel_list').on('click', '.set_text', function(){
-        var cn_id = $(this).parents('tr').find('td:eq(0) small').text();
+        var cn_id = $(this).parents('tr').attr('data-id');
         var td = $(this).parent();
-        var value = $(this).text();
+        var value = $(this).text().trim();
         var field = $(this).attr('data-field');
-        if (field == 'cn_name')
-            var input = td.html('<input type="text" class="form-control" value="'+value+'">').find('input');
+        if (field == 'cn_keyword')
+            var input = td.html('<input type="text" class="form-control input-sm" value="'+value+'">').find('input');
         else
             var input = td.html('<input type="text" value='+value+' style="width:50px;">').find('input');
         input.focus();
@@ -405,7 +403,7 @@ $(document).ready(function(){
     });
     //设置状态
     $('#channel_list').on('change', '.set_status', function(){
-        var cn_id = $(this).parents('tr').find('td:eq(0) small').text();
+        var cn_id = $(this).parents('tr').attr('data-id');
         $.post(
             '/channel/updateField',
             {cn_id: cn_id, field: 'cn_status', value: $(this).val()},
@@ -420,13 +418,13 @@ $(document).ready(function(){
     });
     //扩展字段
     $('#channel_list').on('click', '.set_data', function(){
-        var cn_id = $(this).parents('tr').find('td:eq(0) small').text();
+        var cn_id = $(this).parents('tr').attr('data-id');
         extensionData.loadData(cn_id);
     });
     //删除栏目
     $('#channel_list').on('click', '.delete_channel', function(){
         if (confirm('确定要删除该栏目以及全部下级栏目和内容吗？操作不可恢复！')) {
-            var cn_id = $(this).parents('tr').find('td:eq(0) small').text();
+            var cn_id = $(this).parents('tr').attr('data-id');
             $.post(
                 '/channel/deleteAll',
                 {cn_id: cn_id},
@@ -446,7 +444,7 @@ $(document).ready(function(){
         var menu_stack = ['0'];
         //移动目录
         $('#channel_list').on('click', '.move_channel', function(){
-            cn_id = $(this).parents('tr').find('td:eq(0) small').text();
+            cn_id = $(this).parents('tr').attr('data-id');
             $('#menu_modal').modal('show');
             loadMenuList();
         });
@@ -512,84 +510,6 @@ $(document).ready(function(){
                 'json'
             );
         }
-    })();
-    /*------设置关键字逻辑------*/
-    (function(){
-        var cn_id = '';
-        //显示设置关键字框
-        $('#channel_list').on('click', '.set_index', function(){
-            cn_id = $(this).parents('tr').find('td:eq(0) small').text();
-            var sk = $.trim($(this).text());
-            if (sk == '设置关键词')
-                sk = '';
-            $('#select_keyword').val(sk);
-            $('#keyword_modal').modal('show');
-            //加载热门关键词
-            $.post(
-                '/keyword/getList',
-                {offset:0, limit:5, sort:2},
-                function(res){
-                    if (res.code == 1) {
-                        var html = '';
-                        $.each(res.result.result, function(i,d){
-                            html += '<span class="label label-warning">'+d.kw_name+'</span> ';
-                        });
-                        $('#keyword_hot_list').html(html);
-                    }
-                },
-                'json'
-            );
-        });
-        //搜索关键词
-        var search_timer;
-        $('#search_keyword').on('keyup', function(){
-            if (search_timer != undefined)
-                clearTimeout(search_timer);
-            var keyword = $(this).val();
-            if (keyword == '')
-                keyword = ' ';
-            search_timer = setTimeout(function(){
-                $.post(
-                    '/keyword/getList',
-                    {offset:0, limit:4, keyword:keyword, sort:1},
-                    function(res){
-                        var html = '';
-                        if (res.code == 1) {
-                            if($.trim(keyword) != '')
-                                html += '<span class="label label-info">'+keyword+'</span> ';
-                            $.each(res.result.result, function(i,d){
-                                html += '<span class="label label-success">'+d.kw_name+'</span> ';
-                            });
-                            $('#keyword_search_list').html(html);
-                        }
-                    },
-                    'json'
-                );
-            }, 500);
-        });
-        //选中关键词
-        $('#keyword_modal').on('click', '.label', function(){
-            var keyword = $(this).text();
-            var keyword_list = $('#select_keyword').val();
-            if (keyword_list.indexOf(keyword) === -1) {
-                $('#select_keyword').val(keyword_list+' '+keyword);
-            }
-            $(this).remove();
-        });
-        //保存关键词
-        $('#save_keyword').on('click', function(){
-            $.post(
-                '/channel/setKeyword',
-                {cn_id: cn_id, keyword: $('#select_keyword').val()},
-                function(res){
-                    if (res.code == 1)
-                        location.reload();
-                    else
-                        alert(res.error);
-                },
-                'json'
-            );
-        });
     })();
 });
 </script>

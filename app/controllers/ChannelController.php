@@ -110,23 +110,62 @@ class ChannelController extends \core\web\Controller {
 	}
 
 	/**
-	* 仅获取栏目内容
+	* 获取富文本内容
+	* ======
+	* @param $id		内容id
+	* @param $model		模型名
 	* ======
 	* @author 洪波
-	* @version 16.04.22
+	* @version 19.12.19
 	*/
-	public function actionGetContent() {
-		if($cn_id = $this->getParam('id')) {
-			$content = $this->model('t_channel')->getContent($cn_id);
-			if($content !== false) {
-				$this->respSuccess($content);
+	public function actionGetHtml($id, $model = 'channel') {
+		if ($id) {
+			if (\in_array($model, \app\models\I_html::MATCH_MODEL)) {
+				$result = $this->model('t_' . $model)->getHtml($id);
+				if ($result !== false) {
+					$this->respSuccess($result);
+				} else {
+					$this->respError(106, '栏目不存在');
+				}
 			} else {
-				$this->respError(106);
+				$this->respError(103, '不存在的模型对象');
 			}
 		} else {
 			$this->respError(103);
 		}
 		$this->respJson();
+	}
+
+	/**
+	* 设置富文本内容
+	* ======
+	* @param $id		内容id
+	* @param $model		模型名
+	* @param $content	内容
+	* ======
+	* @author 洪波
+	* @version 19.12.19
+	*/
+	public function actionSetHtml() {
+		if ($this->isPost()) {
+			$id = $this->getPost('id');
+			$model = $this->getPost('model', 'channel');
+			$content = $this->getPost('content');
+			if ($id) {
+				if (\in_array($model, \app\models\I_html::MATCH_MODEL)) {
+					if ($this->model('t_' . $model)->setHtml($id, $content)) {
+						$this->respSuccess();
+					} else {
+						$this->respError(102);
+					}
+				} else {
+					$this->respError(103, '不存在的模型对象');
+				}
+			} else {
+				$this->respError(103);
+			}
+			$this->respJson();
+		}
 	}
 
 	/**

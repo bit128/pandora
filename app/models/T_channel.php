@@ -90,22 +90,34 @@ class T_channel extends \core\web\Model {
 	}
 
 	/**
-	* 仅获取栏目内容
-	* ======
-	* @param $cn_id 	栏目id
-	* ======
-	* @author 洪波
-	* @version 17.09.15
-	*/
-	public function getContent($cn_id) {
+     * 获取内容详情
+     * ======
+     * @author 洪波
+     * @version 19.12.19
+     */
+	public function getHtml($id) {
 		$criteria = new Criteria;
 		$criteria->select = 'cn_content';
-		$criteria->add('cn_id', $cn_id);
+		$criteria->add('cn_id', $id);
 		if ($channel = $this->getOrm()->find($criteria)) {
 			return $channel->cn_content;
 		} else {
 			return false;
 		}
+	}
+
+	/**
+     * 设置内容详情
+     * ======
+     * @author 洪波
+     * @version 19.12.19
+     */
+    public function setHtml($id, $content) {
+		$data = [
+			'cn_content' => $content,
+			'cn_utime' => time()
+		];
+		return self::update($id, $data);
 	}
 
 	/**

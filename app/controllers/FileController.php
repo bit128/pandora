@@ -11,6 +11,7 @@ use app\models\T_file;
 use app\models\T_admin;
 
 class FileController extends \core\web\Controller {
+
 	/**
 	* 设置[模块实体]封面照片
 	* ======
@@ -23,8 +24,7 @@ class FileController extends \core\web\Controller {
 				$file_bid = $this->getPost('file_bid');
 				$image = $this->getPost('image');
 				$mod = $this->getPost('mod');
-
-				$mod_class = '\app\models\M_' . $mod;
+				$mod_class = '\app\models\T_' . $mod;
 				if (class_exists($mod_class)) {
 					$class = new $mod_class;
 					if ($class->setAvatar($file_bid, $image)) {

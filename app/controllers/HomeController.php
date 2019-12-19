@@ -130,20 +130,18 @@ class HomeController extends \core\web\Controller {
 	* @author 洪波
 	* @version 16.08.01
 	*/
-	public function actionContent() {
-		$cn_id = $this->getParam('id');
-		if(strlen($cn_id) == 13) {
-			//获取附件列表
-			$t_file = new \app\models\T_file;
+	public function actionContent($id, $model = 'channel') {
+		if($id && \in_array($model, \app\models\I_html::MATCH_MODEL)) {
 			$criteria = new Criteria;
-			$criteria->add('file_bid', $cn_id);
+			$criteria->add('file_bid', $id);
 			$criteria->offset = 0;
 			$criteria->limit = 99;
-			$file_list = $t_file->getList($criteria);
-			$data = array(
-				'cn_id' => $cn_id,
+			$file_list = $this->model('t_file')->getList($criteria);
+			$data = [
+				'id' => $id,
+				'model' => $model,
 				'file_list' => $file_list
-				);
+			];
 			$this->renderView('content', $data);
 		}
 	}
