@@ -5,13 +5,10 @@ body {
 }
 #note_editor {
 	margin-top: 10px;
-	font-size:16px;
-	color:#666;
 	min-height: 460px;
 	height: auto;
 	width:100%;
 	padding:10px;
-	background: #fff;
 	outline:none;
 }
 #note_editor textarea {
@@ -75,6 +72,7 @@ body {
 	display: inline-block;
 }
 </style>
+<link href="/app/statics/home/css/editor.css" rel="stylesheet">
 <div class="container">
 	<div class="row">
 		<div class="col-md-2">
@@ -125,19 +123,11 @@ body {
 						<span class="glyphicon glyphicon-th"></span>
 					</a>
 				</div>
-				<div class="cbtn-list">
-					<a href="javascript:;" class="btn-color" data-val="666666" style="background-color:#666666;box-shadow:0 0 3px #666666;"></a>
-					<a href="javascript:;" class="btn-color" data-val="FF6666" style="background-color:#FF6666;box-shadow:0 0 3px #FF6666;"></a>
-					<a href="javascript:;" class="btn-color" data-val="0099CC" style="background-color:#0099CC;box-shadow:0 0 3px #0099CC;"></a>
-					<a href="javascript:;" class="btn-color" data-val="FFCC00" style="background-color:#FFCC00;box-shadow:0 0 3px #FFCC00;"></a>
-					<a href="javascript:;" class="btn-color" data-val="669933" style="background-color:#669933;box-shadow:0 0 3px #669933;"></a>
-					<a href="javascript:;" class="btn-color" data-val="996600" style="background-color:#996600;box-shadow:0 0 3px #996600;"></a>
-					<a href="javascript:;" class="btn-color" data-val="993399" style="background-color:#993399;box-shadow:0 0 3px #993399;"></a>
-				</div>
+				<div class="cbtn-list"></div>
 			</div>
 		</div>
 		<div class="col-md-10">
-			<div id="note_editor"></div>
+			<div id="note_editor" class="p-editor"></div>
 		</div>
 	</div>
 	<p>&nbsp;</p>
@@ -209,8 +199,9 @@ body {
 <script type="text/javascript" src="/app/statics/home/js/main.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
-	var cn_id = '<?php echo $id; ?>';
-	var cn_md = '<?php echo $model; ?>'
+	const cn_id = '<?php echo $id; ?>';
+	const cn_md = '<?php echo $model; ?>';
+	const colors = ['666666','FF6666','0099CC','FFCC00','669933','996600','993399'];
 	/*------ 笔记类 ------*/
 	var Note = function(editarea, btns){
 		//编辑区域dom
@@ -228,10 +219,10 @@ $(document).ready(function(){
 	Note.prototype = {
 		constructor: Note,
 		bindEvent: function(){
-			var f = this;
+			let f = this;
 			//编辑按钮事件
 			f.btns.on('click', 'a', function(){
-				var i = f.btns.find('a').index(this);
+				let i = f.btns.find('a').index(this);
 				switch (i) {
 					case 0: //代码模式
 						f.codeView(f, $(this));
@@ -302,27 +293,27 @@ $(document).ready(function(){
 			this.editarea.hide();
 		},
 		insertTitle: function(f, types){
-			var style,title;
+			let c,title;
 			switch (types) {
 				case 1:
-					style = 'font-size:30px;color:#333;';
-					title = '大号模版标题';
+					c = 'p-title-l';
+					title = '大号标题';
 					break;
 				case 2:
-					style = 'font-size:26px;color:#666;';
-					title = '中号模版标题';
+					c = 'p-title-m';
+					title = '中号标题';
 					break;
 				case 3:
-					style = 'font-size:20px;color:#996600;';
-					title = '小号模版标题';
+					c = 'p-title-s';
+					title = '小号标题';
 					break;
 			}
-			document.execCommand('insertHTML', false, '<div style="'+style+'">'+title+'</div><br>');
+			document.execCommand('insertHTML', false, '<div class="'+c+'">'+title+'</div><br>');
 		},
 		setTimer: function(f){
 			if(f.timer == undefined && f.cn_id != 0) {
-				var limit = f.savetime;
-				var btn = f.btns.find('a:eq(1)');
+				let limit = f.savetime;
+				let btn = f.btns.find('a:eq(1)');
 				f.timer = setInterval(function(){
 					if(--limit > 0) {
 						btn.html('<span style="color:#fa6800">'+limit+'s</span>');
@@ -333,7 +324,7 @@ $(document).ready(function(){
 			}
 		},
 		open: function(cn_id, cn_md){
-			var f = this;
+			let f = this;
 			if(cn_id == f.cn_id) {
 				return;
 			}
@@ -346,24 +337,32 @@ $(document).ready(function(){
 				if(data.code == 1){
 					f.editarea[0].contentEditable = true;
 					f.editarea.html(data.result);
+					f.initColors();
 				}else{
 					alert(data.error);
 				}
 			}, 'json');
 		},
 		update: function(f){
-			var btn = f.btns.find('a:eq(1)');
+			let btn = f.btns.find('a:eq(1)');
 			btn.html('<span class="glyphicon glyphicon-save"></span>');
 			clearInterval(f.timer);
 			f.timer = undefined;
-			var ta = f.editarea.find('textarea');
-			var content = '';
+			let ta = f.editarea.find('textarea');
+			let content = '';
 			if(ta.val()){
 				content = f.codeFilter(ta.val());
 			}else{
 				content = f.codeFilter(f.editarea.html());
 			}
 			$.post('/channel/setHtml', {id: f.cn_id, model: f.cn_md, content: content});
+		},
+		initColors: function(){
+			let html = '';
+			for (c of colors) {
+				html += '<a href="javascript:;" class="btn-color" data-val="'+c+'" style="background-color:#'+c+';box-shadow:0 0 3px #'+c+';"></a> ';
+			}
+			this.btns.find('.cbtn-list:last').html(html);
 		}
 	};
 	/*------ 滚动目录类 ------*/
@@ -376,7 +375,7 @@ $(document).ready(function(){
 	ScrollMenu.prototype = {
 		constructor: ScrollMenu,
 		bindEvent: function(){
-			var f = this;
+			let f = this;
 			$(window).on('scroll', function(){
 				if(f.getScrollTop() > f.limit) {
 					f.menu.attr('style', "position:fixed;top:80px;z-index:2000;");
@@ -391,7 +390,7 @@ $(document).ready(function(){
 			this.limit = limit;
 		},
 		getScrollTop: function() {  
-			var scrollPos;  
+			let scrollPos;  
 			if (window.pageYOffset) {  
 				scrollPos = window.pageYOffset; 
 			} else if (document.compatMode && document.compatMode != 'BackCompat') {
@@ -405,11 +404,11 @@ $(document).ready(function(){
 	//菜单滚动
 	new ScrollMenu($('#note_btns'));
 	//笔记编辑器
-	var note = new Note($('#note_editor'), $('#note_btns'));
+	const note = new Note($('#note_editor'), $('#note_btns'));
 	note.open(cn_id, cn_md);
 	//插入附件
 	$('#file_list').on('click', 'button', function(){
-		var types = $(this).attr('data-val');
+		let types = $(this).attr('data-val');
 		if (types == 'jpg' || types == 'jpeg' || types == 'png' || types == 'gif') {
 			document.execCommand('insertHTML', false, '<p style="text-align:center;"><img src="'+$(this).attr('data-path')+'" style="max-width:100%"/></p><br>');
 		}else{
@@ -418,9 +417,9 @@ $(document).ready(function(){
 	});
 	//插入表格
 	$('#insert_table').on('click', function(){
-		var rows = $('#tab_rows').val();
-		var cols = $('#tab_cols').val();
-		var pattern = /^\d+$/;
+		let rows = $('#tab_rows').val();
+		let cols = $('#tab_cols').val();
+		let pattern = /^\d+$/;
 		if(pattern.test(rows) && pattern.test(cols) && rows > 0 && cols > 0){
 			html = '';
 			ths = '';
@@ -431,14 +430,14 @@ $(document).ready(function(){
 				--cols;
 			}
 			if($('#tab_thead')[0].checked){
-				html += '<thead style="background:#eee;"><tr>' + ths + '</tr></thead>';	
+				html += '<thead><tr>' + ths + '</tr></thead>';	
 			}
 			html += '<tbody>';
 			while (rows) {
 				html += '<tr>' + tds + '</tr>';
 				--rows;
 			}
-			$('#note_editor').append('<table class="table table-bordered table-condensed">' + html + '</tbody></table><br>');
+			$('#note_editor').append('<table class="p-table">' + html + '</tbody></table><br>');
 			$('#tab_rows').val('');
 			$('#tab_cols').val('');
 			$('#table_box').modal('hide');

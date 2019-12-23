@@ -1,0 +1,40 @@
+.p-editor {
+	font-size:16px;
+    color:#666;
+	background: #fff;
+}
+
+.p-title-l {
+    font-size: 30px;
+    color: #333;
+}
+
+.p-title-m {
+    font-size: 26px;
+    color: #666;
+}
+
+.p-title-s {
+    font-size: 20px;
+    color: #0099CC;
+}
+
+.p-table {
+    width: 100%;
+    max-width: 100%;
+}
+
+.p-table thead {
+    background-color: #eee;
+    border-bottom: 2px solid #bbb;
+}
+
+.p-table tr th, .p-table tr td {
+    border: 1px solid #ccc;
+    height: 34px;
+    padding: 5px 10px;
+}
+
+.p-table tr td {
+    color: #999;
+}

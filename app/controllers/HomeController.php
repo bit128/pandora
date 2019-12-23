@@ -216,4 +216,11 @@ class HomeController extends \core\web\Controller {
 			);
 		$this->renderView('file', $data);
 	}
+
+	/**
+	 * 移动设备管理
+	 */
+	public function actionMobile() {
+		$this->renderView('mobile');
+	}
 }

@@ -2,8 +2,10 @@
 .desk-item {
 	display: block;
 	text-align: center;
-	background: #f0f0f0;
+	background: #fff;
 	padding:10px 0 5px;
+	border-radius: 6px;
+	box-shadow: 2px 2px 8px #ddd;
 }
 .desk-item:hover {
 	text-decoration: none;
@@ -36,24 +38,16 @@
 				<p><strong style="font-size:16px;">栏目和内容</strong> <br><small>[权限：内容]</small></p>
 			</a>
 		</div>
-		<!--
-		<div class="col-md-2">
-			<a class="desk-item" href="/home/page">
-				<p><img src="/app/statics/home/images/png-0071.png"></p>
-				<p><strong style="font-size:16px;">移动设备</strong> <br><small>[权限：内容]</small></p>
-			</a>
-		</div>-->
-		<!--
-		<div class="col-md-2">
-			<a class="desk-item" href="/home/struct">
-				<p><img src="/app/statics/home/images/png-0011.png"></p>
-				<p><strong style="font-size:16px;">配置项</strong> <br><small>[权限：内容]</small></p>
-			</a>
-		</div>-->
 		<div class="col-md-2">
 			<a class="desk-item" href="/home/file">
 				<p><img src="/app/statics/home/images/png-0841.png"></p>
 				<p><strong style="font-size:16px;">资源</strong> <br><small>[权限：内容]</small></p>
+			</a>
+		</div>
+		<div class="col-md-2">
+			<a class="desk-item" href="/home/mobile">
+				<p><img src="/app/statics/home/images/png-0071.png"></p>
+				<p><strong style="font-size:16px;">移动设备</strong> <br><small>[权限：内容]</small></p>
 			</a>
 		</div>
 		<div class="col-md-2">
@@ -80,6 +74,12 @@
 			<a class="desk-item" href="/home/user">
 				<p><img src="/app/statics/home/images/png-0846.png"></p>
 				<p><strong style="font-size:16px;">用户</strong> <br><small>[权限：用户]</small></p>
+			</a>
+		</div>
+		<div class="col-md-2">
+			<a class="desk-item" href="/home/struct">
+				<p><img src="/app/statics/home/images/png-0011.png"></p>
+				<p><strong style="font-size:16px;">配置项</strong> <br><small>[权限：内容]</small></p>
 			</a>
 		</div>
 		<!--
